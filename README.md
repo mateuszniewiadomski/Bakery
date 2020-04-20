@@ -6,4 +6,4 @@ Bakery Management Application
 ## Author
 Mateusz Niewiadomski
 
-![DBS](DBD.png)
+![DBS](BakeryDBD.png)
