@@ -1,62 +1,62 @@
 CREATE TABLE Position (
 	Id INTEGER PRIMARY KEY,
-	PositionName VARCHAR(30) UNIQUE NOT NULL,
+	PositionName VARCHAR(30) CHECK(LEN(PositionName) > 1) UNIQUE NOT NULL,
 	Salary DECIMAL(8, 2) CHECK(Salary > 0) NOT NULL
 );
 CREATE TABLE Account (
 	Id INTEGER PRIMARY KEY,
-	Account VARCHAR(30) UNIQUE NOT NULL,
-	Password VARCHAR(100) NOT NULL 
+	Account VARCHAR(30) CHECK(LEN(Account) >= 3) UNIQUE NOT NULL,
+	Password VARCHAR(100) CHECK(LEN(Password) >= 8) NOT NULL 
 );
 CREATE TABLE Adres (
 	Id INTEGER PRIMARY KEY,
-	Street VARCHAR(30) NOT NULL,
+	Street VARCHAR(30) CHECK(LEN(Street) > 1) NOT NULL,
 	Nr_Home INTEGER CHECK(Nr_Home > 0),
 	Nr_Apartment INTEGER CHECK(Nr_Apartment > 0),
-	PostalCode CHAR(6) NOT NULL,
-	City VARCHAR(30) NOT NULL
+	PostalCode CHAR(6) CHECK(PostalCode LIKE '[0-9][0-9]-[0-9][0-9][0-9]') NOT NULL,
+	City VARCHAR(30) CHECK(LEN(City) > 1) NOT NULL
 );
 CREATE TABLE Employee (
 	Id INTEGER PRIMARY KEY,
 	Id_Adres INTEGER REFERENCES Adres(Id),
 	Id_Position INTEGER REFERENCES Position(Id),
-	Name VARCHAR(30) NOT NULL,
-	Surname VARCHAR(30) NOT NULL,
-	Pesel CHAR(11) NOT NULL,
+	Name VARCHAR(30) CHECK(LEN(Name) > 1 AND Name LIKE '[A-Z]%') NOT NULL,
+	Surname VARCHAR(30) CHECK(LEN(Surname) > 1 AND Surname LIKE '[A-Z]%') NOT NULL,
+	Pesel CHAR(11) CHECK(Pesel LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]') NOT NULL,
 	BirthDate DATE CHECK(BirthDate <= GETDATE()) NOT NULL,
 	Gender CHAR(1) CHECK(Gender = 'w' OR Gender = 'm') NOT NULL,
-	PhoneNumber VARCHAR(9) NOT NULL,
+	PhoneNumber CHAR(9) CHECK(PhoneNumber LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]') NOT NULL,
 	Id_Account INTEGER REFERENCES Account(Id)
 );
 CREATE TABLE Customer (
 	Id INTEGER PRIMARY KEY,
 	Id_Adres INTEGER REFERENCES Adres(Id),
-	Name VARCHAR(30) NOT NULL,
-	Surname VARCHAR(30) NOT NULL,
-	Pesel CHAR(11) NOT NULL
+	Name VARCHAR(30) CHECK(LEN(Name) > 1 AND Name LIKE '[A-Z]%') NOT NULL,
+	Surname VARCHAR(30) CHECK(LEN(Surname) > 1 AND Surname LIKE '[A-Z]%') NOT NULL,
+	Pesel CHAR(11) CHECK(Pesel LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]') NOT NULL
 );
 CREATE TABLE Supplier (
 	Id INTEGER PRIMARY KEY,
 	Id_Adres INTEGER REFERENCES Adres(Id),
-	CompanyName VARCHAR(30) NOT NULL,
-	PhoneNumber VARCHAR(9) NOT NULL,
-	EMail CHAR(30) NOT NULL
+	CompanyName VARCHAR(30) CHECK(LEN(CompanyName) > 1) NOT NULL,
+	PhoneNumber CHAR(9) CHECK(PhoneNumber LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]') NOT NULL,
+	EMail VARCHAR(30) CHECK(EMail LIKE '%@%') NOT NULL
 );
 CREATE TABLE Subcategory (
 	Id INTEGER PRIMARY KEY,
-	SubcategoryName VARCHAR(30) UNIQUE NOT NULL
+	SubcategoryName VARCHAR(30) CHECK(LEN(SubcategoryName) > 1) UNIQUE NOT NULL
 );
 CREATE TABLE Category (
 	Id INTEGER PRIMARY KEY,
-	CategoryName VARCHAR(30) UNIQUE NOT NULL,
+	CategoryName VARCHAR(30) CHECK(LEN(CategoryName) > 1) UNIQUE NOT NULL,
 	Id_Subccategory INTEGER REFERENCES Subcategory(Id)
 );
 CREATE TABLE Product (
 	Id INTEGER PRIMARY KEY,
-	PoductName VARCHAR(30) UNIQUE NOT NULL,
+	ProductName VARCHAR(30) CHECK(LEN(ProductName) > 1) UNIQUE NOT NULL,
 	Id_Category INTEGER REFERENCES Category(Id),
 	Price DECIMAL(8, 2) CHECK(Price > 0) NOT NULL,
-	Amount INTEGER CHECK(Amount > 0) NOT NULL,
+	Amount INTEGER CHECK(Amount >= 0) NOT NULL,
 	Desctiprion TEXT,
 	Composition TEXT,
 	Id_Baker INTEGER REFERENCES Employee(Id),
@@ -64,11 +64,11 @@ CREATE TABLE Product (
 );
 CREATE TABLE Packing (
 	Id INTEGER PRIMARY KEY,
-	PackingType VARCHAR(30) UNIQUE NOT NULL
+	PackingType VARCHAR(30) CHECK(LEN(PackingType) > 1) UNIQUE NOT NULL
 );
 CREATE TABLE Payment (
 	Id INTEGER PRIMARY KEY,
-	PaymentType VARCHAR(30) UNIQUE NOT NULL
+	PaymentType VARCHAR(30) CHECK(LEN(PaymentType) > 1) UNIQUE NOT NULL
 );
 CREATE TABLE PurchaseOrder (
 	Id INTEGER PRIMARY KEY,
@@ -77,8 +77,13 @@ CREATE TABLE PurchaseOrder (
 	Id_PaymentType INTEGER REFERENCES Payment(Id),
 	Id_PackingType INTEGER REFERENCES Packing(Id),
 	ProductList TEXT NOT NULL,
-	OrderTime DATE NOT NULL,
-	OrderCompletion DATE NOT NULL,
+	OrderTime DATE CHECK(OrderTime <= GETDATE()) NOT NULL,
+	OrderCompletion DATE CHECK(OrderCompletion >= GETDATE()) NOT NULL,
 	OrderCost DECIMAL(8, 2) CHECK(OrderCost > 0) NOT NULL,
 	OrderCostWithTaxes DECIMAL(8, 2) CHECK(OrderCost > 0) NOT NULL
+);
+CREATE TABLE Product_had_PurchaseOrder (
+	Id_Product INTEGER REFERENCES Product(Id),
+	Id_PurchaseOrder INTEGER REFERENCES PurchaseOrder(Id),
+	Amount INTEGER CHECK(Amount > 0) NOT NULL
 );
