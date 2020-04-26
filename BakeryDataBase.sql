@@ -1,7 +1,7 @@
 CREATE TABLE Position (
 	Id INTEGER PRIMARY KEY,
 	PositionName VARCHAR(30) CHECK(LEN(PositionName) > 1) UNIQUE NOT NULL,
-	Salary DECIMAL(8, 2) CHECK(Salary > 0) NOT NULL
+	Salary DECIMAL(8, 2) CHECK(Salary >= 0) NOT NULL
 );
 CREATE TABLE Account (
 	Id INTEGER PRIMARY KEY,
@@ -10,9 +10,9 @@ CREATE TABLE Account (
 );
 CREATE TABLE Adres (
 	Id INTEGER PRIMARY KEY,
-	Street VARCHAR(30) CHECK(LEN(Street) > 1) NOT NULL,
-	Nr_Home INTEGER CHECK(Nr_Home > 0),
-	Nr_Apartment INTEGER CHECK(Nr_Apartment > 0),
+	Street VARCHAR(30) CHECK(LEN(Street) > 1) NULL,
+	Nr_Home INTEGER CHECK(Nr_Home > 0) NOT NULL,
+	Nr_Apartment INTEGER CHECK(Nr_Apartment > 0) NULL,
 	PostalCode CHAR(6) CHECK(PostalCode LIKE '[0-9][0-9]-[0-9][0-9][0-9]') NOT NULL,
 	City VARCHAR(30) CHECK(LEN(City) > 1) NOT NULL
 );
@@ -20,8 +20,8 @@ CREATE TABLE Employee (
 	Id INTEGER PRIMARY KEY,
 	Id_Adres INTEGER REFERENCES Adres(Id),
 	Id_Position INTEGER REFERENCES Position(Id),
-	Name VARCHAR(30) CHECK(LEN(Name) > 1 AND Name LIKE '[A-Z]%') NOT NULL,
-	Surname VARCHAR(30) CHECK(LEN(Surname) > 1 AND Surname LIKE '[A-Z]%') NOT NULL,
+	Name VARCHAR(30) CHECK(LEN(Name) > 1) NOT NULL,
+	Surname VARCHAR(30) CHECK(LEN(Surname) > 1) NOT NULL,
 	Pesel CHAR(11) CHECK(Pesel LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]') NOT NULL,
 	BirthDate DATE CHECK(BirthDate <= GETDATE()) NOT NULL,
 	Gender CHAR(1) CHECK(Gender = 'w' OR Gender = 'm') NOT NULL,
@@ -31,8 +31,8 @@ CREATE TABLE Employee (
 CREATE TABLE Customer (
 	Id INTEGER PRIMARY KEY,
 	Id_Adres INTEGER REFERENCES Adres(Id),
-	Name VARCHAR(30) CHECK(LEN(Name) > 1 AND Name LIKE '[A-Z]%') NOT NULL,
-	Surname VARCHAR(30) CHECK(LEN(Surname) > 1 AND Surname LIKE '[A-Z]%') NOT NULL,
+	Name VARCHAR(30) CHECK(LEN(Name) > 1) NOT NULL,
+	Surname VARCHAR(30) CHECK(LEN(Surname) > 1) NOT NULL,
 	Pesel CHAR(11) CHECK(Pesel LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]') NOT NULL
 );
 CREATE TABLE Supplier (
@@ -40,7 +40,7 @@ CREATE TABLE Supplier (
 	Id_Adres INTEGER REFERENCES Adres(Id),
 	CompanyName VARCHAR(30) CHECK(LEN(CompanyName) > 1) NOT NULL,
 	PhoneNumber CHAR(9) CHECK(PhoneNumber LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]') NOT NULL,
-	EMail VARCHAR(30) CHECK(EMail LIKE '%@%') NOT NULL
+	EMail VARCHAR(30) CHECK(EMail LIKE '%@%.%') NOT NULL
 );
 CREATE TABLE Subcategory (
 	Id INTEGER PRIMARY KEY,
@@ -55,7 +55,7 @@ CREATE TABLE Product (
 	Id INTEGER PRIMARY KEY,
 	ProductName VARCHAR(30) CHECK(LEN(ProductName) > 1) UNIQUE NOT NULL,
 	Id_Category INTEGER REFERENCES Category(Id),
-	Price DECIMAL(8, 2) CHECK(Price > 0) NOT NULL,
+	Price DECIMAL(8, 2) CHECK(Price >= 0) NOT NULL,
 	Amount INTEGER CHECK(Amount >= 0) NOT NULL,
 	Desctiprion TEXT,
 	Composition TEXT,
@@ -78,7 +78,7 @@ CREATE TABLE PurchaseOrder (
 	Id_PackingType INTEGER REFERENCES Packing(Id),
 	ProductList TEXT NOT NULL,
 	OrderTime DATE CHECK(OrderTime <= GETDATE()) NOT NULL,
-	OrderCompletion DATE CHECK(OrderCompletion >= GETDATE()) NOT NULL,
+	OrderCompletion DATE NOT NULL,
 	OrderCost DECIMAL(8, 2) CHECK(OrderCost > 0) NOT NULL,
 	OrderCostWithTaxes DECIMAL(8, 2) CHECK(OrderCost > 0) NOT NULL
 );
