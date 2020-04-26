@@ -79,8 +79,8 @@ CREATE TABLE PurchaseOrder (
 	ProductList TEXT NOT NULL,
 	OrderTime DATE CHECK(OrderTime <= GETDATE()) NOT NULL,
 	OrderCompletion DATE NOT NULL,
-	OrderCost DECIMAL(8, 2) CHECK(OrderCost > 0) NOT NULL,
-	OrderCostWithTaxes DECIMAL(8, 2) CHECK(OrderCost > 0) NOT NULL
+	OrderCost DECIMAL(8, 2) CHECK(OrderCost >= 0) NOT NULL,
+	OrderCostWithTaxes DECIMAL(8, 2) CHECK(OrderCost >= 0) NOT NULL
 );
 CREATE TABLE Product_had_PurchaseOrder (
 	Id_Product INTEGER REFERENCES Product(Id),
