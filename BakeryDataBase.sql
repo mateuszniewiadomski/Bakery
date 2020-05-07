@@ -34,7 +34,6 @@ CREATE TABLE Customer (
 	Id_Adres INTEGER REFERENCES Adres(Id),
 	Name VARCHAR(30) CHECK(LEN(Name) > 1) NOT NULL,
 	Surname VARCHAR(30) CHECK(LEN(Surname) > 1) NOT NULL,
-	Pesel CHAR(11) CHECK(Pesel LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]') NOT NULL,
 	ImageURL VARCHAR NULL
 );
 CREATE TABLE Supplier (
@@ -94,3 +93,99 @@ CREATE TABLE Product_had_PurchaseOrder (
 	Id_PurchaseOrder INTEGER REFERENCES PurchaseOrder(Id),
 	Amount INTEGER CHECK(Amount > 0) NOT NULL
 );
+
+/*
+	Random Data from: 
+	www.fakeaddressgenerator.com
+*/
+
+INSERT INTO Position VALUES 
+(1, 'Manager', 6000),
+(2, 'Confectioner', 4500),
+(3, 'Seller', 3500),
+(4, 'Cleaner', 3000);
+
+INSERT INTO Account VALUES
+(1, 'admin', 'admin1'),
+(2, 'seller', 'seller1'),
+(3, 'seller2', 'seller2');
+
+INSERT INTO Adres VALUES
+(1, 'Warzywnicza', 61, NULL, '80-838', 'Gdansk'),
+(2, 'Promowa', 102, NULL, '80-702', 'Gdansk'),
+(3, 'Sniezna', 105, NULL, '80-554', 'Gdansk'),
+(4, 'Doki', 62, NULL, '80-863', 'Gdansk'),
+(5, 'Zwyciestwa', 21, NULL, '80-210', 'Gdansk'),
+(6, 'Sienna', 92, NULL, '80-605', 'Gdansk'),
+(7, 'Jelenigorska', 63, NULL, '80-180', 'Gdansk'),
+(8, 'Maszynowa', 105, NULL, '80-298', 'Gdansk'),
+(9, 'Zamiejska', 110, NULL, '80-036', 'Gdansk'),
+(10, 'Swojska', 64, NULL, '80-605', 'Gdansk');
+
+INSERT INTO Employee VALUES
+(1, 1, 1, 'Grzegorz', 'Gorski', '93121235950', '1993-12-12', 'm', '192372881', 1, NULL),
+(2, 2, 2, 'Tadeusz', 'Adamczyk', '92072568650', '1992-25-07', 'm', '167220048', NULL, NULL),
+(3, 3, 2, 'Cibor', 'Duda', '69101154555', '1969-11-10', 'm', '983224928', NULL, NULL),
+(4, 4, 3, 'Kornelia', 'Krol', '56091054387', '1956-10-09', 'w', '898036325', 2, NULL),
+(4, 4, 3, 'Przemyslaw', 'Jablonski', '59070630198', '1959-06-07', 'm', '261094108', 3, NULL),
+(4, 4, 4, 'Franciszka', 'Wozniak', '73041706842', '1973-17-04', 'w', '387600103', NULL, NULL);
+
+INSERT INTO Customer VALUES
+(1, 5, 'Patryk', 'Jaworski'),
+(1, 6, 'Milosz', 'Kowalski');
+
+INSERT INTO Supplier VALUES 
+(1, 7, 'HotCoffe', '919823456', 'contact@hotcoffe.com'),
+(1, 8, 'WetDrink', '085195505', 'contact@wetdrink.com'),
+(1, 9, 'SweetIceCrems', '982753774', 'contact@sweeticecreams.com'),
+(1, 10, 'BestJam', '742724069', 'contact@bestjam.com');
+
+INSERT INTO Subcategory VALUES
+(1, 'Cakes', NULL),
+(2, 'Dessert cakes', NULL),
+(3, 'Baked cakes', NULL),
+(4, 'Cookies', NULL),
+(5, 'Ice cream', NULL),
+(6, 'Bevarages', NULL),
+(7, 'Fruit preserves', NULL),
+(8, 'Bread', NULL);
+
+INSERT INTO Category VALUES
+(1, 'Children cake', 1, NULL),
+(2, 'Wedding cake', 1, NULL),
+(3, 'First Communion cake', 1, NULL),
+(4, 'Christening cake', 1, NULL),
+(5, 'Normal cake', 1, NULL),
+(6, 'Slices', 2, NULL),
+(7, 'Roulades', 2, NULL),
+(8, 'Dessert tarts', 2, NULL),
+(9, 'Bundt cakes', 3, NULL),
+(10, 'Cheesecakes', 3, NULL),
+(11, 'Apple pies', 3, NULL),
+(12, 'Pies', 3, NULL),
+(13, 'Baked tarts', 3, NULL),
+(14, 'Cupcakes', 4, NULL),
+(15, 'Banquet cookies', 4, NULL),
+(16, 'Single cookies', 4, NULL),
+(17, 'Desserts', 5, NULL),
+(18, 'Scoop Ice Cream', 5, NULL),
+(19, 'Coffes', 6, NULL),
+(20, 'Teas', 6, NULL),
+(21, 'Chocolates', 6, NULL),
+(22, 'Cold Drinks', 6, NULL),
+(23, 'Sweet preserves', 7, NULL),
+(24, 'Sour preserves', 7, NULL),
+(25, 'Bread', 8, NULL),
+(26, 'Bread rolls', 8, NULL);
+
+INSERT INTO Product VALUES
+(1, 'Peppa Pig', 1, 50, 9, 'Peppa Pig Cake', '100% love', 2, NULL, NULL),
+(2, 'Crying Smiling Emoji', 1, 10, 10, 'Crying Smiling Emoji Cake', '100% Pane', 2, NULL, NULL),
+(3, 'Angel White', 1, 100, 0, 'Peppa Pig Cake', 'Sugar 100 grams', 2, NULL, NULL),
+(4, 'Peppa Pig', 1, 20, 0, 'Peppa Pig Cake', 'Sugar 100 grams', 2, NULL, NULL),
+(5, 'Peppa Pig', 1, 20, 0, 'Peppa Pig Cake', 'Sugar 100 grams', 2, NULL, NULL),
+(6, 'Peppa Pig', 1, 20, 0, 'Peppa Pig Cake', 'Sugar 100 grams', 2, NULL, NULL),
+(7, 'Peppa Pig', 1, 20, 0, 'Peppa Pig Cake', 'Sugar 100 grams', 2, NULL, NULL),
+(8, 'Peppa Pig', 1, 20, 0, 'Peppa Pig Cake', 'Sugar 100 grams', 2, NULL, NULL),
+(9, 'Peppa Pig', 1, 20, 0, 'Peppa Pig Cake', 'Sugar 100 grams', 2, NULL, NULL),
+(10, 'Peppa Pig', 1, 20, 0, 'Peppa Pig Cake', 'Sugar 100 grams', 2, NULL, NULL),
