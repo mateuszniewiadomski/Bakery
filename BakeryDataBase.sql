@@ -1,7 +1,7 @@
 /*
-	//////////////////////////
-	//	Drops all tables	//
-	//////////////////////////
+
+		Drops all tables	
+
 */
 
 DROP TABLE IF EXISTS Product_had_PurchaseOrder
@@ -19,9 +19,9 @@ DROP TABLE IF EXISTS Account
 DROP TABLE IF EXISTS Position
 
 /*
-	//////////////////////////
-	//	Craetes Data Base	//
-	//////////////////////////
+
+		Craetes Data Base	
+
 */
 
 CREATE TABLE Position (
@@ -121,9 +121,9 @@ CREATE TABLE Product_had_PurchaseOrder (
 );
 
 /*	
-	//////////////////////////////////////
-	//	Inserts some stuff at start		//
-	//////////////////////////////////////
+
+		Inserts some stuff at start		
+
 */
 
 INSERT INTO Position VALUES 
@@ -281,10 +281,9 @@ INSERT INTO Payment VALUES
 (5, 'Prepaid Card', NULL);
 
 /*	
-	//////////////////////////////////////
-	//		Personal Data is random		//
-	//			generated in:			//
-	//	www.fakeaddressgenerator.com	//
-	//////////////////////////////////////
+
+		Personal Data is random	generated in:			
+			www.fakeaddressgenerator.com	
+
 */
 
