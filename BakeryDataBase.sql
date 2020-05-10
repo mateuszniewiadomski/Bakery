@@ -1,3 +1,29 @@
+/*
+	//////////////////////////
+	//	Drops all tables	//
+	//////////////////////////
+*/
+
+DROP TABLE IF EXISTS Product_had_PurchaseOrder
+DROP TABLE IF EXISTS PurchaseOrder
+DROP TABLE IF EXISTS Payment
+DROP TABLE IF EXISTS Packing
+DROP TABLE IF EXISTS Product
+DROP TABLE IF EXISTS Category
+DROP TABLE IF EXISTS Subcategory
+DROP TABLE IF EXISTS Supplier
+DROP TABLE IF EXISTS Customer
+DROP TABLE IF EXISTS Employee
+DROP TABLE IF EXISTS Adres
+DROP TABLE IF EXISTS Account
+DROP TABLE IF EXISTS Position
+
+/*
+	//////////////////////////
+	//	Craetes Data Base	//
+	//////////////////////////
+*/
+
 CREATE TABLE Position (
 	Id INTEGER PRIMARY KEY,
 	PositionName VARCHAR(30) CHECK(LEN(PositionName) > 1) UNIQUE NOT NULL,
@@ -6,7 +32,7 @@ CREATE TABLE Position (
 CREATE TABLE Account (
 	Id INTEGER PRIMARY KEY,
 	Account VARCHAR(30) CHECK(LEN(Account) >= 3) UNIQUE NOT NULL,
-	Password VARCHAR(100) CHECK(LEN(Password) >= 8) NOT NULL 
+	Password VARCHAR(100) NOT NULL 
 );
 CREATE TABLE Adres (
 	Id INTEGER PRIMARY KEY,
@@ -56,7 +82,7 @@ CREATE TABLE Category (
 );
 CREATE TABLE Product (
 	Id INTEGER PRIMARY KEY,
-	ProductName VARCHAR(30) CHECK(LEN(ProductName) > 1) UNIQUE NOT NULL,
+	ProductName VARCHAR(50) CHECK(LEN(ProductName) > 1) UNIQUE NOT NULL,
 	Id_Category INTEGER REFERENCES Category(Id),
 	Price DECIMAL(8, 2) CHECK(Price >= 0) NOT NULL,
 	Amount INTEGER CHECK(Amount >= 0) NOT NULL,
@@ -86,7 +112,7 @@ CREATE TABLE PurchaseOrder (
 	OrderTime DATE CHECK(OrderTime <= GETDATE()) NOT NULL,
 	OrderCompletion DATE NOT NULL,
 	OrderCost DECIMAL(8, 2) CHECK(OrderCost >= 0) NOT NULL,
-	OrderCostWithTaxes DECIMAL(8, 2) CHECK(OrderCost >= 0) NOT NULL
+	OrderCostWithTaxes DECIMAL(8, 2) CHECK(OrderCostWithTaxes >= 0) NOT NULL
 );
 CREATE TABLE Product_had_PurchaseOrder (
 	Id_Product INTEGER REFERENCES Product(Id),
@@ -94,9 +120,10 @@ CREATE TABLE Product_had_PurchaseOrder (
 	Amount INTEGER CHECK(Amount > 0) NOT NULL
 );
 
-/*
-	Random Data from: 
-	www.fakeaddressgenerator.com
+/*	
+	//////////////////////////////////////
+	//	Inserts some stuff at start		//
+	//////////////////////////////////////
 */
 
 INSERT INTO Position VALUES 
@@ -126,15 +153,15 @@ INSERT INTO Adres VALUES
 
 INSERT INTO Employee VALUES
 (1, 1, 1, 'Grzegorz', 'Gorski', '93121235950', '1993-12-12', 'm', '192372881', 1, NULL),
-(2, 2, 2, 'Tadeusz', 'Adamczyk', '92072568650', '1992-25-07', 'm', '167220048', NULL, NULL),
-(3, 3, 2, 'Cibor', 'Duda', '69101154555', '1969-11-10', 'm', '983224928', NULL, NULL),
-(4, 4, 3, 'Kornelia', 'Krol', '56091054387', '1956-10-09', 'w', '898036325', 2, NULL),
-(5, 5, 3, 'Przemyslaw', 'Jablonski', '59070630198', '1959-06-07', 'm', '261094108', 3, NULL),
-(6, 6, 4, 'Franciszka', 'Wozniak', '73041706842', '1973-17-04', 'w', '387600103', NULL, NULL);
+(2, 2, 2, 'Tadeusz', 'Adamczyk', '92072568650', '1992-07-25', 'm', '167220048', NULL, NULL),
+(3, 3, 2, 'Cibor', 'Duda', '69101154555', '1969-10-11', 'm', '983224928', NULL, NULL),
+(4, 4, 3, 'Kornelia', 'Krol', '56091054387', '1956-09-10', 'w', '898036325', 2, NULL),
+(5, 5, 3, 'Przemyslaw', 'Jablonski', '59070630198', '1959-07-06', 'm', '261094108', 3, NULL),
+(6, 6, 4, 'Franciszka', 'Wozniak', '73041706842', '1973-04-17', 'w', '387600103', NULL, NULL);
 
 INSERT INTO Customer VALUES
-(1, 11, 'Patryk', 'Jaworski'),
-(2, 12, 'Milosz', 'Kowalski');
+(1, 11, 'Patryk', 'Jaworski', NULL),
+(2, 12, 'Milosz', 'Kowalski', NULL);
 
 INSERT INTO Supplier VALUES 
 (1, 7, 'HotCoffe', '919823456', 'contact@hotcoffe.com'),
@@ -181,63 +208,83 @@ INSERT INTO Category VALUES
 (26, 'Bread rolls', 8, NULL);
 
 INSERT INTO Product VALUES
-(1, 'Peppa Pig', 1, 50, 9, 'Peppa Pig Cake', '100% love', 2, NULL, NULL),
-(2, 'Crying Smiling Emoji', 1, 10, 10, 'Crying Smiling Emoji Cake', '100% Pane', 2, NULL, NULL),
+(1, 'Peppa Pig', 1, 50, 0, 'Peppa Pig Cake', '100% love', 2, NULL, NULL),
+(2, 'Crying Smiling Emoji', 1, 10, 0, 'Crying Smiling Emoji Cake', '100% Pane', 2, NULL, NULL),
 (3, 'Angel White', 2, 100, 0, 'Angel White', 'The whitest cake!', 2, NULL, NULL),
 (4, 'Love Chocolate', 2, 150, 0, 'Best Wedding Cake', 'White and dark chocolate', 2, NULL, NULL),
 (5, 'Holy Bible', 3, 50, 0, 'Looks like real book!', NULL, 2, NULL, NULL),
 (6, 'Cake with Hoste', 3, 60, 0, NULL, NULL, 2, NULL, NULL),
-(7, 'Little Baby White', 4, 20, 0, NULL, NULL, 2, NULL, NULL),
-(8, 'Little Baby Blue', 4, 20, 0, NULL, NULL, 2, NULL, NULL),
-(9, 'Raspberry Cake', 5, 20, 0, NULL, NULL, 2, NULL, NULL),
-(10, 'Blueberry Cake', 5, 20, 0, NULL, NULL, 2, NULL, NULL),
-(11, 'Lemon Cake', 5, 20, 0, NULL, NULL, 2, NULL, NULL),
-(12, 'Black Currant', 6, 20, 0, NULL, NULL, 2, NULL, NULL),
-(13, 'Peach Cheesecake', 6, 20, 0, NULL, NULL, 2, NULL, NULL),
-(14, 'Rool Beige', 7, 20, 0, NULL, NULL, 2, NULL, NULL),
+(7, 'Little Baby White', 4, 25, 0, NULL, NULL, 2, NULL, NULL),
+(8, 'Little Baby Blue', 4, 25, 0, NULL, NULL, 2, NULL, NULL),
+(9, 'Raspberry Cake', 5, 20, 10, NULL, NULL, 2, NULL, NULL),
+(10, 'Blueberry Cake', 5, 20, 10, NULL, NULL, 2, NULL, NULL),
+(11, 'Lemon Cake', 5, 20, 10, NULL, NULL, 2, NULL, NULL),
+(12, 'Black Currant', 6, 10, 30, NULL, NULL, 2, NULL, NULL),
+(13, 'Peach Cheesecake', 6, 7, 30, NULL, NULL, 2, NULL, NULL),
+(14, 'Rool Beige', 7, 20, 30, NULL, NULL, 2, NULL, NULL),
 (15, 'Big Mix', 8, 20, 0, NULL, NULL, 3, NULL, NULL),
-(16, 'Small Mix', 8, 20, 0, NULL, NULL, 3, NULL, NULL),
-(17, 'Chocolate cake', 9, 20, 0, NULL, NULL, 2, NULL, NULL),
-(18, 'Brioche', 9, 20, 0, NULL, NULL, 2, NULL, NULL),
-(19, 'Traditional Cheesecake', 10, 20, 0, NULL, NULL, 2, NULL, NULL),
-(20, 'Home Cheesecake', 10, 20, 0, NULL, NULL, 2, NULL, NULL),
-(21, 'Crispy Cheesecake', 10, 20, 0, NULL, NULL, 2, NULL, NULL),
-(22, 'Dessert Apple Pie', 11, 20, 0, NULL, NULL, 2, NULL, NULL),
-(23, 'Traditional Apple Pie', 11, 20, 0, NULL, NULL, 2, NULL, NULL),
-(24, 'Poppy Seed Cake', 12, 20, 0, NULL, NULL, 2, NULL, NULL),
-(25, 'Yogurt Cake With Rhubarb', 12, 20, 0, NULL, NULL, 2, NULL, NULL),
-(26, 'Gooseberry Tart', 13, 20, 0, NULL, NULL, 2, NULL, NULL),
-(27, 'Cheese Tart', 13, 20, 0, NULL, NULL, 2, NULL, NULL),
-(28, 'Chocolate Cookies', 16, 20, 0, NULL, NULL, 2, NULL, NULL),
-(29, 'Oatmeal Cookies', 16, 20, 0, NULL, NULL, 2, NULL, NULL),
-(30, 'Cupcakes With Chocolate', 14, 20, 0, NULL, NULL, 2, NULL, NULL),
-(31, 'Cupcakes With Vanilla', 14, 20, 0, NULL, NULL, 2, NULL, NULL),
-(32, 'Apple Cake Big', 15, 20, 0, NULL, NULL, 2, NULL, NULL),
-(33, 'Apple Cake Small', 15, 20, 0, NULL, NULL, 2, NULL, NULL),
-(34, 'Mini Dessert Mango', 15, 20, 0, NULL, NULL, 3, NULL, NULL),
-(35, 'Mini Dessert Panna Cotta', 15, 20, 0, NULL, NULL, 3, NULL, NULL),
-(36, 'Raspberry Bliss', 17, 20, 0, NULL, NULL, 3, 3, NULL),
-(37, 'Chocolate Temptation', 17, 20, 0, NULL, NULL, 3, 3, NULL),
-(38, 'Chocolate', 18, 20, 0, NULL, NULL, 3, 3, NULL),
-(39, 'Vanilla', 18, 20, 0, NULL, NULL, 3, 3, NULL),
-(40, 'Salty Caramel', 18, 20, 0, NULL, NULL, 3, 3, NULL),
-(41, 'Creamy', 18, 20, 0, NULL, NULL, 2, 3, NULL),
-(42, 'Espresso', 19, 20, 0, NULL, NULL, NULL, 1, NULL),
-(43, 'Cappuciono', 19, 20, 0, NULL, NULL, NULL, 1, NULL),
-(44, 'Late Macchiato', 19, 20, 0, NULL, NULL, NULL, 1, NULL),
-(45, 'Black Tea', 20, 20, 0, NULL, NULL, NULL, 1, NULL),
-(46, 'Green Tea', 20, 20, 0, NULL, NULL, NULL, 1, NULL),
-(47, 'Hot Chocolate', 21, 20, 0, NULL, NULL, NULL, 1, NULL),
-(48, 'Hot Chocolate with Whipped Cream', 21, 20, 0, NULL, NULL, NULL, 1, NULL),
-(49, 'Cola', 22, 20, 0, NULL, NULL, NULL, 2, NULL),
-(50, 'Orange Juice', 22, 20, 0, NULL, NULL, NULL, 2, NULL),
-(51, 'Apple Juice', 22, 20, 0, NULL, NULL, NULL, 2, NULL),
-(52, 'Strawberry Jam', 23, 20, 0, NULL, NULL, NULL, 2, NULL),
-(53, 'Peach Jam', 23, 20, 0, NULL, NULL, NULL, 4, NULL),
-(54, 'Plum Jam', 24, 20, 0, NULL, NULL, NULL, 4, NULL),
-(55, 'Blueberry Jam', 24, 20, 0, NULL, NULL, NULL, 4, NULL),
-(56, 'Rye Bread', 25, 20, 0, NULL, NULL, NULL, 4, NULL),
-(57, 'Toasted Bread', 25, 20, 0, NULL, NULL, 2, NULL, NULL),
-(58, 'Light Bread', 25, 20, 0, NULL, NULL, 2, NULL, NULL),
-(59, 'Graham Roll', 26, 20, 0, NULL, NULL, 2, NULL, NULL),
-(60, 'Wheat Roll', 26, 20, 0, NULL, NULL, 2, NULL, NULL);
+(16, 'Small Mix', 8, 30, 0, NULL, NULL, 3, NULL, NULL),
+(17, 'Chocolate cake', 9, 50, 30, NULL, NULL, 2, NULL, NULL),
+(18, 'Brioche', 9, 20, 30, NULL, NULL, 2, NULL, NULL),
+(19, 'Traditional Cheesecake', 10, 20, 30, NULL, NULL, 2, NULL, NULL),
+(20, 'Home Cheesecake', 10, 20, 30, NULL, NULL, 2, NULL, NULL),
+(21, 'Crispy Cheesecake', 10, 20, 30, NULL, NULL, 2, NULL, NULL),
+(22, 'Dessert Apple Pie', 11, 20, 30, NULL, NULL, 2, NULL, NULL),
+(23, 'Traditional Apple Pie', 11, 20, 30, NULL, NULL, 2, NULL, NULL),
+(24, 'Poppy Seed Cake', 12, 20, 30, NULL, NULL, 2, NULL, NULL),
+(25, 'Yogurt Cake With Rhubarb', 12, 20, 30, NULL, NULL, 2, NULL, NULL),
+(26, 'Gooseberry Tart', 13, 20, 30, NULL, NULL, 2, NULL, NULL),
+(27, 'Cheese Tart', 13, 20, 30, NULL, NULL, 2, NULL, NULL),
+(28, 'Chocolate Cookies', 16, 20, 30, NULL, NULL, 2, NULL, NULL),
+(29, 'Oatmeal Cookies', 16, 20, 30, NULL, NULL, 2, NULL, NULL),
+(30, 'Cupcakes With Chocolate', 14, 20, 30, NULL, NULL, 2, NULL, NULL),
+(31, 'Cupcakes With Vanilla', 14, 20, 30, NULL, NULL, 2, NULL, NULL),
+(32, 'Apple Cake Big', 15, 20, 30, NULL, NULL, 2, NULL, NULL),
+(33, 'Apple Cake Small', 15, 20, 30, NULL, NULL, 2, NULL, NULL),
+(34, 'Mini Dessert Mango', 15, 20, 30, NULL, NULL, 3, NULL, NULL),
+(35, 'Mini Dessert Panna Cotta', 15, 20, 30, NULL, NULL, 3, NULL, NULL),
+(36, 'Raspberry Bliss', 17, 20, 30, NULL, NULL, 3, 3, NULL),
+(37, 'Chocolate Temptation', 17, 20, 30, NULL, NULL, 3, 3, NULL),
+(38, 'Chocolate', 18, 20, 100, NULL, NULL, 3, 3, NULL),
+(39, 'Vanilla', 18, 20, 100, NULL, NULL, 3, 3, NULL),
+(40, 'Salty Caramel', 18, 20, 100, NULL, NULL, 3, 3, NULL),
+(41, 'Creamy', 18, 20, 100, NULL, NULL, 2, 3, NULL),
+(42, 'Espresso', 19, 20, 1000, NULL, NULL, NULL, 1, NULL),
+(43, 'Cappuciono', 19, 20, 1000, NULL, NULL, NULL, 1, NULL),
+(44, 'Late Macchiato', 19, 20, 1000, NULL, NULL, NULL, 1, NULL),
+(45, 'Black Tea', 20, 20, 1000, NULL, NULL, NULL, 1, NULL),
+(46, 'Green Tea', 20, 20, 1000, NULL, NULL, NULL, 1, NULL),
+(47, 'Hot Chocolate', 21, 20, 1000, NULL, NULL, NULL, 1, NULL),
+(48, 'Hot Chocolate with Whipped Cream', 21, 20, 1000, NULL, NULL, NULL, 1, NULL),
+(49, 'Cola', 22, 20, 100, NULL, NULL, NULL, 2, NULL),
+(50, 'Orange Juice', 22, 20, 100, NULL, NULL, NULL, 2, NULL),
+(51, 'Apple Juice', 22, 20, 100, NULL, NULL, NULL, 2, NULL),
+(52, 'Strawberry Jam', 23, 20, 100, NULL, NULL, NULL, 2, NULL),
+(53, 'Peach Jam', 23, 20, 100, NULL, NULL, NULL, 4, NULL),
+(54, 'Plum Jam', 24, 20, 100, NULL, NULL, NULL, 4, NULL),
+(55, 'Blueberry Jam', 24, 20, 100, NULL, NULL, NULL, 4, NULL),
+(56, 'Rye Bread', 25, 20, 100, NULL, NULL, NULL, 4, NULL),
+(57, 'Toasted Bread', 25, 20, 100, NULL, NULL, 2, NULL, NULL),
+(58, 'Light Bread', 25, 20, 100, NULL, NULL, 2, NULL, NULL),
+(59, 'Graham Roll', 26, 20, 100, NULL, NULL, 2, NULL, NULL),
+(60, 'Wheat Roll', 26, 20, 100, NULL, NULL, 2, NULL, NULL);
+
+INSERT INTO Packing VALUES
+(1, 'On place', NULL),
+(2, 'Takeaway', NULL);
+
+INSERT INTO Payment VALUES
+(1, 'Cash', NULL),
+(2, 'Bank Transfer', NULL),
+(3, 'Credit Card', NULL),
+(4, 'Mobile Payment', NULL),
+(5, 'Prepaid Card', NULL);
+
+/*	
+	//////////////////////////////////////
+	//		Personal Data is random		//
+	//			generated in:			//
+	//	www.fakeaddressgenerator.com	//
+	//////////////////////////////////////
+*/
+
