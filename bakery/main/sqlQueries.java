@@ -1,5 +1,7 @@
 package bakery.main;
 
+import bakery.hashing.HashPassword;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -10,7 +12,7 @@ import java.util.Scanner;
 public class sqlQueries extends Component {
 
     private Connection cn;
-    private String url = "jdbc:sqlserver://localhost:1433;databaseName=master;";
+    private String url = "jdbc:sqlserver://localhost:1433;databaseName=bakery;";
     private String user;
     private String password;
 
@@ -38,8 +40,41 @@ public class sqlQueries extends Component {
         } catch (FileNotFoundException e) {
             System.err.println(e);
         }
+    }
 
+    public void newAccount(String login, String password) {
+        String account = "";
+        try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT Account FROM Account WHERE Account = '" + login + "'");
+            if (rs.next()) {
+                account = rs.getString(1);
+            }
+            if (!(account.equals(login))) {
+                HashPassword hp = new HashPassword();
+                String hash = hp.generateHash(password);
+                System.out.println(hash);
+            }
 
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    public void checkPassword(String login, String password) {
+        String hash = "";
+        try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT Password FROM Account WHERE Account = '" + login + "'");
+            if (rs.next()) {
+                hash = rs.getString(1);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        HashPassword hp = new HashPassword();
+        boolean x = hp.checkPassword(password, hash);
+        System.out.println(hash + " " + x);
     }
 }
 
