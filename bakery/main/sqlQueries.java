@@ -61,7 +61,7 @@ public class sqlQueries extends Component {
         }
     }
 
-    public void checkPassword(String login, String password) {
+    public boolean checkPassword(String login, String password) {
         String hash = "";
         try {
             Statement st = cn.createStatement();
@@ -72,9 +72,12 @@ public class sqlQueries extends Component {
         } catch (SQLException e) {
             System.out.println(e);
         }
-        HashPassword hp = new HashPassword();
-        boolean x = hp.checkPassword(password, hash);
-        System.out.println(hash + " " + x);
+        if (hash.equals("")) {
+            return false;
+        } else {
+            HashPassword hp = new HashPassword();
+            return hp.checkPassword(password, hash);
+        }
     }
 }
 
