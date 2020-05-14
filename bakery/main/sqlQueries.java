@@ -79,5 +79,43 @@ public class sqlQueries extends Component {
             return hp.checkPassword(password, hash);
         }
     }
+
+    public String[] fillcbPosition() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT PositionName FROM Position ORDER BY Id");
+            rs.last();
+            int rows = rs.getRow();
+            rs.first();
+            String[] s = new String[rows];
+            for (int i = 0; i < rows; i++) {
+                s[i] = rs.getString(1);
+                rs.next();
+                System.out.println(s[i]);
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public boolean userExists(String s) {
+        String x = "";
+        try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT 1 FROM Account WHERE Account = '" + s + "'");
+            if (rs.next()) {
+                x = rs.getString(1);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        if (x.equals("")) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }
 
