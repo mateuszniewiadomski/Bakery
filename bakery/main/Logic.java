@@ -9,25 +9,29 @@ public class Logic {
         }
     }
     public boolean checkPesel(String s) {
-        if (s.length() != 11 && s.matches("[0-9]+")) {
+        if (s.length() != 11) {
             return false;
-        }
-        int n1 = s.charAt(0) - 48;
-        int n2 = s.charAt(1) - 48;
-        int n3 = s.charAt(2) - 48;
-        int n4 = s.charAt(3) - 48;
-        int n5 = s.charAt(4) - 48;
-        int n6 = s.charAt(5) - 48;
-        int n7 = s.charAt(6) - 48;
-        int n8 = s.charAt(7) - 48;
-        int n9 = s.charAt(8) - 48;
-        int n10 = s.charAt(9) - 48;
-        int n11 = s.charAt(10) - 48;
-        if ((n1*9+n2*7+n3*3+n4*1+n5*9+n6*7+n7*3+n8*1+n9*9+n10*7) % 10 == n11) {
-            return true;
+        } else if (s.matches("[0-9]+")) {
+            int n1 = s.charAt(0) - 48;
+            int n2 = s.charAt(1) - 48;
+            int n3 = s.charAt(2) - 48;
+            int n4 = s.charAt(3) - 48;
+            int n5 = s.charAt(4) - 48;
+            int n6 = s.charAt(5) - 48;
+            int n7 = s.charAt(6) - 48;
+            int n8 = s.charAt(7) - 48;
+            int n9 = s.charAt(8) - 48;
+            int n10 = s.charAt(9) - 48;
+            int n11 = s.charAt(10) - 48;
+            if ((n1*9+n2*7+n3*3+n4*1+n5*9+n6*7+n7*3+n8*1+n9*9+n10*7) % 10 == n11) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
+
     }
     public String setBirthDate(String s) {
         int n1 = s.charAt(0) - 48;
@@ -95,12 +99,14 @@ public class Logic {
     }
     public boolean checkUsername(String s) {
         if (s.length() >=  3) {
-            sqlQueries q = new sqlQueries();
-            if (q.userExists(s)) {
-                return false;
-            } else {
-                return true;
-            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public boolean checkPassword(String s) {
+        if (s.length() >= 4) {
+            return true;
         } else {
             return false;
         }

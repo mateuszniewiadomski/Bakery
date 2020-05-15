@@ -23,6 +23,8 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private final JLabel lLogo = new JLabel();
     private final JLabel lBanner = new JLabel();
     private final JLabel lBG = new JLabel();
+    private int userId = 1;
+    private boolean isManager = false;
 
     //login window
     private final JPanel pUser = new JPanel();
@@ -83,7 +85,55 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private final JRadioButton rbMale = new JRadioButton("Male");
     private final JRadioButton rbFemale = new JRadioButton("Female");
 
+    private final JTextField tfUserN = new JTextField();
+    private final JPasswordField pfPasswordN = new JPasswordField();
+
     private final JComboBox cbPosition = new JComboBox();
+
+    //left banner
+    private final JButton bHome = new JButton("Home");
+    private final JButton bSearchProducts = new JButton("Search products");
+    private final JButton bNewOrders = new JButton("New orders");
+    private final JButton bCompletedOrders = new JButton("Completed orders");
+    private final JButton bBestClient = new JButton("Best client");
+    private final JButton bBestSeller = new JButton("Best seller");
+
+    //home window
+    private final JPanel pWelcomeHome = new JPanel();
+    private final JLabel lWelcomeHome = new JLabel();
+
+    private final JPanel pProfilePicture = new JPanel();
+    private final JLabel lProfilePicture = new JLabel();
+
+    private final JButton bUpdateHome = new JButton("Update");
+
+    private final JPanel pUrInfo = new JPanel();
+    private final JLabel lUrInfo = new JLabel();
+
+    private final JPanel pUrPosition = new JPanel();
+    private final JPanel pUrSalary = new JPanel();
+    private final JLabel lUrPosition = new JLabel();
+    private final JLabel lUrSalary = new JLabel();
+    private final JLabel lSalary = new JLabel();
+
+    private final JPanel pUrAdres = new JPanel();
+    private final JLabel lUrAdres = new JLabel();
+
+    private final JPanel pBigAdres = new JPanel();
+    private final JLabel lBigAdresl1 = new JLabel();
+    private final JLabel lBigAdresl2 = new JLabel();
+
+    //search product window
+
+    //new orders window
+
+    //completed orders window
+
+    //best client window
+
+    //best seller window
+
+
 
     public Window() {
         setSize(1000, 600);
@@ -94,6 +144,7 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         add(layere);
         layere.setBounds(0,0,1000, 600);
         q.connect();
+        setStyle();
         createTop();
         setListeners();
         setComboBoxes();
@@ -118,8 +169,18 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         tfWPhoto.addKeyListener(this);
         bCreateAccount.addActionListener(this);
         bCancel.addActionListener(this);
-        pfPassword.addKeyListener(this);
-        tfUser.addKeyListener(this);
+        pfPasswordN.addKeyListener(this);
+        tfUserN.addKeyListener(this);
+
+        //left banner
+        bHome.addActionListener(this);
+        bSearchProducts.addActionListener(this);
+        bNewOrders.addActionListener(this);
+        bCompletedOrders.addActionListener(this);
+        bBestClient.addActionListener(this);
+        bBestSeller.addActionListener(this);
+
+        //
     }
 
     private void setComboBoxes() {
@@ -129,17 +190,9 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         }
     }
 
-    private void loginWindow() {
+    private void setStyle() {
 
-        pUser.setBounds(350,200,100,30);
-        pPassword.setBounds(350,230,100,30);
-
-        tfUser.setBounds(480,205,170,25);
-        pfPassword.setBounds(480,235,170,25);
-
-        bLogin.setBounds(360, 270, 290, 25);
-        bNewAccount.setBounds(360, 305, 290, 25);
-
+        //login window
         pUser.setOpaque(false);
         pPassword.setOpaque(false);
 
@@ -166,76 +219,7 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         bLogin.setBorderPainted(false);
         bNewAccount.setBorderPainted(false);
 
-        pUser.add(lUser);
-        pPassword.add(lPassword);
-
-        layere.add(pUser, 1, 0);
-        layere.add(pPassword, 1, 0);
-        layere.add(tfUser, 1, 0);
-        layere.add(pfPassword, 1, 0);
-        layere.add(bLogin, 1, 0);
-        layere.add(bNewAccount, 1, 0);
-    }
-
-    private void incorrectLoginWindow() {
-
-        pAlert.setBounds(420,170,250,30);
-        pAlert.setOpaque(false);
-
-        lAlert.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
-        lAlert.setForeground(new Color(190, 0, 0));
-
-        pAlert.add(lAlert);
-        layere.add(pAlert, 1, 0);
-
-        tfUser.setBackground(new Color(246, 226, 226));
-        pfPassword.setBackground(new Color(246, 226, 226));
-    }
-
-    private void removeLoginWindow() {
-        layere.remove(pAlert);
-        layere.remove(pUser);
-        layere.remove(pfPassword);
-        layere.remove(tfUser);
-        layere.remove(pfPassword);
-        layere.remove(bLogin);
-        layere.remove(bNewAccount);
-        layere.revalidate();
-        layere.repaint();
-    }
-
-    private void newAccountWindow() {
-
-        pName.setBounds(100,100,100,30);
-        tfName.setBounds(220,105,170,25);
-        pSurname.setBounds(100,135,100,30);
-        tfSurname.setBounds(220,140,170,25);
-        pPesel.setBounds(100,170,100,30);
-        tfPesel.setBounds(220,175,170,25);
-        pBirthDate.setBounds(100,205,100,30);
-        tfBirthDate.setBounds(220,210,170,25);
-        pGender.setBounds(100,245,100,30);
-        pTelephone.setBounds(100,280,100,30);
-        tfTelephone.setBounds(220,285,170,25);
-        pUser.setBounds(100,350,100,30);
-        tfUser.setBounds(220,355,170,25);
-        pPassword.setBounds(100,385,100,30);
-        pfPassword.setBounds(220,390,170,25);
-        pStreet.setBounds(600,100,100,30);
-        tfStreet.setBounds(720,105,170,25);
-        pHomeNr.setBounds(600,135,100,30);
-        tfHomeNr.setBounds(720,140,170,25);
-        pPostalCode.setBounds(600,170,100,30);
-        tfPostalCode.setBounds(720,175,170,25);
-        pCity.setBounds(600,205,100,30);
-        tfCity.setBounds(720,210,170,25);
-        pWPhoto.setBounds(530,350,200,30);
-        tfWPhoto.setBounds(540,390,170,25);
-        pPosition.setBounds(510, 267, 100, 30);
-        cbPosition.setBounds(600, 270, 110, 25);
-
-        bCreateAccount.setBounds(100, 500, 300, 25);
-        bCancel.setBounds(600, 500, 300, 25);
+        //new account window
 
         pName.setOpaque(false);
         pSurname.setOpaque(false);
@@ -290,12 +274,12 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         tfTelephone.setForeground(new Color(90, 52, 43));
         tfTelephone.setBackground(new Color(255, 248, 235));
         tfTelephone.setBorder(new LineBorder(new Color(90, 52, 43)));
-        tfUser.setForeground(new Color(90, 52, 43));
-        tfUser.setBackground(new Color(255, 248, 235));
-        tfUser.setBorder(new LineBorder(new Color(90, 52, 43)));
-        pfPassword.setForeground(new Color(90, 52, 43));
-        pfPassword.setBackground(new Color(255, 248, 235));
-        pfPassword.setBorder(new LineBorder(new Color(90, 52, 43)));
+        tfUserN.setForeground(new Color(90, 52, 43));
+        tfUserN.setBackground(new Color(255, 248, 235));
+        tfUserN.setBorder(new LineBorder(new Color(90, 52, 43)));
+        pfPasswordN.setForeground(new Color(90, 52, 43));
+        pfPasswordN.setBackground(new Color(255, 248, 235));
+        pfPasswordN.setBorder(new LineBorder(new Color(90, 52, 43)));
         tfStreet.setForeground(new Color(90, 52, 43));
         tfStreet.setBackground(new Color(255, 248, 235));
         tfStreet.setBorder(new LineBorder(new Color(90, 52, 43)));
@@ -316,6 +300,149 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         cbPosition.setBackground(new Color(255, 248, 235));
         cbPosition.setBorder(new LineBorder(new Color(90, 52, 43)));
 
+        rbFemale.setForeground(new Color(90, 52, 43));
+        rbMale.setForeground(new Color(90, 52, 43));
+        rbFemale.setOpaque(false);
+        rbMale.setOpaque(false);
+        rbMale.setBorderPainted(false);
+        rbFemale.setBorderPainted(false);
+
+        bCreateAccount.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bCancel.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bCreateAccount.setBackground(new Color(90, 52, 43));
+        bCancel.setBackground(new Color(90, 52, 43));
+        bCreateAccount.setForeground(new Color(255, 242, 216));
+        bCancel.setForeground(new Color(255, 242, 216));
+        bCreateAccount.setBorderPainted(false);
+        bCancel.setBorderPainted(false);
+
+        //left banner
+        bHome.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bHome.setBackground(new Color(90, 52, 43));
+        bHome.setForeground(new Color(255, 242, 216));
+        bHome.setBorderPainted(false);
+
+        bSearchProducts.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bSearchProducts.setBackground(new Color(90, 52, 43));
+        bSearchProducts.setForeground(new Color(255, 242, 216));
+        bSearchProducts.setBorderPainted(false);
+
+        bNewOrders.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bNewOrders.setBackground(new Color(90, 52, 43));
+        bNewOrders.setForeground(new Color(255, 242, 216));
+        bNewOrders.setBorderPainted(false);
+
+        bCompletedOrders.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bCompletedOrders.setBackground(new Color(90, 52, 43));
+        bCompletedOrders.setForeground(new Color(255, 242, 216));
+        bCompletedOrders.setBorderPainted(false);
+
+        bBestClient.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bBestClient.setBackground(new Color(90, 52, 43));
+        bBestClient.setForeground(new Color(255, 242, 216));
+        bBestClient.setBorderPainted(false);
+
+        bBestSeller.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bBestSeller.setBackground(new Color(90, 52, 43));
+        bBestSeller.setForeground(new Color(255, 242, 216));
+        bBestSeller.setBorderPainted(false);
+
+        //home window
+        bUpdateHome.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bUpdateHome.setBackground(new Color(90, 52, 43));
+        bUpdateHome.setForeground(new Color(255, 242, 216));
+        bUpdateHome.setBorderPainted(false);
+
+        pWelcomeHome.setOpaque(false);
+
+        lWelcomeHome.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        lWelcomeHome.setForeground(new Color(90, 52, 43));
+
+        pProfilePicture.setOpaque(false);
+    }
+
+    private void loginWindow() {
+
+        pUser.setBounds(350,200,100,30);
+        pPassword.setBounds(350,230,100,30);
+
+        tfUser.setBounds(480,205,170,25);
+        pfPassword.setBounds(480,235,170,25);
+
+        bLogin.setBounds(360, 270, 290, 25);
+        bNewAccount.setBounds(360, 305, 290, 25);
+
+        pUser.add(lUser);
+        pPassword.add(lPassword);
+
+        layere.add(pUser, 1, 0);
+        layere.add(pPassword, 1, 0);
+        layere.add(tfUser, 1, 0);
+        layere.add(pfPassword, 1, 0);
+        layere.add(bLogin, 1, 0);
+        layere.add(bNewAccount, 1, 0);
+    }
+
+    private void incorrectLoginWindow() {
+
+        pAlert.setBounds(420,170,250,30);
+        pAlert.setOpaque(false);
+
+        lAlert.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        lAlert.setForeground(new Color(190, 0, 0));
+
+        pAlert.add(lAlert);
+        layere.add(pAlert, 1, 0);
+
+        tfUser.setBackground(new Color(246, 226, 226));
+        pfPassword.setBackground(new Color(246, 226, 226));
+    }
+
+    private void removeLoginWindow() {
+        layere.remove(pAlert);
+        layere.remove(pUser);
+        layere.remove(pPassword);
+        layere.remove(tfUser);
+        layere.remove(pfPassword);
+        layere.remove(bLogin);
+        layere.remove(bNewAccount);
+        layere.revalidate();
+        layere.repaint();
+    }
+
+    private void newAccountWindow() {
+
+        pName.setBounds(100,100,100,30);
+        tfName.setBounds(220,105,170,25);
+        pSurname.setBounds(100,135,100,30);
+        tfSurname.setBounds(220,140,170,25);
+        pPesel.setBounds(100,170,100,30);
+        tfPesel.setBounds(220,175,170,25);
+        pBirthDate.setBounds(100,205,100,30);
+        tfBirthDate.setBounds(220,210,170,25);
+        pGender.setBounds(100,245,100,30);
+        pTelephone.setBounds(100,280,100,30);
+        tfTelephone.setBounds(220,285,170,25);
+        pUser.setBounds(100,350,100,30);
+        tfUserN.setBounds(220,355,170,25);
+        pPassword.setBounds(100,385,100,30);
+        pfPasswordN.setBounds(220,390,170,25);
+        pStreet.setBounds(600,100,100,30);
+        tfStreet.setBounds(720,105,170,25);
+        pHomeNr.setBounds(600,135,100,30);
+        tfHomeNr.setBounds(720,140,170,25);
+        pPostalCode.setBounds(600,170,100,30);
+        tfPostalCode.setBounds(720,175,170,25);
+        pCity.setBounds(600,205,100,30);
+        tfCity.setBounds(720,210,170,25);
+        pWPhoto.setBounds(530,350,200,30);
+        tfWPhoto.setBounds(540,390,170,25);
+        pPosition.setBounds(510, 267, 100, 30);
+        cbPosition.setBounds(600, 270, 110, 25);
+
+        bCreateAccount.setBounds(100, 500, 300, 25);
+        bCancel.setBounds(600, 500, 300, 25);
+
         pName.add(lName);
         pSurname.add(lSurname);
         pPesel.add(lPesel);
@@ -331,25 +458,10 @@ public class Window extends JFrame implements ActionListener, KeyListener {
 
         rbFemale.setBounds(220, 245, 80, 30);
         rbMale.setBounds(310, 245, 80, 30);
-        rbFemale.setForeground(new Color(90, 52, 43));
-        rbMale.setForeground(new Color(90, 52, 43));
-        rbFemale.setOpaque(false);
-        rbMale.setOpaque(false);
-        rbMale.setBorderPainted(false);
-        rbFemale.setBorderPainted(false);
         bgGender.add(rbFemale);
         bgGender.add(rbMale);
 
-        bCreateAccount.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
-        bCancel.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
-        bCreateAccount.setBackground(new Color(90, 52, 43));
-        bCancel.setBackground(new Color(90, 52, 43));
-        bCreateAccount.setForeground(new Color(255, 242, 216));
-        bCancel.setForeground(new Color(255, 242, 216));
-        bCreateAccount.setBorderPainted(false);
-        bCancel.setBorderPainted(false);
-
-        lCow.setIcon(img.cow);
+        lCow.setIcon(img.getImage("cow.jpg"));
         pCow.setBounds(740, 265, 150, 150);
         pCow.add(lCow);
         pCow.setOpaque(false);
@@ -368,9 +480,9 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         layere.add(pTelephone, 1, 0);
         layere.add(tfTelephone, 1, 0);
         layere.add(pUser, 1, 0);
-        layere.add(tfUser, 1, 0);
+        layere.add(tfUserN, 1, 0);
         layere.add(pPassword, 1, 0);
-        layere.add(pfPassword, 1, 0);
+        layere.add(pfPasswordN, 1, 0);
         layere.add(pStreet, 1, 0);
         layere.add(tfStreet, 1, 0);
         layere.add(pHomeNr, 1, 0);
@@ -405,9 +517,9 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         layere.remove(pTelephone);
         layere.remove(tfTelephone);
         layere.remove(pUser);
-        layere.remove(tfUser);
+        layere.remove(tfUserN);
         layere.remove(pPassword);
-        layere.remove(pfPassword);
+        layere.remove(pfPasswordN);
         layere.remove(pStreet);
         layere.remove(tfStreet);
         layere.remove(pHomeNr);
@@ -429,15 +541,15 @@ public class Window extends JFrame implements ActionListener, KeyListener {
 
     private void createTop() {
 
-        lLogo.setIcon(img.Logo);
-        pLogo.setBounds(50, -5, 100, 100);
+        lLogo.setIcon(img.getImage("logo.jpg"));
+        pLogo.setBounds(60, -5, 100, 100);
         pLogo.add(lLogo);
 
-        lBanner.setIcon(img.Banner);
+        lBanner.setIcon(img.getImage("banner.jpg"));
         pBanner.setBounds(0,-5,1000, 70);
         pBanner.add(lBanner);
 
-        lBG.setIcon(img.BG);
+        lBG.setIcon(img.getImage("BG.jpg"));
         pBG.setBounds(0,-5, 1000, 600);
         pBG.add(lBG);
 
@@ -446,6 +558,43 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         layere.add(pBG, 0, 0);
 
         loginWindow();
+        //createLeftBanner();
+    }
+
+    private void createLeftBanner() {
+        bHome.setBounds(25, 120, 170, 30);
+        bSearchProducts.setBounds(25, 170, 170, 30);
+        bNewOrders.setBounds(25, 220, 170, 30);
+        bCompletedOrders.setBounds(25, 270, 170, 30);
+        bBestClient.setBounds(25, 320, 170, 30);
+        bBestSeller.setBounds(25, 370, 170, 30);
+        layere.add(bHome, 1, 0);
+        layere.add(bSearchProducts, 1, 0);
+        layere.add(bNewOrders, 1, 0);
+        layere.add(bCompletedOrders, 1, 0);
+        layere.add(bBestClient, 1, 0);
+        layere.add(bBestSeller, 1, 0);
+        homeWindow();
+    }
+
+    private void homeWindow() {
+        pWelcomeHome.setBounds(400, 80, 200, 40);
+        lWelcomeHome.setText("Welcome "+q.getNameHome(userId)+"!");
+        pWelcomeHome.add(lWelcomeHome);
+
+        pProfilePicture.setBounds(800, 100, 150, 150);
+        lProfilePicture.setIcon(img.getImage(q.getPicture("Employee",userId)));
+        pProfilePicture.add(lProfilePicture);
+
+        pBigAdres.setBounds(300, 200, 100, 200);
+        lBigAdresl1.setText(q.getAdres1(userId));
+        lBigAdresl2.setText(q.getAdres2(userId));
+        pBigAdres.add(lBigAdresl1);
+        pBigAdres.add(lBigAdresl2);
+
+        layere.add(pWelcomeHome,1,0);
+        layere.add(pProfilePicture, 1, 0);
+        layere.add(pBigAdres, 1, 0);
     }
 
     @Override
@@ -455,7 +604,10 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             String login = tfUser.getText();
             String password = pfPassword.getText();
             if (q.checkPassword(login, password)) {
+                userId = q.setUserId(tfUser.getText());
                 removeLoginWindow();
+                createLeftBanner();
+                homeWindow();
             } else {
                 incorrectLoginWindow();
             }
@@ -463,14 +615,33 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             removeLoginWindow();
             newAccountWindow();
         } else if (z == bCreateAccount) {
-            if (1==1) {
-
-            } else {
-
+            if (logic.checkNames(tfName.getText()) && logic.checkNames(tfSurname.getText()) && logic.checkPesel(tfPesel.getText()) && logic.checkBirthDate(tfBirthDate.getText()) && logic.checkTelephone(tfTelephone.getText()) && logic.checkUsername(tfUserN.getText()) && !q.userExists(tfUserN.getText()) && logic.checkPassword(pfPasswordN.getText()) && logic.checkNames(tfStreet.getText()) && logic.checkNumber(tfHomeNr.getText()) && logic.checkNames(tfCity.getText()) && logic.checkImage(tfWPhoto.getText())) {
+                String gender = "";
+                int position = cbPosition.getSelectedIndex();
+                if (rbMale.isSelected()) {
+                    gender = "m";
+                } else {
+                    gender = "w";
+                }
+                q.newAccount(tfName.getText(),tfSurname.getText(),tfPesel.getText(),tfBirthDate.getText(),gender,tfTelephone.getText(),tfStreet.getText(),Integer.parseInt(tfHomeNr.getText()),tfPostalCode.getText(),tfCity.getText(),tfUserN.getText(),pfPasswordN.getText(),position);
+                removeNewAccountWindow();
+                loginWindow();
             }
         } else if (z == bCancel) {
             removeNewAccountWindow();
             loginWindow();
+        } else if (z == bHome) {
+
+        } else if (z == bSearchProducts) {
+
+        } else if (z == bNewOrders) {
+
+        } else if (z == bCompletedOrders) {
+
+        } else if (z == bBestClient) {
+
+        } else if (z == bBestSeller) {
+
         }
     }
 
@@ -489,19 +660,19 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         Object z = keyEvent.getSource();
         if (z == tfName) {
             if (logic.checkNames(tfName.getText())) {
-                tfName.setBackground(new Color(255, 248, 235));
+                tfName.setBackground(new Color(227, 245, 227));
             } else {
                 tfName.setBackground(new Color(246, 226, 226));
             }
         } else if (z == tfSurname) {
             if (logic.checkNames(tfSurname.getText())) {
-                tfSurname.setBackground(new Color(255, 248, 235));
+                tfSurname.setBackground(new Color(227, 245, 227));
             } else {
                 tfSurname.setBackground(new Color(246, 226, 226));
             }
         } else if (z == tfPesel) {
             if (logic.checkPesel(tfPesel.getText())) {
-                tfPesel.setBackground(new Color(255, 248, 235));
+                tfPesel.setBackground(new Color(227, 245, 227));
                 tfBirthDate.setText(logic.setBirthDate(tfPesel.getText()));
                 if (logic.setGender(tfPesel.getText())) {
                     rbFemale.doClick();
@@ -513,37 +684,37 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             }
         } else if (z == tfBirthDate) {
             if (logic.checkBirthDate(tfBirthDate.getText())) {
-                tfBirthDate.setBackground(new Color(255, 248, 235));
+                tfBirthDate.setBackground(new Color(227, 245, 227));
             } else {
                 tfBirthDate.setBackground(new Color(246, 226, 226));
             }
         } else if (z == tfTelephone) {
             if (logic.checkTelephone(tfTelephone.getText())) {
-                tfTelephone.setBackground(new Color(255, 248, 235));
+                tfTelephone.setBackground(new Color(227, 245, 227));
             } else {
                 tfTelephone.setBackground(new Color(246, 226, 226));
             }
         } else if (z == tfStreet) {
             if (logic.checkNames(tfStreet.getText())) {
-                tfStreet.setBackground(new Color(255, 248, 235));
+                tfStreet.setBackground(new Color(227, 245, 227));
             } else {
                 tfStreet.setBackground(new Color(246, 226, 226));
             }
         } else if (z == tfHomeNr) {
             if (logic.checkNumber(tfHomeNr.getText())) {
-                tfHomeNr.setBackground(new Color(255, 248, 235));
+                tfHomeNr.setBackground(new Color(227, 245, 227));
             } else {
                 tfHomeNr.setBackground(new Color(246, 226, 226));
             }
         } else if (z == tfPostalCode) {
             if (logic.checkPostalCode(tfPostalCode.getText())) {
-                tfPostalCode.setBackground(new Color(255, 248, 235));
+                tfPostalCode.setBackground(new Color(227, 245, 227));
             } else {
                 tfPostalCode.setBackground(new Color(246, 226, 226));
             }
         } else if (z == tfCity) {
             if (logic.checkNames(tfCity.getText())) {
-                tfCity.setBackground(new Color(255, 248, 235));
+                tfCity.setBackground(new Color(227, 245, 227));
             } else {
                 tfCity.setBackground(new Color(246, 226, 226));
             }
@@ -553,14 +724,22 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             } else {
                 tfWPhoto.setBackground(new Color(246, 226, 226));
             }
-        } else if (z == tfUser) {
-            if (logic.checkUsername(tfUser.getText())) {
-                tfUser.setBackground(new Color(227, 245, 227));
+        } else if (z == tfUserN) {
+            if (logic.checkUsername(tfUserN.getText())) {
+                if (!q.userExists(tfUserN.getText())) {
+                    tfUserN.setBackground(new Color(227, 245, 227));
+                } else {
+                    tfUserN.setBackground(new Color(246, 226, 226));
+                }
             } else {
-                tfUser.setBackground(new Color(246, 226, 226));
+                tfUserN.setBackground(new Color(246, 226, 226));
             }
-        } else if (z == pfPassword) {
-
+        } else if (z == pfPasswordN) {
+            if (logic.checkPassword(pfPasswordN.getText())) {
+                pfPasswordN.setBackground(new Color(227, 245, 227));
+            } else {
+                pfPasswordN.setBackground(new Color(246, 226, 226));
+            }
         }
     }
 }

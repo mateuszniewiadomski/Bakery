@@ -53,14 +53,14 @@ CREATE TABLE Employee (
 	Gender CHAR(1) CHECK(Gender = 'w' OR Gender = 'm') NOT NULL,
 	PhoneNumber CHAR(9) CHECK(PhoneNumber LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]') NOT NULL,
 	Id_Account INTEGER REFERENCES Account(Id),
-	ImageURL VARCHAR NULL
+	ImageURL VARCHAR(30) NULL
 );
 CREATE TABLE Customer (
 	Id INTEGER PRIMARY KEY,
 	Id_Adres INTEGER REFERENCES Adres(Id),
 	Name VARCHAR(30) CHECK(LEN(Name) > 1) NOT NULL,
 	Surname VARCHAR(30) CHECK(LEN(Surname) > 1) NOT NULL,
-	ImageURL VARCHAR NULL
+	ImageURL VARCHAR(30) NULL
 );
 CREATE TABLE Supplier (
 	Id INTEGER PRIMARY KEY,
@@ -72,13 +72,13 @@ CREATE TABLE Supplier (
 CREATE TABLE Subcategory (
 	Id INTEGER PRIMARY KEY,
 	SubcategoryName VARCHAR(30) CHECK(LEN(SubcategoryName) > 1) UNIQUE NOT NULL,
-	ImageURL VARCHAR NULL
+	ImageURL VARCHAR(30) NULL
 );
 CREATE TABLE Category (
 	Id INTEGER PRIMARY KEY,
 	CategoryName VARCHAR(30) CHECK(LEN(CategoryName) > 1) UNIQUE NOT NULL,
 	Id_Subccategory INTEGER REFERENCES Subcategory(Id),
-	ImageURL VARCHAR NULL
+	ImageURL VARCHAR(30) NULL
 );
 CREATE TABLE Product (
 	Id INTEGER PRIMARY KEY,
@@ -90,17 +90,17 @@ CREATE TABLE Product (
 	Composition TEXT,
 	Id_Baker INTEGER REFERENCES Employee(Id),
 	Id_Supplier INTEGER REFERENCES Supplier(Id),
-	ImageURL VARCHAR NULL
+	ImageURL VARCHAR(30) NULL
 );
 CREATE TABLE Packing (
 	Id INTEGER PRIMARY KEY,
 	PackingType VARCHAR(30) CHECK(LEN(PackingType) > 1) UNIQUE NOT NULL,
-	ImageURL VARCHAR NULL
+	ImageURL VARCHAR(30) NULL
 );
 CREATE TABLE Payment (
 	Id INTEGER PRIMARY KEY,
 	PaymentType VARCHAR(30) CHECK(LEN(PaymentType) > 1) UNIQUE NOT NULL,
-	ImageURL VARCHAR NULL
+	ImageURL VARCHAR(30) NULL
 );
 CREATE TABLE PurchaseOrder (
 	Id INTEGER PRIMARY KEY,
@@ -155,7 +155,7 @@ INSERT INTO Adres VALUES
 (12, 'Sniezna', 15, NULL, '80-554', 'Gdansk');
 
 INSERT INTO Employee VALUES
-(1, 1, 1, 'Grzegorz', 'Gorski', '93121235950', '1993-12-12', 'm', '192372881', 1, NULL),
+(1, 1, 1, 'Grzegorz', 'Gorski', '93121235950', '1993-12-12', 'm', '192372881', 1, 'manager.jpg'),
 (2, 2, 2, 'Tadeusz', 'Adamczyk', '92072568650', '1992-07-25', 'm', '167220048', NULL, NULL),
 (3, 3, 2, 'Cibor', 'Duda', '69101154555', '1969-10-11', 'm', '983224928', NULL, NULL),
 (4, 4, 3, 'Kornelia', 'Krol', '56091054387', '1956-09-10', 'w', '898036325', 2, NULL),

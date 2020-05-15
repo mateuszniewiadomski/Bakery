@@ -9,8 +9,8 @@ import javax.swing.*;
  */
 
 public class img {
-    public ImageIcon Logo = new ImageIcon(this.getClass().getResource("logo.jpg"));
-    public ImageIcon Banner = new ImageIcon(this.getClass().getResource("banner.jpg"));
-    public ImageIcon BG = new ImageIcon(this.getClass().getResource("bg.jpg"));
-    public ImageIcon cow = new ImageIcon(this.getClass().getResource("cow.jpg"));
+
+    public ImageIcon getImage(String s) {
+        return new ImageIcon(this.getClass().getResource(s));
+    }
 }

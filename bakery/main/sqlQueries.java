@@ -3,6 +3,7 @@ package bakery.main;
 import bakery.hashing.HashPassword;
 
 import javax.swing.*;
+import javax.swing.text.Position;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,20 +43,37 @@ public class sqlQueries extends Component {
         }
     }
 
-    public void newAccount(String login, String password) {
-        String account = "";
+    public void newAccount(String Name, String Surname, String Pesel, String BirthDate, String Gender, String Phone, String Street, int HomeNr, String PostalCode, String City, String User, String Password, int Position) {
         try {
-            Statement st = cn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT Account FROM Account WHERE Account = '" + login + "'");
-            if (rs.next()) {
-                account = rs.getString(1);
+            Statement stNA = cn.createStatement();
+            HashPassword hp = new HashPassword();
+            Password = hp.generateHash(Password);
+            Statement stNAPassword = cn.createStatement();
+            ResultSet rsPassword = stNAPassword.executeQuery("SELECT Id FROM Account ORDER BY Id DESC");
+            int AccountId = 1;
+            if (rsPassword.next()) {
+                AccountId = rsPassword.getInt(1);
             }
-            if (!(account.equals(login))) {
-                HashPassword hp = new HashPassword();
-                String hash = hp.generateHash(password);
-                System.out.println(hash);
+            AccountId = AccountId + 1;
+            stNA.executeUpdate("INSERT INTO Account(Id, Account, Password) VALUES (" + AccountId + ",'"+User+"','"+Password+"')");
+            Statement stAdres = cn.createStatement();
+            ResultSet rsAdres = stAdres.executeQuery("SELECT Id FROM Adres ORDER BY Id DESC");
+            int AdresId = 1;
+            if (rsAdres.next()) {
+                AdresId = rsAdres.getInt(1);
             }
-
+            AdresId = AdresId + 1;
+            Statement stEmployee = cn.createStatement();
+            stAdres.executeUpdate("INSERT INTO Adres (Id, Street, Nr_Home, PostalCode, City) VALUES ("+AdresId+",'"+ Street +"',"+ HomeNr +",'"+ PostalCode +"','"+ City +"')");
+            Statement stE = cn.createStatement();
+            ResultSet rsE = stE.executeQuery("SELECT Id FROM Employee ORDER BY Id DESC");
+            int EmployeeId = 1;
+            if (rsE.next()) {
+                EmployeeId = rsE.getInt(1);
+            }
+            EmployeeId = EmployeeId + 1;
+            stEmployee.executeUpdate("INSERT INTO Employee (Id, Id_Adres, Id_Position, Name, Surname, Pesel, BirthDate, Gender, PhoneNumber, Id_Account) " +
+                    "VALUES ("+EmployeeId+","+AdresId+","+(Position+1)+",'"+Name+"','"+Surname+"','"+Pesel+"','"+BirthDate+"','"+Gender+"','"+Phone+"',"+AccountId+")");
         } catch (SQLException e) {
             System.out.println(e);
         }
@@ -91,7 +109,6 @@ public class sqlQueries extends Component {
             for (int i = 0; i < rows; i++) {
                 s[i] = rs.getString(1);
                 rs.next();
-                System.out.println(s[i]);
             }
             return s;
         } catch (SQLException e) {
@@ -104,18 +121,92 @@ public class sqlQueries extends Component {
         String x = "";
         try {
             Statement st = cn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT 1 FROM Account WHERE Account = '" + s + "'");
+            ResultSet rs = st.executeQuery("SELECT Account FROM Account WHERE Account = '" + s + "'");
             if (rs.next()) {
                 x = rs.getString(1);
+            }
+            if (x.equals("")) {
+                return false;
+            } else {
+                return true;
             }
         } catch (SQLException e) {
             System.out.println(e);
         }
-        if (x.equals("")) {
-            return false;
-        } else {
-            return true;
+        return true;
+    }
+
+    public int setUserId(String login) {
+        int id = 0;
+        try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT Employee.Id FROM Employee INNER JOIN Account ON Account.Id = Employee.Id_Account WHERE Account.Account = '"+login+"'");
+            if (rs.next()) {
+                id = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println(e);
         }
+        return id;
+    }
+
+    public String getNameHome(int Id) {
+        String s = "";
+        try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT Name FROM Employee WHERE Id = "+Id);
+            if (rs.next()) {
+                s = rs.getString(1);
+            }
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return s;
+    }
+
+    public String getPicture(String dbo, int id) {
+        String s = "";
+        try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT ImageURL FROM "+dbo+" WHERE Id = "+id);
+            if (rs.next()) {
+                s = rs.getString(1);
+            }
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        if (s == null) {
+            s = "default.jpg";
+        }
+        return s;
+    }
+
+    public String getAdres1(int id) {
+        String s = "";
+        try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT Street, Nr_Home FROM Adres INNER JOIN Employee ON Employee.Id_Adres = Adres.Id WHERE Employee.Id = "+id);
+            if (rs.next()) {
+                s = rs.getString(1) + " " + rs.getString(2);
+            }
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return s;
+    }
+
+    public String getAdres2(int id) {
+        String s = "";
+        try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT City, PostalCode FROM Adres INNER JOIN Employee ON Employee.Id_Adres = Adres.Id WHERE Employee.Id = "+id);
+            if (rs.next()) {
+                s = rs.getString(1) + " " + rs.getString(2);
+            }
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return s;
     }
 }
 
