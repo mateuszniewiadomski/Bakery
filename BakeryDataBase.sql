@@ -258,7 +258,7 @@ INSERT INTO Product VALUES
 (45, 'Black Tea', 20, 20, 1000, 'Hot delicious tea', 'water, black tea', NULL, 1, '45.jpg'),
 (46, 'Green Tea', 20, 20, 1000, 'Hot delicious tea', 'water, green tea', NULL, 1, '46.jpg'),
 (47, 'Hot Chocolate', 21, 20, 1000, 'Hot delicious liquid chocolate', 'water, milk, sugar, chocolate', NULL, 1, '47.jpg'),
-(48, 'Hot Chocolate with Whipped Cream', 21, 20, 1000, 'Hot delicious liquid chocolate', 'water, milk, sugar, chocolate, cream', NULL, 1, '48.jpg'),
+(48, 'Hot Chocolate with Cream', 21, 20, 1000, 'Hot delicious liquid chocolate', 'water, milk, sugar, chocolate, cream', NULL, 1, '48.jpg'),
 (49, 'Cola', 22, 20, 100, 'refreshment drink', 'water, sugar, caramel', NULL, 2, '49.jpg'),
 (50, 'Orange Juice', 22, 20, 100, 'fresh juice 100% ', 'water, sugar, orange juice', NULL, 2, '50.jpg'),
 (51, 'Apple Juice', 22, 20, 100, 'fresh juice 100% ', 'water, sugar, apple juice', NULL, 2, '51.jpg'),
@@ -291,6 +291,10 @@ INSERT INTO Payment VALUES
 */
 
 SELECT Product.Id, Product.ProductName, Product.Price, Product.Amount, Product.ImageURL, Product.Desctiprion, Product.Composition, Employee.Name, Employee.Surname, Supplier.CompanyName, Category.CategoryName 
-FROM Product LEFT JOIN Employee ON Employee.Id = Product.Id_Baker LEFT JOIN Supplier ON Supplier.Id = Product.Id_Supplier INNER JOIN Category ON Category.Id = Product.Id_Category
+FROM Product LEFT JOIN Employee ON Employee.Id = Product.Id_Baker 
+LEFT JOIN Supplier ON Supplier.Id = Product.Id_Supplier 
+INNER JOIN Category ON Category.Id = Product.Id_Category 
+INNER JOIN Subcategory ON Subcategory.Id = Category.Id_Subcategory
+ORDER BY 2
 
 --SELECT ProductName FROM Product

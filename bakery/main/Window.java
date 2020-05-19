@@ -8,7 +8,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.swing.BorderFactory.createEmptyBorder;
 
 public class Window extends JFrame implements ActionListener, KeyListener {
 
@@ -24,7 +27,11 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private final JLabel lBanner = new JLabel();
     private final JLabel lBG = new JLabel();
     private int userId = 1;
+    private String window = "";
     private boolean isManager = false;
+    private boolean isSeller = false;
+    private String sMin = "0";
+    private String sMax = "100";
 
     //login window
     private final JPanel pUser = new JPanel();
@@ -107,23 +114,53 @@ public class Window extends JFrame implements ActionListener, KeyListener {
 
     private final JButton bUpdateHome = new JButton("Update");
 
-    private final JPanel pUrInfo = new JPanel();
-    private final JLabel lUrInfo = new JLabel();
-
     private final JPanel pUrPosition = new JPanel();
     private final JPanel pUrSalary = new JPanel();
-    private final JLabel lUrPosition = new JLabel();
-    private final JLabel lUrSalary = new JLabel();
+    private final JLabel lUrPosition = new JLabel("Your position:");
+    private final JLabel lUrSalary = new JLabel("Your salary:");
     private final JLabel lSalary = new JLabel();
+    private final JPanel pUrPosition2 = new JPanel();
+    private final JPanel pUrSalary2 = new JPanel();
+    private final JLabel lUrPosition2 = new JLabel();
+    private final JLabel lUrSalary2 = new JLabel();
+    private final JLabel lSalary2 = new JLabel();
 
     private final JPanel pUrAdres = new JPanel();
-    private final JLabel lUrAdres = new JLabel();
+    private final JLabel lUrAdres = new JLabel("Your adres:");
 
-    private final JPanel pBigAdres = new JPanel();
+    private final JPanel pBigAdres1 = new JPanel();
+    private final JPanel pBigAdres2 = new JPanel();
     private final JLabel lBigAdresl1 = new JLabel();
     private final JLabel lBigAdresl2 = new JLabel();
 
     //search product window
+    private final List<String> listCategory = new ArrayList<String>();
+
+    private final JPanel pProductBox = new JPanel();
+    private final JScrollPane sp = new JScrollPane(pProductBox);
+
+    private final JComboBox cbCategory = new JComboBox();
+    private final JComboBox cbSubategory = new JComboBox();
+    private final JComboBox cbOrderBy = new JComboBox();
+
+    private final JPanel pMin = new JPanel();
+    private final JPanel pMax = new JPanel();
+    private final JPanel pSearchProductByName = new JPanel();
+    private final JPanel pCategory = new JPanel();
+    private final JPanel pSubcategory = new JPanel();
+    private final JPanel pOrderProducts = new JPanel();
+
+    private final JLabel lMin = new JLabel("Min price");
+    private final JLabel lMax = new JLabel("Max price");
+    private final JLabel lSearchProductByName = new JLabel("Search");
+    private final JLabel lCategory = new JLabel("Category");
+    private final JLabel lSubcategory = new JLabel("Subcategory");
+    private final JLabel lOrderProducts = new JLabel("Order by");
+
+    private final JTextField tfMin = new JTextField();
+    private final JTextField tfMax = new JTextField();
+    private final JTextField tfSearchProductByName = new JTextField();
+
 
     //new orders window
 
@@ -180,7 +217,10 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         bBestClient.addActionListener(this);
         bBestSeller.addActionListener(this);
 
-        //
+        //search product window
+        tfMin.addKeyListener(this);
+        tfMax.addKeyListener(this);
+        tfSearchProductByName.addKeyListener(this);
     }
 
     private void setComboBoxes() {
@@ -188,6 +228,21 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         for (String s : q.fillcbPosition()) {
             cbPosition.addItem(s);
         }
+
+        cbSubategory.addItem("All");
+        for (String s : q.fillcbSubcat()) {
+            cbSubategory.addItem(s);
+        }
+
+        for (String s : q.fillcbCat(0)) {
+            cbCategory.addItem(s);
+            listCategory.add(s);
+        }
+
+        cbOrderBy.addItem("Default");
+        cbOrderBy.addItem("Name");
+        cbOrderBy.addItem("Price");
+        cbOrderBy.addItem("Amount");
     }
 
     private void setStyle() {
@@ -355,10 +410,102 @@ public class Window extends JFrame implements ActionListener, KeyListener {
 
         pWelcomeHome.setOpaque(false);
 
-        lWelcomeHome.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        lWelcomeHome.setFont(new Font(Font.DIALOG,  Font.BOLD, 30));
         lWelcomeHome.setForeground(new Color(90, 52, 43));
 
+        lUrAdres.setFont(new Font(Font.DIALOG,  Font.BOLD, 20));
+        lUrAdres.setForeground(new Color(90, 52, 43));
+
+        lBigAdresl1.setFont(new Font(Font.DIALOG,  Font.BOLD, 20));
+        lBigAdresl1.setForeground(new Color(90, 52, 43));
+
+        lBigAdresl2.setFont(new Font(Font.DIALOG,  Font.BOLD, 20));
+        lBigAdresl2.setForeground(new Color(90, 52, 43));
+
+        lUrPosition.setFont(new Font(Font.DIALOG,  Font.BOLD, 20));
+        lUrPosition.setForeground(new Color(90, 52, 43));
+
+        lUrPosition2.setFont(new Font(Font.DIALOG,  Font.BOLD, 20));
+        lUrPosition2.setForeground(new Color(90, 52, 43));
+
+        lUrSalary2.setFont(new Font(Font.DIALOG,  Font.BOLD, 20));
+        lUrSalary2.setForeground(new Color(90, 52, 43));
+
+        lUrSalary.setFont(new Font(Font.DIALOG,  Font.BOLD, 20));
+        lUrSalary.setForeground(new Color(90, 52, 43));
+
         pProfilePicture.setOpaque(false);
+
+        //search product window
+        cbSubategory.setForeground(new Color(90, 52, 43));
+        cbSubategory.setBackground(new Color(255, 248, 235));
+        cbSubategory.setBorder(new LineBorder(new Color(90, 52, 43)));
+
+        cbCategory.setForeground(new Color(90, 52, 43));
+        cbCategory.setBackground(new Color(255, 248, 235));
+        cbCategory.setBorder(new LineBorder(new Color(90, 52, 43)));
+
+        cbOrderBy.setForeground(new Color(90, 52, 43));
+        cbOrderBy.setBackground(new Color(255, 248, 235));
+        cbOrderBy.setBorder(new LineBorder(new Color(90, 52, 43)));
+
+        tfSearchProductByName.setForeground(new Color(90, 52, 43));
+        tfSearchProductByName.setBackground(new Color(255, 248, 235));
+        tfSearchProductByName.setBorder(new LineBorder(new Color(90, 52, 43)));
+
+        tfMin.setForeground(new Color(90, 52, 43));
+        tfMin.setBackground(new Color(255, 248, 235));
+        tfMin.setBorder(new LineBorder(new Color(90, 52, 43)));
+
+        tfMax.setForeground(new Color(90, 52, 43));
+        tfMax.setBackground(new Color(255, 248, 235));
+        tfMax.setBorder(new LineBorder(new Color(90, 52, 43)));
+
+        lCategory.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        lCategory.setForeground(new Color(90, 52, 43));
+
+        lSubcategory.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        lSubcategory.setForeground(new Color(90, 52, 43));
+
+        lSearchProductByName.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        lSearchProductByName.setForeground(new Color(90, 52, 43));
+
+        lMin.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        lMin.setForeground(new Color(90, 52, 43));
+
+        lMax.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        lMax.setForeground(new Color(90, 52, 43));
+
+        lOrderProducts.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        lOrderProducts.setForeground(new Color(90, 52, 43));
+
+        pCategory.setOpaque(false);
+        pSubcategory.setOpaque(false);
+        pSearchProductByName.setOpaque(false);
+        pMin.setOpaque(false);
+        pMax.setOpaque(false);
+        pOrderProducts.setOpaque(false);
+
+        pCategory.add(lCategory);
+        pSubcategory.add(lSubcategory);
+        pSearchProductByName.add(lSearchProductByName);
+        pMin.add(lMin);
+        pMax.add(lMax);
+        pOrderProducts.add(lOrderProducts);
+
+        cbSubategory.setBounds(210, 110, 120, 25);
+        cbCategory.setBounds(360, 110, 120, 25);
+        tfSearchProductByName.setBounds(500, 110, 120, 25);
+        tfMin.setBounds(750, 80, 50, 25);
+        tfMax.setBounds(750, 110, 50, 25);
+        cbOrderBy.setBounds(850, 110, 120, 25);
+
+        pCategory.setBounds(210, 80, 120, 25);
+        pSubcategory.setBounds(360, 80, 120, 25);
+        pSearchProductByName.setBounds(500, 80, 120, 25);
+        pMin.setBounds(650, 78, 120, 25);
+        pMax.setBounds(650, 108, 120, 25);
+        pOrderProducts.setBounds(850, 80, 120, 25);
     }
 
     private void loginWindow() {
@@ -557,8 +704,8 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         layere.add(pBanner, 1, 0);
         layere.add(pBG, 0, 0);
 
-        loginWindow();
-        //createLeftBanner();
+        //loginWindow();
+        createLeftBanner();
     }
 
     private void createLeftBanner() {
@@ -574,27 +721,295 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         layere.add(bCompletedOrders, 1, 0);
         layere.add(bBestClient, 1, 0);
         layere.add(bBestSeller, 1, 0);
+        checkPosition();
         homeWindow();
     }
 
+    private void checkPosition() {
+        String position = q.getSalaryOrPosition(userId, "PositionName");
+        if (position.equals("Manager")) {
+            isManager = true;
+        } else {
+            isManager = false;
+        }
+        if (position.equals("Seller")) {
+            isSeller = true;
+        } else {
+            isSeller= false;
+        }
+    }
+
     private void homeWindow() {
-        pWelcomeHome.setBounds(400, 80, 200, 40);
+        window = "home";
+
+        pWelcomeHome.setBounds(350, 80, 400, 50);
         lWelcomeHome.setText("Welcome "+q.getNameHome(userId)+"!");
         pWelcomeHome.add(lWelcomeHome);
 
-        pProfilePicture.setBounds(800, 100, 150, 150);
+        pProfilePicture.setBounds(700, 160, 250, 250);
         lProfilePicture.setIcon(img.getImage(q.getPicture("Employee",userId)));
         pProfilePicture.add(lProfilePicture);
 
-        pBigAdres.setBounds(300, 200, 100, 200);
-        lBigAdresl1.setText(q.getAdres1(userId));
+        pBigAdres1.setBounds(400, 170, 200, 40);
+        pBigAdres2.setBounds(400, 200, 160, 40);
+        lBigAdresl1.setText(q.getAdres1(userId) + " St.");
         lBigAdresl2.setText(q.getAdres2(userId));
-        pBigAdres.add(lBigAdresl1);
-        pBigAdres.add(lBigAdresl2);
+        pBigAdres1.add(lBigAdresl1);
+        pBigAdres2.add(lBigAdresl2);
+        pBigAdres1.setOpaque(false);
+        pBigAdres2.setOpaque(false);
+
+        pUrAdres.setBounds(250, 170, 150, 40);
+        pUrAdres.add(lUrAdres);
+        pUrAdres.setOpaque(false);
+
+        pUrPosition.setBounds(250, 270, 150, 40);
+        pUrPosition.add(lUrPosition);
+        pUrPosition.setOpaque(false);
+
+        pUrSalary.setBounds(250, 320, 150, 40);
+        pUrSalary.add(lUrSalary);
+        pUrSalary.setOpaque(false);
+
+        pUrPosition2.setBounds(400, 270, 100, 40);
+        lUrPosition2.setText(q.getSalaryOrPosition(userId, "PositionName"));
+        pUrPosition2.add(lUrPosition2);
+        pUrPosition2.setOpaque(false);
+
+        pUrSalary2.setBounds(400, 320, 100, 40);
+        lUrSalary2.setText("$ " + q.getSalaryOrPosition(userId, "Salary"));
+        pUrSalary2.add(lUrSalary2);
+        pUrSalary2.setOpaque(false);
 
         layere.add(pWelcomeHome,1,0);
         layere.add(pProfilePicture, 1, 0);
-        layere.add(pBigAdres, 1, 0);
+        layere.add(pBigAdres1, 1, 0);
+        layere.add(pBigAdres2, 1, 0);
+
+        layere.add(pUrAdres, 1, 0);
+        layere.add(pUrPosition, 1, 0);
+        layere.add(pUrSalary, 1, 0);
+
+        layere.add(pUrPosition2, 1, 0);
+        layere.add(pUrSalary2, 1, 0);
+    }
+
+    private void removeWindows() {
+        if (window.equals("home")) {
+            removeHomeWindow();
+        } else if (window.equals("searchProducts")) {
+            removeSearchProducts();
+        }
+    }
+
+    private void removeHomeWindow() {
+
+        layere.remove(pWelcomeHome);
+        layere.remove(pProfilePicture);
+        layere.remove(pUrAdres);
+        layere.remove(pBigAdres1);
+        layere.remove(pBigAdres2);
+        layere.remove(pUrSalary);
+        layere.remove(pUrSalary2);
+        layere.remove(pUrPosition);
+        layere.remove(pUrPosition2);
+        layere.revalidate();
+        layere.repaint();
+    }
+
+    private void searchProducts() {
+        layere.add(cbCategory, 1, 0);
+        layere.add(cbSubategory, 1, 0);
+        layere.add(cbOrderBy, 1, 0);
+        layere.add(tfSearchProductByName, 1, 0);
+        layere.add(tfMin, 1, 0);
+        layere.add(tfMax, 1, 0);
+        layere.add(pCategory, 1, 0);
+        layere.add(pSubcategory, 1, 0);
+        layere.add(pSearchProductByName, 1, 0);
+        layere.add(pMin, 1, 0);
+        layere.add(pMax, 1, 0);
+        layere.add(pOrderProducts, 1, 0);
+
+
+        searchProducts(0, 0, "", "100", "0", 1);
+    }
+
+    private void searchProducts(int cat, int subcat, String word, String pMax, String pMin, int order) {
+
+        window = "searchProducts";
+
+        cbCategory.removeActionListener(this);
+        cbSubategory.removeActionListener(this);
+        cbOrderBy.removeActionListener(this);
+
+        String[][] a = q.getProducts(cat, subcat, word, pMax, pMin, order);
+        JPanel[] p1 = new JPanel[a.length];
+        JPanel[] pTitle = new JPanel[a.length];
+        JPanel[] pTitleGroup = new JPanel[a.length];
+        JLabel[] lTitle = new JLabel[a.length];
+        JLabel[] limg = new JLabel[a.length];
+        JPanel[] pimg = new JPanel[a.length];
+        JPanel[] pCost = new JPanel[a.length];
+        JLabel[] lCost = new JLabel[a.length];
+        JPanel[] pAmount = new JPanel[a.length];
+        JLabel[] lAmount = new JLabel[a.length];
+        JPanel[] pMadeBy = new JPanel[a.length];
+        JLabel[] lMadeBy = new JLabel[a.length];
+        JPanel[] pDesc = new JPanel[a.length];
+        JLabel[] lDesc = new JLabel[a.length];
+        JPanel[] pComp = new JPanel[a.length];
+        JLabel[] lComp = new JLabel[a.length];
+        JPanel[] pCategory = new JPanel[a.length];
+        JLabel[] lCategory = new JLabel[a.length];
+
+        int i = 0;
+        for (String s[] : a) {
+            p1[i] = new JPanel();
+            pTitle[i] = new JPanel();
+            lTitle[i] = new JLabel();
+            pTitleGroup[i] = new JPanel();
+            pimg[i] = new JPanel();
+            limg[i] = new JLabel();
+            pCost[i] = new JPanel();
+            lCost[i] = new JLabel();
+            pAmount[i] = new JPanel();
+            lAmount[i] = new JLabel();
+            pMadeBy[i] = new JPanel();
+            lMadeBy[i] = new JLabel();
+            pDesc[i] = new JPanel();
+            lDesc[i] = new JLabel();
+            pComp[i] = new JPanel();
+            lComp[i] = new JLabel();
+            pCategory[i] = new JPanel();
+            lCategory[i] = new JLabel();
+
+            limg[i].setIcon(img.getImage(s[4]));
+            pimg[i].setPreferredSize(new Dimension(100, 100));
+            pimg[i].add(limg[i]);
+            pimg[i].setOpaque(false);
+
+            p1[i].setOpaque(false);
+            p1[i].setPreferredSize(new Dimension(750, 200));
+
+            lTitle[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 20));
+            lTitle[i].setForeground(new Color(90, 52, 43));
+            lTitle[i].setText(s[1]);
+
+            lCategory[i].setFont(new Font(Font.DIALOG,  Font.ITALIC, 15));
+            lCategory[i].setForeground(new Color(90, 52, 43));
+            lCategory[i].setText(s[10]);
+
+            pTitleGroup[i].setPreferredSize(new Dimension(300, 100));
+            pTitleGroup[i].setOpaque(false);
+
+            pCategory[i].setPreferredSize(new Dimension(300, 40));
+            pCategory[i].add(lCategory[i]);
+            pCategory[i].setOpaque(false);
+
+            pTitle[i].setPreferredSize(new Dimension(300, 40));
+            pTitle[i].add(lTitle[i]);
+            pTitle[i].setOpaque(false);
+            pTitleGroup[i].add(pTitle[i]);
+            pTitleGroup[i].add(pCategory[i]);
+
+            lCost[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 30));
+            lCost[i].setForeground(new Color(90, 52, 43));
+            lCost[i].setText("$ "+s[2]);
+
+            pCost[i].setPreferredSize(new Dimension(300, 100));
+            pCost[i].add(lCost[i]);
+            pCost[i].setOpaque(false);
+
+            lAmount[i].setFont(new Font(Font.DIALOG,  Font.ITALIC, 15));
+            lAmount[i].setForeground(new Color(90, 52, 43));
+            lAmount[i].setText("Amount: "+s[3]+" pcs.");
+
+            pAmount[i].setPreferredSize(new Dimension(300, 30));
+            pAmount[i].add(lAmount[i]);
+            pAmount[i].setOpaque(false);
+            pCost[i].add(pAmount[i]);
+
+            lMadeBy[i].setFont(new Font(Font.DIALOG,  Font.ITALIC, 15));
+            lMadeBy[i].setForeground(new Color(90, 52, 43));
+            lMadeBy[i].setText("Made by: "+s[7]+" "+s[8]+" "+s[9]);
+
+            pMadeBy[i].setOpaque(false);
+            pMadeBy[i].setPreferredSize(new Dimension(700, 100));
+            pMadeBy[i].add(lMadeBy[i]);
+
+            lDesc[i].setFont(new Font(Font.DIALOG,  Font.ITALIC, 15));
+            lDesc[i].setForeground(new Color(90, 52, 43));
+            lDesc[i].setText("Description: "+s[5]);
+
+            pDesc[i].setOpaque(false);
+            pDesc[i].setPreferredSize(new Dimension(700, 25));
+            pDesc[i].add(lDesc[i]);
+
+            lComp[i].setFont(new Font(Font.DIALOG,  Font.ITALIC, 15));
+            lComp[i].setForeground(new Color(90, 52, 43));
+            lComp[i].setText("Composition: "+s[6]);
+
+            pComp[i].setOpaque(false);
+            pComp[i].setPreferredSize(new Dimension(700, 25));
+            pComp[i].add(lComp[i]);
+
+            pMadeBy[i].add(pDesc[i]);
+            pMadeBy[i].add(pComp[i]);
+            JPanel line = new JPanel();
+            line.setPreferredSize(new Dimension(750, 2));
+            line.setBackground(new Color(90, 52, 43));
+
+            p1[i].add(line);
+            p1[i].add(pimg[i]);
+            p1[i].add(pTitleGroup[i]);
+            p1[i].add(pCost[i]);
+            p1[i].add(pMadeBy[i]);
+
+
+            pProductBox.add(p1[i]);
+            i++;
+        }
+
+        pProductBox.setPreferredSize(new Dimension(750, 202*(i+1)));
+        pProductBox.setOpaque(false);
+        sp.setOpaque(false);
+        sp.getViewport().setOpaque(false);
+        sp.setBorder(createEmptyBorder());
+        sp.setBounds(200, 150, 786, 414);
+        layere.add(sp, 1, 0);
+
+        cbCategory.addActionListener(this);
+        cbSubategory.addActionListener(this);
+        cbOrderBy.addActionListener(this);
+    }
+
+    private void removeSearchProducts() {
+        layere.remove(sp);
+        layere.remove(cbSubategory);
+        layere.remove(cbCategory);
+        layere.remove(tfSearchProductByName);
+        layere.remove(tfMin);
+        layere.remove(tfMax);
+        layere.remove(cbOrderBy);
+        layere.remove(pSubcategory);
+        layere.remove(pCategory);
+        layere.remove(pSearchProductByName);
+        layere.remove(pMax);
+        layere.remove(pMin);
+        layere.remove(pOrderProducts);
+
+        layere.revalidate();
+        layere.repaint();
+    }
+
+    private void removeSearchProductsBoxes() {
+        layere.remove(sp);
+        layere.revalidate();
+        layere.repaint();
+        pProductBox.removeAll();
+        pProductBox.revalidate();
+        pProductBox.repaint();
     }
 
     @Override
@@ -631,17 +1046,37 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             removeNewAccountWindow();
             loginWindow();
         } else if (z == bHome) {
-
+            removeWindows();
+            layere.remove(sp);
+            homeWindow();
         } else if (z == bSearchProducts) {
-
+            removeWindows();
+            searchProducts();
+            cbCategory.setSelectedItem(0);
+            cbSubategory.setSelectedItem(0);
         } else if (z == bNewOrders) {
+            removeWindows();
 
         } else if (z == bCompletedOrders) {
+            removeWindows();
 
         } else if (z == bBestClient) {
+            removeWindows();
 
         } else if (z == bBestSeller) {
+            removeWindows();
 
+        } else if (z == cbSubategory) {
+            cbCategory.setModel(new DefaultComboBoxModel(q.fillcbCat(cbSubategory.getSelectedIndex())));
+            removeSearchProductsBoxes();
+            searchProducts(0, cbSubategory.getSelectedIndex(), tfSearchProductByName.getText(), tfMax.getText(), tfMin.getText(), cbOrderBy.getSelectedIndex()+1);
+        } else if (z == cbCategory) {
+            String s = cbCategory.getSelectedItem().toString();
+            removeSearchProductsBoxes();
+            searchProducts(listCategory.indexOf(s), cbSubategory.getSelectedIndex(), tfSearchProductByName.getText(), tfMax.getText(), tfMin.getText(), cbOrderBy.getSelectedIndex()+1);
+        } else if (z == cbOrderBy) {
+            removeSearchProductsBoxes();
+            searchProducts(listCategory.indexOf(cbCategory.getSelectedItem().toString()), cbSubategory.getSelectedIndex(), tfSearchProductByName.getText(), tfMax.getText(), tfMin.getText(), cbOrderBy.getSelectedIndex()+1);
         }
     }
 
@@ -739,6 +1174,34 @@ public class Window extends JFrame implements ActionListener, KeyListener {
                 pfPasswordN.setBackground(new Color(227, 245, 227));
             } else {
                 pfPasswordN.setBackground(new Color(246, 226, 226));
+            }
+        } else if (z == tfSearchProductByName) {
+            if (logic.checkProductName(tfSearchProductByName.getText())) {
+                tfSearchProductByName.setBackground(new Color(255, 248, 235));
+                removeSearchProductsBoxes();
+                searchProducts(listCategory.indexOf(cbCategory.getSelectedItem().toString()), cbSubategory.getSelectedIndex(), tfSearchProductByName.getText(), tfMax.getText(), tfMin.getText(), cbOrderBy.getSelectedIndex()+1);
+            } else {
+                tfSearchProductByName.setBackground(new Color(246, 226, 226));
+            }
+        } else if (z == tfMin) {
+            if (logic.checkPrice(tfMin.getText())) {
+                tfMin.setBackground(new Color(255, 248, 235));
+                sMin = tfMin.getText();
+                removeSearchProductsBoxes();
+                searchProducts(listCategory.indexOf(cbCategory.getSelectedItem().toString()), cbSubategory.getSelectedIndex(), tfSearchProductByName.getText(), tfMax.getText(), tfMin.getText(), cbOrderBy.getSelectedIndex()+1);
+            } else {
+                tfMin.setText(sMin);
+                tfMin.setBackground(new Color(246, 226, 226));
+            }
+        } else if (z == tfMax) {
+            if (logic.checkPrice(tfMax.getText())) {
+                tfMax.setBackground(new Color(255, 248, 235));
+                sMax = tfMax.getText();
+                removeSearchProductsBoxes();
+                searchProducts(listCategory.indexOf(cbCategory.getSelectedItem().toString()), cbSubategory.getSelectedIndex(), tfSearchProductByName.getText(), tfMax.getText(), tfMin.getText(), cbOrderBy.getSelectedIndex()+1);
+            } else {
+                tfMax.setText(sMax);
+                tfMax.setBackground(new Color(246, 226, 226));
             }
         }
     }

@@ -208,5 +208,123 @@ public class sqlQueries extends Component {
         }
         return s;
     }
+
+    public String getSalaryOrPosition(int id, String q) {
+        String s = "";
+        try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT "+q+" FROM Position INNER JOIN Employee ON Employee.Id_Position = Position.Id WHERE Employee.Id = "+id);
+            if (rs.next()) {
+                s = rs.getString(1);
+            }
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return s;
+    }
+
+    public String[] fillcbCat(int id) {
+        if (id >= 1) {
+            try {
+                Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                ResultSet rs = st.executeQuery("SELECT CategoryName FROM Category INNER JOIN Subcategory ON Category.Id_Subcategory = Subcategory.Id WHERE Subcategory.Id = "+ id +" ORDER BY Category.Id");
+                rs.last();
+                int rows = rs.getRow();
+                rs.first();
+                String[] s = new String[rows+1];
+                for (int i = 0; i < rows; i++) {
+                    s[i+1] = rs.getString(1);
+                    rs.next();
+                }
+                s[0] = "All";
+                return s;
+            } catch (SQLException e) {
+                System.err.println(e);
+            }
+        } else {
+            try {
+                Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                ResultSet rs = st.executeQuery("SELECT CategoryName FROM Category ORDER BY Id");
+                rs.last();
+                int rows = rs.getRow();
+                rs.first();
+                String[] s = new String[rows+1];
+                for (int i = 0; i < rows; i++) {
+                    s[i+1] = rs.getString(1);
+                    rs.next();
+                }
+                s[0] = "All";
+                return s;
+            } catch (SQLException e) {
+                System.err.println(e);
+            }
+        }
+        return null;
+    }
+
+    public String[] fillcbSubcat() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT SubcategoryName FROM Subcategory ORDER BY Id");
+            rs.last();
+            int rows = rs.getRow();
+            rs.first();
+            String[] s = new String[rows];
+            for (int i = 0; i < rows; i++) {
+                s[i] = rs.getString(1);
+                rs.next();
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String[][] getProducts(int cat, int subCat, String word, String pMax, String pMin, int order) {
+        if (pMax.equals("")) {
+            pMax = "100000";
+        }
+        if (pMin.equals("")) {
+            pMin = "0";
+        }
+        String where = " WHERE (Product.Price BETWEEN "+pMin+" AND "+pMax+") ";
+        if (cat != 0) {
+            where = where + "AND (Category.Id = "+cat+") ";
+        } if (subCat != 0) {
+            where = where + "AND (Subcategory.Id = "+subCat+") ";
+        } if (!word.equals("")) {
+            where = where + "AND (UPPER(Product.ProductName) LIKE UPPER('%"+word+"%')) ";
+        }
+        where = where + "ORDER BY "+order+" ASC";
+        String[][] er = new String[1][1];
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Product.Id, Product.ProductName, Product.Price, Product.Amount, Product.ImageURL, Product.Desctiprion, Product.Composition, Employee.Name, Employee.Surname, Supplier.CompanyName, Category.CategoryName " +
+                    "FROM Product LEFT JOIN Employee ON Employee.Id = Product.Id_Baker " +
+                    "LEFT JOIN Supplier ON Supplier.Id = Product.Id_Supplier " +
+                    "INNER JOIN Category ON Category.Id = Product.Id_Category " +
+                    "INNER JOIN Subcategory ON Subcategory.Id = Category.Id_Subcategory" + where);
+            ResultSetMetaData rsmd = rs.getMetaData();
+            rs.last();
+            int amountRows = rs.getRow();
+            rs.first();
+            int amountColumns = rsmd.getColumnCount();
+            String[][] s = new String[amountRows][amountColumns];
+            for (int i = 0; i < amountRows; i++) {
+                for (int j = 0; j < amountColumns; j++) {
+                    s[i][j] = rs.getString(j+1);
+                    if (s[i][j] == null) {
+                        s[i][j] = "";
+                    }
+                }
+                rs.next();
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return er;
+    }
 }
 

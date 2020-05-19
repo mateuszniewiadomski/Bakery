@@ -2,7 +2,7 @@ package bakery.main;
 
 public class Logic {
     public boolean checkNames(String s) {
-        if (s.length() > 1 && s.matches("[a-zA-z]+")) {
+        if (s.length() > 1 && s.matches("[a-zA-Z]+")) {
             return true;
         } else {
             return false;
@@ -106,6 +106,20 @@ public class Logic {
     }
     public boolean checkPassword(String s) {
         if (s.length() >= 4) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public boolean checkPrice(String s) {
+        if (s.matches("[0-9]*")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public boolean checkProductName(String s) {
+        if (s.matches("[A-Za-z]*")) {
             return true;
         } else {
             return false;
