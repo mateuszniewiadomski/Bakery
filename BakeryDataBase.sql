@@ -108,7 +108,6 @@ CREATE TABLE PurchaseOrder (
 	Id_Cashier INTEGER REFERENCES Employee(Id),
 	Id_PaymentType INTEGER REFERENCES Payment(Id),
 	Id_PackingType INTEGER REFERENCES Packing(Id),
-	ProductList TEXT NOT NULL,
 	OrderTime DATE CHECK(OrderTime <= GETDATE()) NOT NULL,
 	OrderCompletion DATE NOT NULL,
 	OrderCost DECIMAL(8, 2) CHECK(OrderCost >= 0) NOT NULL,

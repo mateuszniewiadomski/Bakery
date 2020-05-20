@@ -8,7 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static javax.swing.BorderFactory.createEmptyBorder;
@@ -27,6 +31,7 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private final JLabel lBanner = new JLabel();
     private final JLabel lBG = new JLabel();
     private int userId = 1;
+    private int shift = 0;
     private String window = "";
     private boolean isManager = false;
     private boolean isSeller = false;
@@ -101,6 +106,7 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private final JButton bHome = new JButton("Home");
     private final JButton bSearchProducts = new JButton("Search products");
     private final JButton bNewOrders = new JButton("New orders");
+    private final JButton bBake = new JButton("Bake");
     private final JButton bCompletedOrders = new JButton("Completed orders");
     private final JButton bBestClient = new JButton("Best client");
     private final JButton bBestSeller = new JButton("Best seller");
@@ -163,13 +169,24 @@ public class Window extends JFrame implements ActionListener, KeyListener {
 
 
     //new orders window
+    private final List<OrderGenerator> listOrders = new ArrayList<OrderGenerator>();
+
+    private final JPanel pNewOrders = new JPanel();
+    private final JScrollPane spNewOrders = new JScrollPane(pNewOrders);
+
+    private final JPanel pNewOrdersTitle = new JPanel();
+    private final JLabel lNewOrdersTitle = new JLabel("New Orders List");
+
+    private final JButton bGenerateNewOrder = new JButton("Generate New Order");
+    private final JButton bAcceptAll = new JButton("Accept Orders");
 
     //completed orders window
+
+    //production window
 
     //best client window
 
     //best seller window
-
 
 
     public Window() {
@@ -181,6 +198,7 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         add(layere);
         layere.setBounds(0,0,1000, 600);
         q.connect();
+        shift = q.getLastId("PurchaseOrder");
         setStyle();
         createTop();
         setListeners();
@@ -221,6 +239,11 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         tfMin.addKeyListener(this);
         tfMax.addKeyListener(this);
         tfSearchProductByName.addKeyListener(this);
+
+        //new orders window
+        bGenerateNewOrder.addActionListener(this);
+        bAcceptAll.addActionListener(this);
+
     }
 
     private void setComboBoxes() {
@@ -387,6 +410,11 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         bNewOrders.setForeground(new Color(255, 242, 216));
         bNewOrders.setBorderPainted(false);
 
+        bBake.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bBake.setBackground(new Color(90, 52, 43));
+        bBake.setForeground(new Color(255, 242, 216));
+        bBake.setBorderPainted(false);
+
         bCompletedOrders.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
         bCompletedOrders.setBackground(new Color(90, 52, 43));
         bCompletedOrders.setForeground(new Color(255, 242, 216));
@@ -506,6 +534,27 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         pMin.setBounds(650, 78, 120, 25);
         pMax.setBounds(650, 108, 120, 25);
         pOrderProducts.setBounds(850, 80, 120, 25);
+
+        //new orders window
+        lNewOrdersTitle.setFont(new Font(Font.DIALOG,  Font.BOLD, 25));
+        lNewOrdersTitle.setForeground(new Color(90, 52, 43));
+
+        pNewOrdersTitle.setOpaque(false);
+        pNewOrdersTitle.add(lNewOrdersTitle);
+
+        bGenerateNewOrder.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bGenerateNewOrder.setBackground(new Color(90, 52, 43));
+        bGenerateNewOrder.setForeground(new Color(255, 242, 216));
+        bGenerateNewOrder.setBorderPainted(false);
+
+        bAcceptAll.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bAcceptAll.setBackground(new Color(90, 52, 43));
+        bAcceptAll.setForeground(new Color(255, 242, 216));
+        bAcceptAll.setBorderPainted(false);
+
+        bGenerateNewOrder.setBounds(700, 80, 200, 25);
+        pNewOrdersTitle.setBounds(300, 90, 400, 40);
+        bAcceptAll.setBounds(700, 110, 200, 25);
     }
 
     private void loginWindow() {
@@ -712,12 +761,14 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         bHome.setBounds(25, 120, 170, 30);
         bSearchProducts.setBounds(25, 170, 170, 30);
         bNewOrders.setBounds(25, 220, 170, 30);
-        bCompletedOrders.setBounds(25, 270, 170, 30);
-        bBestClient.setBounds(25, 320, 170, 30);
-        bBestSeller.setBounds(25, 370, 170, 30);
+        bBake.setBounds(25, 270, 170, 30);
+        bCompletedOrders.setBounds(25, 320, 170, 30);
+        bBestClient.setBounds(25, 370, 170, 30);
+        bBestSeller.setBounds(25, 420, 170, 30);
         layere.add(bHome, 1, 0);
         layere.add(bSearchProducts, 1, 0);
         layere.add(bNewOrders, 1, 0);
+        layere.add(bBake, 1, 0);
         layere.add(bCompletedOrders, 1, 0);
         layere.add(bBestClient, 1, 0);
         layere.add(bBestSeller, 1, 0);
@@ -799,6 +850,8 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             removeHomeWindow();
         } else if (window.equals("searchProducts")) {
             removeSearchProducts();
+        } else if (window.equals("newOrderWindow")) {
+            removeNewOrderWindow();
         }
     }
 
@@ -889,8 +942,9 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             pimg[i].add(limg[i]);
             pimg[i].setOpaque(false);
 
-            p1[i].setOpaque(false);
-            p1[i].setPreferredSize(new Dimension(750, 200));
+            //p1[i].setOpaque(false);
+            p1[i].setBackground(new Color(255, 255, 255, 50));
+            p1[i].setPreferredSize(new Dimension(750, 205));
 
             lTitle[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 20));
             lTitle[i].setForeground(new Color(90, 52, 43));
@@ -971,7 +1025,7 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             i++;
         }
 
-        pProductBox.setPreferredSize(new Dimension(750, 202*(i+1)));
+        pProductBox.setPreferredSize(new Dimension(750, 207*(i+1)));
         pProductBox.setOpaque(false);
         sp.setOpaque(false);
         sp.getViewport().setOpaque(false);
@@ -1005,11 +1059,272 @@ public class Window extends JFrame implements ActionListener, KeyListener {
 
     private void removeSearchProductsBoxes() {
         layere.remove(sp);
+        layere.remove(spNewOrders);
         layere.revalidate();
         layere.repaint();
         pProductBox.removeAll();
         pProductBox.revalidate();
         pProductBox.repaint();
+    }
+
+    private void newOrderWindow() {
+
+        window = "newOrderWindow";
+
+        layere.add(bGenerateNewOrder, 1, 0);
+        layere.add(pNewOrdersTitle, 1, 0);
+        layere.add(bAcceptAll, 1, 0);
+
+        layere.remove(spNewOrders);
+        layere.revalidate();
+        layere.repaint();
+
+        pNewOrders.removeAll();
+        pNewOrders.revalidate();
+        pNewOrders.repaint();
+
+        updateNewOrdersList();
+    }
+
+    private void generateNewOrder() {
+
+        listOrders.add(new OrderGenerator());
+
+        layere.remove(spNewOrders);
+        layere.revalidate();
+        layere.repaint();
+
+        pNewOrders.removeAll();
+        pNewOrders.revalidate();
+        pNewOrders.repaint();
+
+        updateNewOrdersList();
+    }
+
+    private void acceptOrders() {
+
+        layere.remove(spNewOrders);
+        layere.revalidate();
+        layere.repaint();
+
+        pNewOrders.removeAll();
+        pNewOrders.revalidate();
+        pNewOrders.repaint();
+
+        for (int i = 0; i < listOrders.size(); i++) {
+            boolean makeIt = true;
+            if (!listOrders.get(i).done) {
+                for (int j = 0; j < listOrders.get(i).products.length; j++) {
+                    int x = q.getAmount(listOrders.get(i).products[j][0]);
+                    if (x - listOrders.get(i).products[j][1] < 0) {
+                        makeIt = false;
+                    }
+                }
+                if (makeIt) {
+                    Date Date = Calendar.getInstance().getTime();
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    double sum = 0;
+                    for (int z = 0; z < listOrders.get(i).products.length; z++) {
+                        sum = sum + listOrders.get(i).products[z][1]*q.getCost(listOrders.get(i).products[z][0]);
+                        q.updateAmountOfProducts(listOrders.get(i).products[z][0], q.getAmount(listOrders.get(i).products[z][0]) - listOrders.get(i).products[z][1]);
+                    }
+                    double noTaxes = sum*0.77;
+                    q.insertOrders(i+1+shift, listOrders.get(i).customerId, userId, listOrders.get(i).paymentId, listOrders.get(i).packingId, listOrders.get(i).date, dateFormat.format(Date), sum, noTaxes);
+                    for (int z = 0; z < listOrders.get(i).products.length; z++) {
+                        q.insertProductHasOrder(listOrders.get(i).products[z][0], i+1+shift, listOrders.get(i).products[z][1]);
+                    }
+                    listOrders.get(i).done = true;
+                }
+            }
+        }
+
+        updateNewOrdersList();
+    }
+
+    private void updateNewOrdersList() {
+
+        JPanel[] p1 = new JPanel[listOrders.size()];
+        JPanel[] pTitle = new JPanel[listOrders.size()];
+        JPanel[] pClient = new JPanel[listOrders.size()];
+        JPanel[] pProduct = new JPanel[listOrders.size()];
+        JPanel[] pBlankSpace1 = new JPanel[listOrders.size()];
+        JPanel[] pBlankSpace2 = new JPanel[listOrders.size()];
+        JPanel[] pBlankSpace3 = new JPanel[listOrders.size()];
+        JPanel[] pDate = new JPanel[listOrders.size()];
+        JPanel[] pToPay = new JPanel[listOrders.size()];
+
+        JLabel[] lTitle = new JLabel[listOrders.size()];
+        JLabel[] lClient = new JLabel[listOrders.size()];
+        JLabel[] lProduct = new JLabel[listOrders.size()];
+        JLabel[] lDate = new JLabel[listOrders.size()];
+        JLabel[] lToPay = new JLabel[listOrders.size()];
+
+        int extraHeight = 0;
+        int currentObjects = 0;
+
+        for (int i = 0; i < listOrders.size(); i++) {
+
+            if (!listOrders.get(i).done) {
+
+                currentObjects = currentObjects + 1;
+
+                p1[i] = new JPanel();
+                pTitle[i] = new JPanel();
+                pProduct[i] = new JPanel();
+                pBlankSpace1[i] = new JPanel();
+                pBlankSpace2[i] = new JPanel();
+                pBlankSpace3[i] = new JPanel();
+                pDate[i] = new JPanel();
+                pToPay[i] = new JPanel();
+                pClient[i] = new JPanel();
+
+                pTitle[i].setOpaque(false);
+                pProduct[i].setOpaque(false);
+                pBlankSpace1[i].setOpaque(false);
+                pBlankSpace2[i].setOpaque(false);
+                pBlankSpace3[i].setOpaque(false);
+                pDate[i].setOpaque(false);
+                pToPay[i].setOpaque(false);
+                pClient[i].setOpaque(false);
+
+                lTitle[i] = new JLabel("New order from: ");
+                lClient[i] = new JLabel(q.getFullName(listOrders.get(i).customerId));
+                lProduct[i] = new JLabel("Products:");
+                lDate[i] = new JLabel(listOrders.get(i).date);
+                lToPay[i] = new JLabel();
+
+                JLabel[] lProductName = new JLabel[listOrders.get(i).products.length];
+                JLabel[] lProductCost = new JLabel[listOrders.get(i).products.length];
+                JLabel[] lProductAmount = new JLabel[listOrders.get(i).products.length];
+
+                JPanel[] pProductName = new JPanel[listOrders.get(i).products.length];
+                JPanel[] pProductCost = new JPanel[listOrders.get(i).products.length];
+                JPanel[] pProductAmount = new JPanel[listOrders.get(i).products.length];
+                JPanel[] pExtraSpace1 = new JPanel[listOrders.get(i).products.length];
+                JPanel[] pExtraSpace2 = new JPanel[listOrders.get(i).products.length];
+
+                p1[i].add(pTitle[i]);
+                p1[i].add(pClient[i]);
+                p1[i].add(pBlankSpace3[i]);
+                p1[i].add(pDate[i]);
+                p1[i].add(pProduct[i]);
+                p1[i].add(pBlankSpace1[i]);
+
+                pTitle[i].add(lTitle[i]);
+                pClient[i].add(lClient[i]);
+                pProduct[i].add(lProduct[i]);
+
+                pTitle[i].setPreferredSize(new Dimension(180, 30));
+                pClient[i].setPreferredSize(new Dimension(180, 30));
+                pDate[i].setPreferredSize(new Dimension(150, 40));
+                pProduct[i].setPreferredSize(new Dimension(150, 30));
+                pBlankSpace1[i].setPreferredSize(new Dimension(550, 30));
+                pBlankSpace3[i].setPreferredSize(new Dimension(200, 30));
+
+                int additionalHeight = 0;
+                double toPay = 0.00;
+
+                for (int j = 0; j < listOrders.get(i).products.length; j++) {
+
+                    additionalHeight = additionalHeight + 22;
+
+                    toPay = toPay + listOrders.get(i).products[j][1]*q.getCost(listOrders.get(i).products[j][0]);
+
+                    pProductName[j] = new JPanel();
+                    pProductCost[j] = new JPanel();
+                    pProductAmount[j] = new JPanel();
+                    pExtraSpace1[j] = new JPanel();
+                    pExtraSpace2[j] = new JPanel();
+
+                    pProductName[j].setOpaque(false);
+                    pProductCost[j].setOpaque(false);
+                    pProductAmount[j].setOpaque(false);
+                    pExtraSpace1[j].setOpaque(false);
+                    pExtraSpace2[j].setOpaque(false);
+
+                    lProductName[j] = new JLabel(q.getProductName(listOrders.get(i).products[j][0]));
+                    lProductCost[j] = new JLabel("$ "+q.getCost(listOrders.get(i).products[j][0]));
+                    lProductAmount[j] = new JLabel("x"+listOrders.get(i).products[j][1]);
+
+                    lProductName[j].setFont(new Font(Font.DIALOG,  Font.BOLD, 12));
+                    lProductName[j].setForeground(new Color(90, 52, 43));
+
+                    lProductCost[j].setFont(new Font(Font.DIALOG,  Font.BOLD, 12));
+                    lProductCost[j].setForeground(new Color(90, 52, 43));
+
+                    lProductAmount[j].setFont(new Font(Font.DIALOG,  Font.BOLD, 12));
+                    lProductAmount[j].setForeground(new Color(90, 52, 43));
+
+                    pExtraSpace1[j].setPreferredSize(new Dimension(100, 20));
+                    pProductName[j].setPreferredSize(new Dimension(150, 20));
+                    pProductCost[j].setPreferredSize(new Dimension(50, 20));
+                    pProductAmount[j].setPreferredSize(new Dimension(50, 20));
+                    pExtraSpace2[j].setPreferredSize(new Dimension(300, 20));
+
+                    pProductName[j].add(lProductName[j]);
+                    pProductCost[j].add(lProductCost[j]);
+                    pProductAmount[j].add(lProductAmount[j]);
+
+                    p1[i].add(pExtraSpace1[j]);
+                    p1[i].add(pProductName[j]);
+                    p1[i].add(pProductCost[j]);
+                    p1[i].add(pProductAmount[j]);
+                    p1[i].add(pExtraSpace2[j]);
+
+                }
+                lToPay[i].setText("To pay:    $ "+toPay);
+
+                extraHeight = extraHeight + additionalHeight;
+
+                p1[i].setBackground(new Color(255, 255, 255, 50));
+                p1[i].setPreferredSize(new Dimension(750, 140+additionalHeight));
+
+                lTitle[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 20));
+                lTitle[i].setForeground(new Color(90, 52, 43));
+
+                lClient[i].setFont(new Font(Font.DIALOG,  Font.ITALIC, 20));
+                lClient[i].setForeground(new Color(90, 52, 43));
+
+                lProduct[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                lProduct[i].setForeground(new Color(90, 52, 43));
+
+                lDate[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                lDate[i].setForeground(new Color(90, 52, 43));
+
+                lToPay[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                lToPay[i].setForeground(new Color(90, 52, 43));
+
+                pToPay[i].setPreferredSize(new Dimension(200, 40));
+                pBlankSpace2[i].setPreferredSize(new Dimension(400, 40));
+
+                pDate[i].add(lDate[i]);
+                pToPay[i].add(lToPay[i]);
+
+                p1[i].add(pBlankSpace2[i]);
+                p1[i].add(pToPay[i]);
+
+                pNewOrders.add(p1[i]);
+            }
+        }
+
+        pNewOrders.setPreferredSize(new Dimension(750, 145*currentObjects+extraHeight));
+        pNewOrders.setOpaque(false);
+        spNewOrders.setOpaque(false);
+        spNewOrders.getViewport().setOpaque(false);
+        spNewOrders.setBorder(createEmptyBorder());
+        spNewOrders.setBounds(200, 150, 786, 414);
+
+        layere.add(spNewOrders, 1, 0);
+    }
+
+    private void removeNewOrderWindow() {
+
+        layere.remove(pNewOrdersTitle);
+        layere.remove(bGenerateNewOrder);
+        layere.remove(bAcceptAll);
+
+        layere.revalidate();
+        layere.repaint();
     }
 
     @Override
@@ -1051,12 +1366,13 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             homeWindow();
         } else if (z == bSearchProducts) {
             removeWindows();
+            removeSearchProductsBoxes();
             searchProducts();
             cbCategory.setSelectedItem(0);
             cbSubategory.setSelectedItem(0);
         } else if (z == bNewOrders) {
             removeWindows();
-
+            newOrderWindow();
         } else if (z == bCompletedOrders) {
             removeWindows();
 
@@ -1077,6 +1393,10 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         } else if (z == cbOrderBy) {
             removeSearchProductsBoxes();
             searchProducts(listCategory.indexOf(cbCategory.getSelectedItem().toString()), cbSubategory.getSelectedIndex(), tfSearchProductByName.getText(), tfMax.getText(), tfMin.getText(), cbOrderBy.getSelectedIndex()+1);
+        } else if (z == bGenerateNewOrder) {
+            generateNewOrder();
+        } else if (z == bAcceptAll) {
+            acceptOrders();
         }
     }
 

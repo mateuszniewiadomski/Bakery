@@ -326,5 +326,128 @@ public class sqlQueries extends Component {
         }
         return er;
     }
+
+    public int[] getAllIds(String s) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Id FROM "+s);
+            rs.last();
+            int rows = rs.getRow();
+            rs.first();
+            int[] ids = new int[rows];
+            for (int i = 0; i < rows; i++) {
+                ids[i] = rs.getInt(1);
+                rs.next();
+            }
+            return ids;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public int getLastId(String s) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Id FROM "+s+" ORDER BY 1 DESC");
+            int id = 0;
+            if (rs.next()) {
+                id = rs.getInt(1);
+            }
+            return id;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return 0;
+    }
+
+    public int getAmount(int id) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Amount FROM Product WHERE Id = "+id);
+            int amount = 0;
+            if (rs.next()) {
+                amount = rs.getInt(1);
+            }
+            return amount;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return 0;
+    }
+
+    public void insertOrders(int id, int customerId, int cashierId, int paymentId, int packingId, String orderTime, String orderFinishTime, double orderCost, double orderCostWithTaxes) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("INSERT INTO PurchaseOrder VALUES " +
+                    "("+id+", "+customerId+", "+cashierId+", "+paymentId+", "+packingId+", '"+orderTime+"', '"+orderFinishTime+"', "+orderCost+", "+orderCostWithTaxes+")");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void insertProductHasOrder(int productId, int orderId, int amount) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("INSERT INTO Product_had_PurchaseOrder VALUES " +
+                    "("+productId+", "+orderId+", "+amount+")");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void updateAmountOfProducts(int id, int amount) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("UPDATE Product SET Amount = "+amount+" WHERE Id = "+id);
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public double getCost(int id) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Price FROM Product WHERE Id = "+id);
+            double price = 0;
+            if (rs.next()) {
+                price = rs.getDouble(1);
+            }
+            return price;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return 0;
+    }
+
+    public String getFullName(int id) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Name, Surname FROM Customer WHERE Id = "+id);
+            String fullName = "";
+            if (rs.next()) {
+                fullName = rs.getString(1)+" "+rs.getString(2);
+            }
+            return fullName;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String getProductName(int id) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT ProductName FROM Product WHERE Id = "+id);
+            String name = "";
+            if (rs.next()) {
+                name = rs.getString(1);
+            }
+            return name;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
 }
 
