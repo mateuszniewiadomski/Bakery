@@ -109,8 +109,7 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private final JButton bNewOrders = new JButton("New orders");
     private final JButton bBake = new JButton("Bake");
     private final JButton bCompletedOrders = new JButton("Completed orders");
-    private final JButton bBestClient = new JButton("Best client");
-    private final JButton bBestSeller = new JButton("Best seller");
+    private final JButton bStatistics = new JButton("Statistics");
     private final JButton bManagerArea = new JButton("Manager area");
 
     //home window
@@ -207,6 +206,13 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private final JComboBox cbOrderToBake = new JComboBox();
 
     //completed orders window
+    private final JPanel pAllCompletedOrders = new JPanel();
+    private final JScrollPane spCompletedOrders = new JScrollPane(pAllCompletedOrders);
+
+    private final JComboBox cbOrderCompletedOrders = new JComboBox();
+
+    private final JPanel pOrderCompletedOrders = new JPanel();
+    private final JLabel lOrderCompletedOrders = new JLabel("Order by: ");
 
     //production window
 
@@ -260,8 +266,7 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         bNewOrders.addActionListener(this);
         bBake.addActionListener(this);
         bCompletedOrders.addActionListener(this);
-        bBestClient.addActionListener(this);
-        bBestSeller.addActionListener(this);
+        bStatistics.addActionListener(this);
         bManagerArea.addActionListener(this);
 
         //search product window
@@ -309,6 +314,16 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         cbOrderToBake.addItem("<Order>");
         cbOrderToBake.addItem("Priority");
         cbOrderToBake.addItem("Name");
+
+        cbOrderCompletedOrders.addItem("<Default>");
+        cbOrderCompletedOrders.addItem("Customer");
+        cbOrderCompletedOrders.addItem("Cashier");
+        cbOrderCompletedOrders.addItem("Payment");
+        cbOrderCompletedOrders.addItem("Packing");
+        cbOrderCompletedOrders.addItem("Order Time");
+        cbOrderCompletedOrders.addItem("Order Completion");
+        cbOrderCompletedOrders.addItem("Cost");
+
     }
 
     private void setStyle() {
@@ -463,15 +478,10 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         bCompletedOrders.setForeground(new Color(255, 242, 216));
         bCompletedOrders.setBorderPainted(false);
 
-        bBestClient.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
-        bBestClient.setBackground(new Color(90, 52, 43));
-        bBestClient.setForeground(new Color(255, 242, 216));
-        bBestClient.setBorderPainted(false);
-
-        bBestSeller.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
-        bBestSeller.setBackground(new Color(90, 52, 43));
-        bBestSeller.setForeground(new Color(255, 242, 216));
-        bBestSeller.setBorderPainted(false);
+        bStatistics.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bStatistics.setBackground(new Color(90, 52, 43));
+        bStatistics.setForeground(new Color(255, 242, 216));
+        bStatistics.setBorderPainted(false);
 
         bManagerArea.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
         bManagerArea.setBackground(new Color(90, 52, 43));
@@ -644,6 +654,19 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         cbOrderToBake.setBorder(new LineBorder(new Color(90, 52, 43)));
 
         //completed orders window
+        cbOrderCompletedOrders.setForeground(new Color(90, 52, 43));
+        cbOrderCompletedOrders.setBackground(new Color(255, 248, 235));
+        cbOrderCompletedOrders.setBorder(new LineBorder(new Color(90, 52, 43)));
+
+        lOrderCompletedOrders.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        lOrderCompletedOrders.setForeground(new Color(90, 52, 43));
+
+        pOrderCompletedOrders.add(lOrderCompletedOrders);
+
+        pOrderCompletedOrders.setOpaque(false);
+
+        pOrderCompletedOrders.setBounds(440, 95, 100, 30);
+        cbOrderCompletedOrders.setBounds(550, 100, 150, 25);
 
         //production window
 
@@ -860,16 +883,14 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         bNewOrders.setBounds(25, 220, 170, 30);
         bBake.setBounds(25, 270, 170, 30);
         bCompletedOrders.setBounds(25, 320, 170, 30);
-        bBestClient.setBounds(25, 370, 170, 30);
-        bBestSeller.setBounds(25, 420, 170, 30);
+        bStatistics.setBounds(25, 370, 170, 30);
         bManagerArea.setBounds(25, 470, 170, 30);
         layere.add(bHome, 1, 0);
         layere.add(bSearchProducts, 1, 0);
         layere.add(bNewOrders, 1, 0);
         layere.add(bBake, 1, 0);
         layere.add(bCompletedOrders, 1, 0);
-        layere.add(bBestClient, 1, 0);
-        layere.add(bBestSeller, 1, 0);
+        layere.add(bStatistics, 1, 0);
         layere.add(bManagerArea, 1, 0);
         checkPosition();
         homeWindow();
@@ -958,6 +979,8 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             removeNewOrderWindow();
         } else if (window.equals("bakeWindow")) {
             removeBakeWindow();
+        } else if (window.equals("completedOrdersWindow")) {
+            removeCompletedOrdersWindow();
         }
     }
 
@@ -1048,7 +1071,6 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             pimg[i].add(limg[i]);
             pimg[i].setOpaque(false);
 
-            //p1[i].setOpaque(false);
             p1[i].setBackground(new Color(255, 255, 255, 50));
             p1[i].setPreferredSize(new Dimension(750, 205));
 
@@ -1388,7 +1410,12 @@ public class Window extends JFrame implements ActionListener, KeyListener {
 
                 extraHeight = extraHeight + additionalHeight;
 
-                p1[i].setBackground(new Color(255, 255, 255, 50));
+                if (i%2 == 0) {
+                    p1[i].setBackground(new Color(255, 255, 255, 65));
+                } else {
+                    p1[i].setBackground(new Color(207, 255, 255, 50));
+                }
+
                 p1[i].setPreferredSize(new Dimension(750, 140+additionalHeight));
 
                 lTitle[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 20));
@@ -1431,6 +1458,7 @@ public class Window extends JFrame implements ActionListener, KeyListener {
 
     private void removeNewOrderWindow() {
 
+        layere.remove(spNewOrders);
         layere.remove(pNewOrdersTitle);
         layere.remove(bGenerateNewOrder);
         layere.remove(bAcceptAll);
@@ -1442,6 +1470,12 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private void bakeWindow() {
 
         window = "bakeWindow";
+
+        if (isConfectioner) {
+            bBakeProducts.setEnabled(true);
+        } else {
+            bBakeProducts.setEnabled(false);
+        }
 
         layere.add(cbOrderToBake, 1, 0);
         layere.add(pBakeTitle, 1, 0);
@@ -1521,7 +1555,11 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             ptf.setPreferredSize(new Dimension(200, 35));
             p1[i].setPreferredSize(new Dimension(700, 40));
 
-            p1[i].setBackground(new Color(255, 255, 255, 50));
+            if (i%2 == 0) {
+                p1[i].setBackground(new Color(255, 255, 255, 65));
+            } else {
+                p1[i].setBackground(new Color(207, 255, 255, 50));
+            }
 
             p1[i].add(pProductName[i]);
             p1[i].add(pProductAmount[i]);
@@ -1565,7 +1603,134 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         layere.repaint();
     }
 
-    
+    private void completedOrdersWindow() {
+
+        window = "completedOrdersWindow";
+
+        layere.add(pOrderCompletedOrders, 1, 0);
+        layere.add(cbOrderCompletedOrders, 1, 0);
+
+        cbOrderCompletedOrders.addActionListener(this);
+
+        layere.revalidate();
+        layere.repaint();
+
+        updateCompletedOrdersWindow();
+    }
+
+    private void updateCompletedOrdersWindow(){
+
+        layere.remove(spCompletedOrders);
+        layere.revalidate();
+        layere.repaint();
+
+        pAllCompletedOrders.removeAll();
+        pAllCompletedOrders.revalidate();
+        pAllCompletedOrders.repaint();
+
+        String[][] a = q.getAllCompletedOrders(cbOrderCompletedOrders.getSelectedIndex());
+
+        int i = 0;
+
+        for (String s[] : a) {
+
+            JPanel p1 = new JPanel();
+
+            JPanel pClientName = new JPanel();
+            JPanel pCashierName = new JPanel();
+            JPanel pPayment = new JPanel();
+            JPanel pPacking = new JPanel();
+            JPanel pDate1 = new JPanel();
+            JPanel pDate2 = new JPanel();
+            JPanel pCost = new JPanel();
+            JPanel pSpace1 = new JPanel();
+            JPanel pSpace2 = new JPanel();
+            JPanel pSpace3 = new JPanel();
+
+            JLabel lClientName = new JLabel("Customer: "+s[0]+" "+s[1]);
+            JLabel lCashierName = new JLabel("Cashier: "+s[2]+" "+s[3]);
+            JLabel lPayment = new JLabel("By: "+s[4]);
+            JLabel lPacking = new JLabel("Packing: "+s[5]);
+            JLabel lDate1 = new JLabel(" Date of order: "+s[6]);
+            JLabel lDate2 = new JLabel("Order finished: "+s[7]);
+            JLabel lCost = new JLabel("Payment: $ "+s[8]);
+
+            pClientName.add(lClientName);
+            pCashierName.add(lCashierName);
+            pDate1.add(lDate1);
+            pDate2.add(lDate2);
+            pPacking.add(lPacking);
+            pPayment.add(lPayment);
+            pCost.add(lCost);
+
+            pClientName.setOpaque(false);
+            pCashierName.setOpaque(false);
+            pDate1.setOpaque(false);
+            pDate2.setOpaque(false);
+            pPacking.setOpaque(false);
+            pPayment.setOpaque(false);
+            pCost.setOpaque(false);
+            pSpace1.setOpaque(false);
+            pSpace2.setOpaque(false);
+            pSpace3.setOpaque(false);
+
+            if (i%2 == 0) {
+                p1.setBackground(new Color(255, 255, 255, 65));
+            } else {
+                p1.setBackground(new Color(207, 255, 255, 50));
+            }
+
+            pClientName.setPreferredSize(new Dimension(170, 25));
+            pCashierName.setPreferredSize(new Dimension(170, 25));
+            pDate1.setPreferredSize(new Dimension(200, 25));
+            pDate2.setPreferredSize(new Dimension(200, 25));
+            pPacking.setPreferredSize(new Dimension(150, 25));
+            pPayment.setPreferredSize(new Dimension(150, 25));
+            pCost.setPreferredSize(new Dimension(110, 25));
+            p1.setPreferredSize(new Dimension(700, 100));
+            pSpace1.setPreferredSize(new Dimension(300, 25));
+            pSpace2.setPreferredSize(new Dimension(300, 25));
+            pSpace3.setPreferredSize(new Dimension(270, 25));
+
+            p1.add(pClientName);
+            p1.add(pSpace1);
+            p1.add(pDate1);
+            p1.add(pCashierName);
+            p1.add(pSpace2);
+            p1.add(pDate2);
+            p1.add(pPacking);
+            p1.add(pSpace3);
+            p1.add(pCost);
+            p1.add(pPayment);
+
+            pAllCompletedOrders.add(p1);
+            i = i+1;
+        }
+
+
+        pAllCompletedOrders.setPreferredSize(new Dimension(750, 106*i));
+        pAllCompletedOrders.setOpaque(false);
+        spCompletedOrders.setOpaque(false);
+        spCompletedOrders.getViewport().setOpaque(false);
+        spCompletedOrders.setBorder(createEmptyBorder());
+        spCompletedOrders.setBounds(200, 150, 786, 414);
+
+        layere.add(spCompletedOrders, 1, 0);
+
+
+    }
+
+    private void removeCompletedOrdersWindow() {
+
+        layere.remove(pOrderCompletedOrders);
+        layere.remove(cbOrderCompletedOrders);
+        layere.remove(spCompletedOrders);
+
+        cbOrderCompletedOrders.removeActionListener(this);
+
+        layere.revalidate();
+        layere.repaint();
+    }
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
@@ -1618,11 +1783,8 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             bakeWindow();
         } else if (z == bCompletedOrders) {
             removeWindows();
-
-        } else if (z == bBestClient) {
-            removeWindows();
-
-        } else if (z == bBestSeller) {
+            completedOrdersWindow();
+        } else if (z == bStatistics) {
             removeWindows();
 
         } else if (z == bManagerArea) {
@@ -1648,6 +1810,8 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             bakeWindowUpdate();
         } else if (z == cbOrderToBake) {
             bakeWindowUpdate();
+        } else if (z == cbOrderCompletedOrders) {
+            updateCompletedOrdersWindow();
         }
     }
 

@@ -3,7 +3,6 @@ package bakery.main;
 import bakery.hashing.HashPassword;
 
 import javax.swing.*;
-import javax.swing.text.Position;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -469,5 +468,61 @@ public class sqlQueries extends Component {
         return null;
     }
 
+    public String[][] getAllCompletedOrders(int x) {
+        switch(x) {
+            case 0:
+                x = 7;
+                break;
+            case 1:
+                x = 1;
+                break;
+            case 2:
+                x = 3;
+                break;
+            case 3:
+                x = 5;
+                break;
+            case 4:
+                x =6;
+                break;
+            case 5:
+                x = 7;
+                break;
+            case 6:
+                x = 8;
+                break;
+            case 7:
+                x = 9;
+                break;
+            default:
+                x = 7;
+        }
+        String[][] er = new String[1][1];
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Customer.Name, Customer.Surname, Employee.Name, Employee.Surname, Payment.PaymentType, Packing.PackingType, OrderTime, OrderCompletion, OrderCost\n" +
+                    " FROM PurchaseOrder \n" +
+                    " INNER JOIN Customer ON Customer.Id = PurchaseOrder.Id_Customer \n" +
+                    " INNER JOIN Employee ON Employee.Id = PurchaseOrder.Id_Cashier\n" +
+                    " INNER JOIN Payment ON Payment.Id = PurchaseOrder.Id_PaymentType\n" +
+                    " INNER JOIN Packing ON Packing.Id = PurchaseOrder.Id_PackingType ORDER BY "+x);
+            ResultSetMetaData rsmd = rs.getMetaData();
+            rs.last();
+            int amountRows = rs.getRow();
+            rs.first();
+            int amountColumns = rsmd.getColumnCount();
+            String[][] s = new String[amountRows][amountColumns];
+            for (int i = 0; i < amountRows; i++) {
+                for (int j = 0; j < amountColumns; j++) {
+                    s[i][j] = rs.getString(j+1);
+                }
+                rs.next();
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return er;
+    }
 }
 
