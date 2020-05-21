@@ -35,6 +35,7 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private String window = "";
     private boolean isManager = false;
     private boolean isSeller = false;
+    private boolean isConfectioner = false;
     private String sMin = "0";
     private String sMax = "100";
 
@@ -110,6 +111,7 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private final JButton bCompletedOrders = new JButton("Completed orders");
     private final JButton bBestClient = new JButton("Best client");
     private final JButton bBestSeller = new JButton("Best seller");
+    private final JButton bManagerArea = new JButton("Manager area");
 
     //home window
     private final JPanel pWelcomeHome = new JPanel();
@@ -180,6 +182,30 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private final JButton bGenerateNewOrder = new JButton("Generate New Order");
     private final JButton bAcceptAll = new JButton("Accept Orders");
 
+    //bake window
+    private final List<Integer> listBakeProductsId = new ArrayList<Integer>();
+
+    private JTextField[] tfAmountToBake;
+
+    private final JPanel pProductsToBake = new JPanel();
+    private final JScrollPane spBake = new JScrollPane(pProductsToBake);
+
+    private final JPanel pBakeTitle = new JPanel();
+    private final JLabel lBakeTitle = new JLabel("Bake area");
+
+    private final JButton bBakeProducts = new JButton("Bake");
+
+    private final JPanel pProductName = new JPanel();
+    private final JLabel lProductName = new JLabel("Product name");
+
+    private final JPanel pProductCurrentAmount = new JPanel();
+    private final JLabel lProductCurrentAmuont = new JLabel("Current amount");
+
+    private final JPanel pProductAmountToBake = new JPanel();
+    private final JLabel lProductAmountToBake = new JLabel("Amount to bake");
+
+    private final JComboBox cbOrderToBake = new JComboBox();
+
     //completed orders window
 
     //production window
@@ -188,6 +214,7 @@ public class Window extends JFrame implements ActionListener, KeyListener {
 
     //best seller window
 
+    //manager area window
 
     public Window() {
         setSize(1000, 600);
@@ -231,9 +258,11 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         bHome.addActionListener(this);
         bSearchProducts.addActionListener(this);
         bNewOrders.addActionListener(this);
+        bBake.addActionListener(this);
         bCompletedOrders.addActionListener(this);
         bBestClient.addActionListener(this);
         bBestSeller.addActionListener(this);
+        bManagerArea.addActionListener(this);
 
         //search product window
         tfMin.addKeyListener(this);
@@ -244,6 +273,16 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         bGenerateNewOrder.addActionListener(this);
         bAcceptAll.addActionListener(this);
 
+        //completed orders window
+        bBakeProducts.addActionListener(this);
+
+        //production window
+
+        //best client window
+
+        //best seller window
+
+        //manager area window
     }
 
     private void setComboBoxes() {
@@ -266,6 +305,10 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         cbOrderBy.addItem("Name");
         cbOrderBy.addItem("Price");
         cbOrderBy.addItem("Amount");
+
+        cbOrderToBake.addItem("<Order>");
+        cbOrderToBake.addItem("Priority");
+        cbOrderToBake.addItem("Name");
     }
 
     private void setStyle() {
@@ -430,6 +473,11 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         bBestSeller.setForeground(new Color(255, 242, 216));
         bBestSeller.setBorderPainted(false);
 
+        bManagerArea.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bManagerArea.setBackground(new Color(90, 52, 43));
+        bManagerArea.setForeground(new Color(255, 242, 216));
+        bManagerArea.setBorderPainted(false);
+
         //home window
         bUpdateHome.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
         bUpdateHome.setBackground(new Color(90, 52, 43));
@@ -555,6 +603,55 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         bGenerateNewOrder.setBounds(700, 80, 200, 25);
         pNewOrdersTitle.setBounds(300, 90, 400, 40);
         bAcceptAll.setBounds(700, 110, 200, 25);
+
+        //bake products window
+        bBakeProducts.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bBakeProducts.setBackground(new Color(90, 52, 43));
+        bBakeProducts.setForeground(new Color(255, 242, 216));
+        bBakeProducts.setBorderPainted(false);
+
+        lBakeTitle.setFont(new Font(Font.DIALOG,  Font.BOLD, 25));
+        lBakeTitle.setForeground(new Color(90, 52, 43));
+
+        lProductName.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        lProductName.setForeground(new Color(90, 52, 43));
+
+        lProductCurrentAmuont.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        lProductCurrentAmuont.setForeground(new Color(90, 52, 43));
+
+        lProductAmountToBake.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        lProductAmountToBake.setForeground(new Color(90, 52, 43));
+
+        pBakeTitle.setOpaque(false);
+        pProductName.setOpaque(false);
+        pProductCurrentAmount.setOpaque(false);
+        pProductAmountToBake.setOpaque(false);
+
+        pBakeTitle.add(lBakeTitle);
+        pProductName.add(lProductName);
+        pProductCurrentAmount.add(lProductCurrentAmuont);
+        pProductAmountToBake.add(lProductAmountToBake);
+
+        pBakeTitle.setBounds(350, 80, 200, 40);
+        bBakeProducts.setBounds(600, 85, 200, 25);
+        pProductName.setBounds(280, 120, 200, 25);
+        pProductCurrentAmount.setBounds(475, 120, 200, 25);
+        pProductAmountToBake.setBounds(680, 120, 200, 25);
+        cbOrderToBake.setBounds(850, 85, 100, 25);
+
+        cbOrderToBake.setForeground(new Color(90, 52, 43));
+        cbOrderToBake.setBackground(new Color(255, 248, 235));
+        cbOrderToBake.setBorder(new LineBorder(new Color(90, 52, 43)));
+
+        //completed orders window
+
+        //production window
+
+        //best client window
+
+        //best seller window
+
+        //manager area window
     }
 
     private void loginWindow() {
@@ -765,6 +862,7 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         bCompletedOrders.setBounds(25, 320, 170, 30);
         bBestClient.setBounds(25, 370, 170, 30);
         bBestSeller.setBounds(25, 420, 170, 30);
+        bManagerArea.setBounds(25, 470, 170, 30);
         layere.add(bHome, 1, 0);
         layere.add(bSearchProducts, 1, 0);
         layere.add(bNewOrders, 1, 0);
@@ -772,11 +870,13 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         layere.add(bCompletedOrders, 1, 0);
         layere.add(bBestClient, 1, 0);
         layere.add(bBestSeller, 1, 0);
+        layere.add(bManagerArea, 1, 0);
         checkPosition();
         homeWindow();
     }
 
     private void checkPosition() {
+        isManager = isSeller = isConfectioner = false;
         String position = q.getSalaryOrPosition(userId, "PositionName");
         if (position.equals("Manager")) {
             isManager = true;
@@ -787,6 +887,10 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             isSeller = true;
         } else {
             isSeller= false;
+        } if (position.equals("Confectioner")) {
+            isConfectioner = true;
+        } else {
+            isConfectioner= false;
         }
     }
 
@@ -852,6 +956,8 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             removeSearchProducts();
         } else if (window.equals("newOrderWindow")) {
             removeNewOrderWindow();
+        } else if (window.equals("bakeWindow")) {
+            removeBakeWindow();
         }
     }
 
@@ -1070,6 +1176,12 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private void newOrderWindow() {
 
         window = "newOrderWindow";
+
+        if (isSeller) {
+            bAcceptAll.setEnabled(true);
+        } else {
+            bAcceptAll.setEnabled(false);
+        }
 
         layere.add(bGenerateNewOrder, 1, 0);
         layere.add(pNewOrdersTitle, 1, 0);
@@ -1327,6 +1439,134 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         layere.repaint();
     }
 
+    private void bakeWindow() {
+
+        window = "bakeWindow";
+
+        layere.add(cbOrderToBake, 1, 0);
+        layere.add(pBakeTitle, 1, 0);
+        layere.add(bBakeProducts, 1, 0);
+        layere.add(pProductName, 1, 0);
+        layere.add(pProductCurrentAmount, 1, 0);
+        layere.add(pProductAmountToBake, 1, 0);
+
+        cbOrderToBake.addActionListener(this);
+
+        bakeWindowUpdate();
+    }
+
+    private void bakeWindowUpdate() {
+
+        layere.remove(spBake);
+        layere.revalidate();
+        layere.repaint();
+
+        pProductsToBake.removeAll();
+        pProductsToBake.revalidate();
+        pProductsToBake.repaint();
+
+        listBakeProductsId.clear();
+        int[] ids = q.getIdsToBake(cbOrderToBake.getSelectedIndex()+1);
+        for (int i : ids) {
+            listBakeProductsId.add(i);
+        }
+
+        JPanel[] p1 = new JPanel[ids.length];
+        tfAmountToBake = new JTextField[ids.length];
+        JPanel[] pProductName = new JPanel[ids.length];
+        JPanel[] pProductAmount = new JPanel[ids.length];
+
+        for (int i = 0; i < ids.length; i++) {
+
+            p1[i] = new JPanel();
+            pProductName[i] = new JPanel();
+            pProductAmount[i] = new JPanel();
+            tfAmountToBake[i] = new JTextField("0");
+
+            JLabel lProductName = new JLabel();
+            JLabel lProductAmount = new JLabel();
+            JPanel ptf = new JPanel();
+
+            pProductName[i].add(lProductName);
+            pProductAmount[i].add(lProductAmount);
+            ptf.add(tfAmountToBake[i]);
+
+            lProductName.setText(q.getProductName(ids[i]));
+            lProductAmount.setText(String.valueOf(q.getAmount(ids[i])));
+
+            if (q.getAmount(ids[i]) < 5) {
+                lProductAmount.setForeground(new Color(255, 0, 0));
+            } else if (q.getAmount(ids[i]) > 7) {
+                lProductAmount.setForeground(new Color(73, 255, 0));
+            } else {
+                lProductAmount.setForeground(new Color(255, 141, 0));
+            }
+
+            lProductAmount.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+
+            lProductName.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+            lProductName.setForeground(new Color(90, 52, 43));
+
+            tfAmountToBake[i].setForeground(new Color(90, 52, 43));
+            tfAmountToBake[i].setBackground(new Color(255, 248, 235));
+            tfAmountToBake[i].setBorder(new LineBorder(new Color(90, 52, 43)));
+
+            pProductName[i].setOpaque(false);
+            pProductAmount[i].setOpaque(false);
+            ptf.setOpaque(false);
+
+            pProductName[i].setPreferredSize(new Dimension(200, 35));
+            pProductAmount[i].setPreferredSize(new Dimension(200, 35));
+            tfAmountToBake[i].setPreferredSize(new Dimension(50, 25));
+            ptf.setPreferredSize(new Dimension(200, 35));
+            p1[i].setPreferredSize(new Dimension(700, 40));
+
+            p1[i].setBackground(new Color(255, 255, 255, 50));
+
+            p1[i].add(pProductName[i]);
+            p1[i].add(pProductAmount[i]);
+            p1[i].add(ptf);
+
+            pProductsToBake.add(p1[i]);
+        }
+
+        pProductsToBake.setPreferredSize(new Dimension(750, 46*ids.length));
+        pProductsToBake.setOpaque(false);
+        spBake.setOpaque(false);
+        spBake.getViewport().setOpaque(false);
+        spBake.setBorder(createEmptyBorder());
+        spBake.setBounds(200, 150, 786, 414);
+
+        layere.add(spBake, 1, 0);
+    }
+
+    private void updateBake() {
+
+        for (int i = 0; i < listBakeProductsId.size(); i++) {
+            int add = Integer.valueOf(tfAmountToBake[i].getText());
+            int now = q.getAmount(listBakeProductsId.get(i));
+            q.updateAmountOfProducts(listBakeProductsId.get(i), now+add);
+        }
+    }
+
+    private void removeBakeWindow() {
+
+        cbOrderToBake.removeActionListener(this);
+
+        layere.remove(cbOrderToBake);
+        layere.remove(pBakeTitle);
+        layere.remove(bBakeProducts);
+        layere.remove(pProductName);
+        layere.remove(pProductCurrentAmount);
+        layere.remove(pProductAmountToBake);
+        layere.remove(spBake);
+
+        layere.revalidate();
+        layere.repaint();
+    }
+
+    
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         Object z = actionEvent.getSource();
@@ -1373,6 +1613,9 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         } else if (z == bNewOrders) {
             removeWindows();
             newOrderWindow();
+        } else if (z == bBake) {
+            removeWindows();
+            bakeWindow();
         } else if (z == bCompletedOrders) {
             removeWindows();
 
@@ -1380,6 +1623,9 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             removeWindows();
 
         } else if (z == bBestSeller) {
+            removeWindows();
+
+        } else if (z == bManagerArea) {
             removeWindows();
 
         } else if (z == cbSubategory) {
@@ -1397,6 +1643,11 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             generateNewOrder();
         } else if (z == bAcceptAll) {
             acceptOrders();
+        } else if (z == bBakeProducts) {
+            updateBake();
+            bakeWindowUpdate();
+        } else if (z == cbOrderToBake) {
+            bakeWindowUpdate();
         }
     }
 

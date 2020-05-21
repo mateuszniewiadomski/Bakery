@@ -449,5 +449,25 @@ public class sqlQueries extends Component {
         }
         return null;
     }
+
+    public int[] getIdsToBake(int x) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Id, Amount, ProductName FROM Product ORDER BY "+x);
+            rs.last();
+            int rows = rs.getRow();
+            rs.first();
+            int[] ids = new int[rows];
+            for (int i = 0; i < rows; i++) {
+                ids[i] = rs.getInt(1);
+                rs.next();
+            }
+            return ids;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
 }
 
