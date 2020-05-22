@@ -1,6 +1,7 @@
 package bakery.main;
 
 public class Logic {
+
     public boolean checkNames(String s) {
         if (s.length() > 1 && s.matches("[a-zA-Z]+")) {
             return true;
@@ -8,6 +9,7 @@ public class Logic {
             return false;
         }
     }
+
     public boolean checkPesel(String s) {
         if (s.length() != 11) {
             return false;
@@ -33,6 +35,7 @@ public class Logic {
         }
 
     }
+
     public String setBirthDate(String s) {
         int n1 = s.charAt(0) - 48;
         int n2 = s.charAt(1) - 48;
@@ -53,6 +56,7 @@ public class Logic {
             return "22"+n1+""+n2+"-"+n3+""+n4+"-"+n5+""+n6;
         }
     }
+
     public boolean checkBirthDate(String s) {
         if (s.matches("[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")) {
             return true;
@@ -60,6 +64,7 @@ public class Logic {
             return false;
         }
     }
+
     public boolean setGender(String s) {
         if ((s.charAt(9)-48) % 2 == 0) {
             return true;
@@ -67,6 +72,7 @@ public class Logic {
             return false;
         }
     }
+
     public boolean checkTelephone(String s) {
         if (s.length() == 9 && s.matches("[0-9]+")) {
             return true;
@@ -74,6 +80,7 @@ public class Logic {
             return false;
         }
     }
+
     public boolean checkNumber(String s) {
         if (s.matches("[1-9][0-9]*")) {
             return true;
@@ -81,6 +88,7 @@ public class Logic {
             return false;
         }
     }
+
     public boolean checkPostalCode(String s) {
         if (s.matches("[0-9][0-9]-[0-9][0-9][0-9]")) {
             return true;
@@ -89,6 +97,7 @@ public class Logic {
         }
 
     }
+
     public boolean checkImage(String s) {
         if (s.equals("cow") || s.equals("Cow") || s.equals("COW")) {
             return true;
@@ -97,6 +106,7 @@ public class Logic {
         }
 
     }
+
     public boolean checkUsername(String s) {
         if (s.length() >=  3) {
             return true;
@@ -104,6 +114,7 @@ public class Logic {
             return false;
         }
     }
+
     public boolean checkPassword(String s) {
         if (s.length() >= 4) {
             return true;
@@ -111,6 +122,7 @@ public class Logic {
             return false;
         }
     }
+
     public boolean checkPrice(String s) {
         if (s.matches("[0-9]*")) {
             return true;
@@ -118,9 +130,22 @@ public class Logic {
             return false;
         }
     }
+
     public boolean checkProductName(String s) {
         if (s.matches("[A-Za-z]*")) {
             return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean checkProductToBake(String s) {
+        if (s.matches("[0-9]*")) {
+            if (s.matches("[0][0-9]+")) {
+                return false;
+            } else {
+                return true;
+            }
         } else {
             return false;
         }

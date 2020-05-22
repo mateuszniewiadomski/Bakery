@@ -524,5 +524,338 @@ public class sqlQueries extends Component {
         }
         return er;
     }
-}
 
+    public String getStatsCash1() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT CAST(SUM(OrderCost) AS DECIMAL(8,2)) FROM PurchaseOrder");
+            String name = "";
+            if (rs.next()) {
+                name = rs.getString(1);
+            }
+            return name;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String getStatsCash2() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT CAST(AVG(OrderCost) AS DECIMAL(8,2)) FROM PurchaseOrder");
+            String name = "";
+            if (rs.next()) {
+                name = rs.getString(1);
+            }
+            return name;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String getStatsCash3_0() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT CAST(SUM(OrderCost*0.23) AS DECIMAL(8,2)) FROM PurchaseOrder");
+            String name = "";
+            if (rs.next()) {
+                name = rs.getString(1);
+            }
+            return name;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String getStatsCash3() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT CAST(SUM(OrderCost) AS DECIMAL(8,2)) FROM PurchaseOrder GROUP BY MONTH(OrderCompletion) ORDER BY 1 DESC");
+            String name = "";
+            if (rs.next()) {
+                name = rs.getString(1);
+            }
+            return name;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String getStatsCash4() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT CAST(SUM(OrderCost) AS DECIMAL(8,2)) FROM PurchaseOrder GROUP BY DAY(OrderCompletion) ORDER BY 1 DESC");
+            String name = "";
+            if (rs.next()) {
+                name = rs.getString(1);
+            }
+            return name;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return "-";
+    }
+
+    public String getStatsCash5() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT CAST(SUM(OrderCost) AS DECIMAL(8,2)) FROM PurchaseOrder GROUP BY DAY(OrderCompletion) ORDER BY 1 ASC");
+            String name = "";
+            if (rs.next()) {
+                name = rs.getString(1);
+            }
+            return name;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return "-";
+    }
+
+    public String[] getStatsProduct1() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT ProductName, SUM(Product_had_PurchaseOrder.Amount)\n" +
+                    " FROM Product INNER JOIN Product_had_PurchaseOrder ON Product.Id = Product_had_PurchaseOrder.Id_Product\n" +
+                    " GROUP BY ProductName ORDER BY 2 DESC");
+            String[] s = new String[2];
+            if (rs.next()) {
+                s[0] = rs.getString(1);
+                s[1] = rs.getString(2);
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String[] getStatsProduct2() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT CategoryName, SUM(Product_had_PurchaseOrder.Amount)\n" +
+                    " FROM Product INNER JOIN Product_had_PurchaseOrder ON Product.Id = Product_had_PurchaseOrder.Id_Product\n" +
+                    " INNER JOIN Category ON Product.Id_Category = Category.Id\n" +
+                    " GROUP BY CategoryName ORDER BY 2 DESC");
+            String[] s = new String[2];
+            if (rs.next()) {
+                s[0] = rs.getString(1);
+                s[1] = rs.getString(2);
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String[] getStatsProduct3() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT SubcategoryName, SUM(Product_had_PurchaseOrder.Amount)\n" +
+                    " FROM Product INNER JOIN Product_had_PurchaseOrder ON Product.Id = Product_had_PurchaseOrder.Id_Product\n" +
+                    " INNER JOIN Category ON Product.Id_Category = Category.Id\n" +
+                    " INNER JOIN Subcategory ON Category.Id_Subcategory = Subcategory.Id\n" +
+                    " GROUP BY SubcategoryName ORDER BY 2 DESC");
+            String[] s = new String[2];
+            if (rs.next()) {
+                s[0] = rs.getString(1);
+                s[1] = rs.getString(2);
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String[] getStatsProduct4() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT ProductName, SUM(Product_had_PurchaseOrder.Amount)\n" +
+                    " FROM Product INNER JOIN Product_had_PurchaseOrder ON Product.Id = Product_had_PurchaseOrder.Id_Product\n" +
+                    " GROUP BY ProductName ORDER BY 2 ASC");
+            String[] s = new String[2];
+            if (rs.next()) {
+                s[0] = rs.getString(1);
+                s[1] = rs.getString(2);
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String[] getStatsProduct5() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT CategoryName, SUM(Product_had_PurchaseOrder.Amount)\n" +
+                    " FROM Product INNER JOIN Product_had_PurchaseOrder ON Product.Id = Product_had_PurchaseOrder.Id_Product\n" +
+                    " INNER JOIN Category ON Product.Id_Category = Category.Id\n" +
+                    " GROUP BY CategoryName ORDER BY 2 ASC");
+            String[] s = new String[2];
+            if (rs.next()) {
+                s[0] = rs.getString(1);
+                s[1] = rs.getString(2);
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String[] getStatsProduct6() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT SubcategoryName, SUM(Product_had_PurchaseOrder.Amount)\n" +
+                    " FROM Product INNER JOIN Product_had_PurchaseOrder ON Product.Id = Product_had_PurchaseOrder.Id_Product\n" +
+                    " INNER JOIN Category ON Product.Id_Category = Category.Id\n" +
+                    " INNER JOIN Subcategory ON Category.Id_Subcategory = Subcategory.Id\n" +
+                    " GROUP BY SubcategoryName ORDER BY 2 ASC");
+            String[] s = new String[2];
+            if (rs.next()) {
+                s[0] = rs.getString(1);
+                s[1] = rs.getString(2);
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String getStatsCustomer1() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM Customer");
+            String name = "";
+            if (rs.next()) {
+                name = rs.getString(1);
+            }
+            return name;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String[] getStatsCustomer2() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Customer.Id, Customer.Name, Customer.Surname, SUM(OrderCost), COUNT(*) FROM PurchaseOrder INNER JOIN Customer ON PurchaseOrder.Id_Customer = Customer.Id\n" +
+                    " GROUP BY Customer.Id, Customer.Name, Customer.Surname ORDER BY 4 DESC");
+            String[] s = new String[5];
+            if (rs.next()) {
+                s[0] = rs.getString(1);
+                s[1] = rs.getString(2);
+                s[2] = rs.getString(3);
+                s[3] = rs.getString(4);
+                s[4] = rs.getString(5);
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String[] getStatsCustomer3(String id) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Product.ProductName, COUNT(Product.ProductName) FROM PurchaseOrder\n" +
+                    " INNER JOIN Product_had_PurchaseOrder ON Product_had_PurchaseOrder.Id_PurchaseOrder = PurchaseOrder.Id\n" +
+                    " INNER JOIN Product ON Product_had_PurchaseOrder.Id_Product = Product.Id\n" +
+                    " WHERE PurchaseOrder.Id_Customer = "+id+"\n" +
+                    " GROUP BY Product.ProductName ORDER BY 2 DESC");
+            String[] s = new String[2];
+            if (rs.next()) {
+                s[0] = rs.getString(1);
+                s[1] = rs.getString(2);
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String[] getStatsCustomer4(String id) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Category.CategoryName, COUNT(Category.CategoryName) FROM PurchaseOrder\n" +
+                    " INNER JOIN Product_had_PurchaseOrder ON Product_had_PurchaseOrder.Id_PurchaseOrder = PurchaseOrder.Id\n" +
+                    " INNER JOIN Product ON Product_had_PurchaseOrder.Id_Product = Product.Id\n" +
+                    " INNER JOIN Category ON Category.Id = Product.Id_Category\n" +
+                    " WHERE PurchaseOrder.Id_Customer = "+id+"\n" +
+                    " GROUP BY Category.CategoryName ORDER BY 2 DESC");
+            String[] s = new String[2];
+            if (rs.next()) {
+                s[0] = rs.getString(1);
+                s[1] = rs.getString(2);
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String getStatsCustomer5(String id) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Id_Customer, SUM(Product_had_PurchaseOrder.Amount) FROM PurchaseOrder\n" +
+                    " INNER JOIN Product_had_PurchaseOrder ON Product_had_PurchaseOrder.Id_PurchaseOrder = PurchaseOrder.Id\n" +
+                    " INNER JOIN Product ON Product_had_PurchaseOrder.Id_Product = Product.Id\n" +
+                    " WHERE PurchaseOrder.Id_Customer = 1\n" +
+                    " GROUP BY Id_Customer");
+            String s = "";
+            if (rs.next()) {
+                s = rs.getString(2);
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String getStatsFactory1() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM Employee\n");
+            String name = "";
+            if (rs.next()) {
+                name = rs.getString(1);
+            }
+            return name;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String[] getStatsFactory2() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Employee.Name, Employee.Surname, COUNT(*), SUM(OrderCost) FROM Employee\n" +
+                    " INNER JOIN PurchaseOrder ON PurchaseOrder.Id_Cashier = Employee.Id\n" +
+                    " GROUP BY Employee.Name, Employee.Surname");
+            String[] s = new String[4];
+            if (rs.next()) {
+                s[0] = rs.getString(1);
+                s[1] = rs.getString(2);
+                s[2] = rs.getString(3);
+                s[3] = rs.getString(4);
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+}

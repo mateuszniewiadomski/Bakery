@@ -4,10 +4,7 @@ import bakery.img.img;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,7 +14,7 @@ import java.util.List;
 
 import static javax.swing.BorderFactory.createEmptyBorder;
 
-public class Window extends JFrame implements ActionListener, KeyListener {
+public class Window extends JFrame implements ActionListener, KeyListener, MouseListener {
 
     //global
     private final sqlQueries q = new sqlQueries();
@@ -112,6 +109,9 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private final JButton bStatistics = new JButton("Statistics");
     private final JButton bManagerArea = new JButton("Manager area");
 
+    private final JPanel pMustManager = new JPanel();
+    private final JLabel lMustManager = new JLabel();
+
     //home window
     private final JPanel pWelcomeHome = new JPanel();
     private final JLabel lWelcomeHome = new JLabel();
@@ -125,12 +125,10 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private final JPanel pUrSalary = new JPanel();
     private final JLabel lUrPosition = new JLabel("Your position:");
     private final JLabel lUrSalary = new JLabel("Your salary:");
-    private final JLabel lSalary = new JLabel();
     private final JPanel pUrPosition2 = new JPanel();
     private final JPanel pUrSalary2 = new JPanel();
     private final JLabel lUrPosition2 = new JLabel();
     private final JLabel lUrSalary2 = new JLabel();
-    private final JLabel lSalary2 = new JLabel();
 
     private final JPanel pUrAdres = new JPanel();
     private final JLabel lUrAdres = new JLabel("Your adres:");
@@ -181,6 +179,9 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private final JButton bGenerateNewOrder = new JButton("Generate New Order");
     private final JButton bAcceptAll = new JButton("Accept Orders");
 
+    private final JPanel pMustSeller = new JPanel();
+    private final JLabel lMustSeller = new JLabel();
+
     //bake window
     private final List<Integer> listBakeProductsId = new ArrayList<Integer>();
 
@@ -193,6 +194,9 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private final JLabel lBakeTitle = new JLabel("Bake area");
 
     private final JButton bBakeProducts = new JButton("Bake");
+
+    private final JPanel pMustConfectioner = new JPanel();
+    private final JLabel lMustConfectioner = new JLabel();
 
     private final JPanel pProductName = new JPanel();
     private final JLabel lProductName = new JLabel("Product name");
@@ -214,11 +218,13 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private final JPanel pOrderCompletedOrders = new JPanel();
     private final JLabel lOrderCompletedOrders = new JLabel("Order by: ");
 
-    //production window
+    //statistics window
+    private final JComboBox cbStatsCategory = new JComboBox();
 
-    //best client window
+    private final JPanel pStatsBox = new JPanel();
 
-    //best seller window
+    private final JPanel pStats = new JPanel();
+    private final JLabel lStats = new JLabel("Choose category:");
 
     //manager area window
 
@@ -267,7 +273,11 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         bBake.addActionListener(this);
         bCompletedOrders.addActionListener(this);
         bStatistics.addActionListener(this);
-        bManagerArea.addActionListener(this);
+        if (isManager) {
+            bManagerArea.addActionListener(this);
+        } else {
+            bManagerArea.addMouseListener(this);
+        }
 
         //search product window
         tfMin.addKeyListener(this);
@@ -276,16 +286,19 @@ public class Window extends JFrame implements ActionListener, KeyListener {
 
         //new orders window
         bGenerateNewOrder.addActionListener(this);
-        bAcceptAll.addActionListener(this);
+        if (isSeller) {
+            bAcceptAll.addActionListener(this);
+        } else {
+            bAcceptAll.addMouseListener(this);
+        }
 
         //completed orders window
-        bBakeProducts.addActionListener(this);
 
-        //production window
-
-        //best client window
-
-        //best seller window
+        if (isConfectioner) {
+            bBakeProducts.addActionListener(this);
+        } else {
+            bBakeProducts.addMouseListener(this);
+        }
 
         //manager area window
     }
@@ -324,6 +337,10 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         cbOrderCompletedOrders.addItem("Order Completion");
         cbOrderCompletedOrders.addItem("Cost");
 
+        cbStatsCategory.addItem("Cash");
+        cbStatsCategory.addItem("Products");
+        cbStatsCategory.addItem("Clients");
+        cbStatsCategory.addItem("Bakery");
     }
 
     private void setStyle() {
@@ -487,6 +504,9 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         bManagerArea.setBackground(new Color(90, 52, 43));
         bManagerArea.setForeground(new Color(255, 242, 216));
         bManagerArea.setBorderPainted(false);
+
+        lMustManager.setFont(new Font(Font.DIALOG,  Font.ITALIC, 13));
+        pMustManager.add(lMustManager);
 
         //home window
         bUpdateHome.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
@@ -668,11 +688,20 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         pOrderCompletedOrders.setBounds(440, 95, 100, 30);
         cbOrderCompletedOrders.setBounds(550, 100, 150, 25);
 
-        //production window
+        //statistics window
+        cbStatsCategory.setForeground(new Color(90, 52, 43));
+        cbStatsCategory.setBackground(new Color(255, 248, 235));
+        cbStatsCategory.setBorder(new LineBorder(new Color(90, 52, 43)));
 
-        //best client window
+        lStats.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        lStats.setForeground(new Color(90, 52, 43));
 
-        //best seller window
+        pStats.add(lStats);
+
+        pStats.setOpaque(false);
+
+        pStats.setBounds(400, 95, 150, 30);
+        cbStatsCategory.setBounds(550, 100, 150, 25);
 
         //manager area window
     }
@@ -893,6 +922,11 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         layere.add(bStatistics, 1, 0);
         layere.add(bManagerArea, 1, 0);
         checkPosition();
+        if (isManager) {
+            bManagerArea.setEnabled(true);
+        } else {
+            bManagerArea.setEnabled(false);
+        }
         homeWindow();
     }
 
@@ -981,6 +1015,8 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             removeBakeWindow();
         } else if (window.equals("completedOrdersWindow")) {
             removeCompletedOrdersWindow();
+        } else if (window.equals("statisticsWindow")) {
+            removeStatisticsWindow();
         }
     }
 
@@ -1015,6 +1051,12 @@ public class Window extends JFrame implements ActionListener, KeyListener {
 
 
         searchProducts(0, 0, "", "100", "0", 1);
+        cbCategory.setSelectedIndex(0);
+        cbSubategory.setSelectedIndex(0);
+        tfSearchProductByName.setText("");
+        tfMin.setText("");
+        tfMax.setText("");
+        cbOrderBy.setSelectedIndex(0);
     }
 
     private void searchProducts(int cat, int subcat, String word, String pMax, String pMin, int order) {
@@ -1198,12 +1240,6 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private void newOrderWindow() {
 
         window = "newOrderWindow";
-
-        if (isSeller) {
-            bAcceptAll.setEnabled(true);
-        } else {
-            bAcceptAll.setEnabled(false);
-        }
 
         layere.add(bGenerateNewOrder, 1, 0);
         layere.add(pNewOrdersTitle, 1, 0);
@@ -1471,12 +1507,6 @@ public class Window extends JFrame implements ActionListener, KeyListener {
 
         window = "bakeWindow";
 
-        if (isConfectioner) {
-            bBakeProducts.setEnabled(true);
-        } else {
-            bBakeProducts.setEnabled(false);
-        }
-
         layere.add(cbOrderToBake, 1, 0);
         layere.add(pBakeTitle, 1, 0);
         layere.add(bBakeProducts, 1, 0);
@@ -1516,6 +1546,8 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             pProductName[i] = new JPanel();
             pProductAmount[i] = new JPanel();
             tfAmountToBake[i] = new JTextField("0");
+
+            tfAmountToBake[i].addKeyListener(this);
 
             JLabel lProductName = new JLabel();
             JLabel lProductAmount = new JLabel();
@@ -1581,6 +1613,9 @@ public class Window extends JFrame implements ActionListener, KeyListener {
     private void updateBake() {
 
         for (int i = 0; i < listBakeProductsId.size(); i++) {
+            if (tfAmountToBake[i].getText().equals("")) {
+                tfAmountToBake[i].setText("0");
+            }
             int add = Integer.valueOf(tfAmountToBake[i].getText());
             int now = q.getAmount(listBakeProductsId.get(i));
             q.updateAmountOfProducts(listBakeProductsId.get(i), now+add);
@@ -1732,6 +1767,112 @@ public class Window extends JFrame implements ActionListener, KeyListener {
         layere.repaint();
     }
 
+    private void statisticsWindow() {
+
+        window = "statisticsWindow";
+
+        layere.add(cbStatsCategory, 1, 0);
+        layere.add(pStats, 1, 0);
+
+        cbStatsCategory.addActionListener(this);
+
+        updateStatisticsWindow();
+    }
+
+    private void updateStatisticsWindow() {
+
+        layere.remove(pStatsBox);
+        layere.revalidate();
+        layere.repaint();
+
+        pStatsBox.removeAll();
+        pStatsBox.revalidate();
+        pStatsBox.repaint();
+
+        JPanel[] p = new JPanel[10];
+        JLabel[] l = new JLabel[10];
+
+        for (int i = 0; i < 10; i++) {
+            p[i] = new JPanel();
+            l[i] = new JLabel();
+            p[i].add(l[i]);
+            p[i].setOpaque(false);
+            p[i].setPreferredSize(new Dimension(700, 30));
+            l[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+            l[i].setForeground(new Color(90, 52, 43));
+            pStatsBox.add(p[i]);
+        }
+
+        switch (cbStatsCategory.getSelectedIndex()) {
+            case 0:
+                String s1c0 = q.getStatsCash1();
+                String s2c0 = q.getStatsCash2();
+                String s3c0 = q.getStatsCash3_0();
+                String s4c0 = q.getStatsCash3();
+                String s5c0 = q.getStatsCash4();
+                String s6c0 = q.getStatsCash5();
+                l[1].setText("Total earned: $ "+s1c0);
+                l[2].setText("Average earnings per order: $ "+s2c0);
+                l[3].setText("Total paid taxes: $ "+s3c0);
+                l[4].setText("Best month: $ "+s4c0);
+                l[5].setText("Best day: $ "+s5c0);
+                l[6].setText("Worst day: $ "+s6c0);
+                break;
+            case 1:
+                String[] s1c1 = q.getStatsProduct1();
+                String[] s2c1 = q.getStatsProduct2();
+                String[] s3c1 = q.getStatsProduct3();
+                String[] s4c1 = q.getStatsProduct4();
+                String[] s5c1 = q.getStatsProduct5();
+                String[] s6c1 = q.getStatsProduct6();
+                l[1].setText("Best selling product: \""+s1c1[0]+"\", Amount: "+s1c1[1]);
+                l[2].setText("Best selling subcategory: \""+s2c1[0]+"\", Amount: "+s2c1[1]);
+                l[3].setText("Best selling category: \""+s3c1[0]+"\", Amount: "+s3c1[1]);
+                l[5].setText("Worst selling product: \""+s4c1[0]+"\", Amount: "+s4c1[1]);
+                l[6].setText("Worst selling subcategory: \""+s5c1[0]+"\", Amount: "+s5c1[1]);
+                l[7].setText("Worst selling category: \""+s6c1[0]+"\", Amount: "+s6c1[1]);
+                break;
+            case 2:
+                String s1c2 = q.getStatsCustomer1();
+                String[] s2c2 = q.getStatsCustomer2();
+                String[] s3c2 = q.getStatsCustomer3(s2c2[0]);
+                String[] s4c2 = q.getStatsCustomer4(s2c2[0]);
+                String s5c2 = q.getStatsCustomer5(s2c2[0]);
+                l[1].setText("Total clients: "+s1c2);
+                l[3].setText("Best client: "+s2c2[1]+" "+s2c2[2]+"!");
+                l[4].setText("He spent: $ "+s2c2[3]+" in "+s2c2[4]+" orders");
+                l[5].setText("He bought in total: "+s5c2+" products");
+                l[6].setText("His favourite product: \""+s3c2[0]+"\", and bought: "+s3c2[1]+" products from it");
+                l[7].setText("His favourite category: \""+s4c2[0]+"\", and bought: \""+s4c2[1]+"\" products from it");
+                break;
+            case 3:
+                String s1c3 = q.getStatsFactory1();
+                String[] s3c3 = q.getStatsFactory2();
+                l[1].setText("Total employees: "+s1c3);
+                l[3].setText("Best cashier: "+s3c3[0]+" "+s3c3[1]);
+                l[4].setText("She made: "+s3c3[2]+" orders");
+                l[5].setText("And bring: $ "+s3c3[3]+" for the company");
+                break;
+            default:
+        }
+        pStatsBox.setOpaque(false);
+        pStatsBox.setBounds(200, 150, 786, 414);
+        layere.add(pStatsBox, 1, 0);
+    }
+
+    private void removeStatisticsWindow() {
+
+        cbStatsCategory.removeActionListener(this);
+
+        layere.remove(pStatsBox);
+
+        layere.remove(cbStatsCategory);
+        layere.remove(pStats);
+
+        layere.revalidate();
+        layere.repaint();
+    }
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         Object z = actionEvent.getSource();
@@ -1786,7 +1927,7 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             completedOrdersWindow();
         } else if (z == bStatistics) {
             removeWindows();
-
+            statisticsWindow();
         } else if (z == bManagerArea) {
             removeWindows();
 
@@ -1812,6 +1953,8 @@ public class Window extends JFrame implements ActionListener, KeyListener {
             bakeWindowUpdate();
         } else if (z == cbOrderCompletedOrders) {
             updateCompletedOrdersWindow();
+        } else if (z == cbStatsCategory) {
+            updateStatisticsWindow();
         }
     }
 
@@ -1938,6 +2081,50 @@ public class Window extends JFrame implements ActionListener, KeyListener {
                 tfMax.setText(sMax);
                 tfMax.setBackground(new Color(246, 226, 226));
             }
+        } else {
+            for (int i = 0; i < tfAmountToBake.length; i++) {
+                if (z == tfAmountToBake[i]) {
+                    if (logic.checkProductToBake(tfAmountToBake[i].getText())) {
+                        tfAmountToBake[i].setBackground(new Color(227, 245, 227));
+                    } else {
+                        tfAmountToBake[i].setText("0");
+                        tfAmountToBake[i].setBackground(new Color(246, 226, 226));
+                    }
+                }
+            }
         }
+    }
+
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent mouseEvent) {
+        Object z = mouseEvent.getSource();
+        if (z == bManagerArea) {
+            JPanel p = new JPanel();
+            JLabel l = new JLabel("ELO");
+            p.add(l);
+            p.setBounds(300, 200, 400, 100);
+            layere.add(p, 1, 0);
+        }
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }
