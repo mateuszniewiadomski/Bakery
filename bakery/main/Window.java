@@ -43,7 +43,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
     private final JLabel lPassword = new JLabel("Password");
     private final JTextField tfUser = new JTextField();
     private final JPasswordField pfPassword = new JPasswordField();
-    private final JButton bLogin = new JButton("Login");
+    private final JButton bLogin = new JButton("Sign in");
     private final JButton bNewAccount = new JButton("Create new account");
     private final JPanel pAlert = new JPanel();
     private final JLabel lAlert = new JLabel("Incorrect login or password");
@@ -110,7 +110,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
     private final JButton bManagerArea = new JButton("Manager area");
 
     private final JPanel pMustManager = new JPanel();
-    private final JLabel lMustManager = new JLabel();
+    private final JLabel lMustManager = new JLabel("no access - you must be a manager!");
 
     //home window
     private final JPanel pWelcomeHome = new JPanel();
@@ -137,6 +137,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
     private final JPanel pBigAdres2 = new JPanel();
     private final JLabel lBigAdresl1 = new JLabel();
     private final JLabel lBigAdresl2 = new JLabel();
+
+    private final JButton bLogOut = new JButton("Sign out");
 
     //search product window
     private final List<String> listCategory = new ArrayList<String>();
@@ -180,7 +182,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
     private final JButton bAcceptAll = new JButton("Accept Orders");
 
     private final JPanel pMustSeller = new JPanel();
-    private final JLabel lMustSeller = new JLabel();
+    private final JLabel lMustSeller = new JLabel("no access - you must be a seller!");
 
     //bake window
     private final List<Integer> listBakeProductsId = new ArrayList<Integer>();
@@ -196,7 +198,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
     private final JButton bBakeProducts = new JButton("Bake");
 
     private final JPanel pMustConfectioner = new JPanel();
-    private final JLabel lMustConfectioner = new JLabel();
+    private final JLabel lMustConfectioner = new JLabel("no access - you must be a confectioner!");
 
     private final JPanel pProductName = new JPanel();
     private final JLabel lProductName = new JLabel("Product name");
@@ -227,6 +229,31 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
     private final JLabel lStats = new JLabel("Choose category:");
 
     //manager area window
+    private final List<Integer> listOfIds = new ArrayList<Integer>();
+
+    private final JPanel bgManager = new JPanel();
+
+    private final JButton bManagerAdd = new JButton("Add");
+    private JButton[] bManagerDelete;
+    private JButton[] bManagerUpdate;
+    private final JButton bManagerBack = new JButton("Back");
+    private final JButton bManagerAccept = new JButton("Accept");
+    private final JButton bManagerCancel = new JButton("Cancel");
+
+    private final JComboBox cbChooseDbo = new JComboBox();
+
+    private final JPanel pManagementBox = new JPanel();
+    private final JScrollPane spManagement = new JScrollPane(pManagementBox);
+
+    private JComboBox cbManagamet = new JComboBox();
+    private JComboBox cbManagamet1 = new JComboBox();
+    private JComboBox cbManagamet2 = new JComboBox();
+    private String[][] sData;
+    private JTextField[] tfData;
+    private int stroreId;
+    private int[] storeBakerId;
+
+    private boolean update = false;
 
     public Window() {
         setSize(1000, 600);
@@ -273,11 +300,17 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         bBake.addActionListener(this);
         bCompletedOrders.addActionListener(this);
         bStatistics.addActionListener(this);
+
+        bManagerArea.removeActionListener(this);
+        bManagerArea.removeMouseListener(this);
         if (isManager) {
             bManagerArea.addActionListener(this);
         } else {
             bManagerArea.addMouseListener(this);
         }
+
+        //home window
+        bLogOut.addActionListener(this);
 
         //search product window
         tfMin.addKeyListener(this);
@@ -286,6 +319,9 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
 
         //new orders window
         bGenerateNewOrder.addActionListener(this);
+
+        bAcceptAll.removeActionListener(this);
+        bAcceptAll.removeMouseListener(this);
         if (isSeller) {
             bAcceptAll.addActionListener(this);
         } else {
@@ -294,6 +330,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
 
         //completed orders window
 
+        bBakeProducts.removeActionListener(this);
+        bBakeProducts.removeMouseListener(this);
         if (isConfectioner) {
             bBakeProducts.addActionListener(this);
         } else {
@@ -301,6 +339,10 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         }
 
         //manager area window
+        bManagerBack.addActionListener(this);
+        bManagerAdd.addActionListener(this);
+        bManagerCancel.addActionListener(this);
+        bManagerAccept.addActionListener(this);
     }
 
     private void setComboBoxes() {
@@ -341,6 +383,12 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         cbStatsCategory.addItem("Products");
         cbStatsCategory.addItem("Clients");
         cbStatsCategory.addItem("Bakery");
+
+        cbChooseDbo.addItem("Clients");
+        cbChooseDbo.addItem("Employees");
+        cbChooseDbo.addItem("Products");
+        cbChooseDbo.addItem("Supplier");
+        cbChooseDbo.addItem("Position");
     }
 
     private void setStyle() {
@@ -500,10 +548,17 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         bStatistics.setForeground(new Color(255, 242, 216));
         bStatistics.setBorderPainted(false);
 
-        bManagerArea.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
-        bManagerArea.setBackground(new Color(90, 52, 43));
-        bManagerArea.setForeground(new Color(255, 242, 216));
-        bManagerArea.setBorderPainted(false);
+        if (isManager) {
+            bManagerArea.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+            bManagerArea.setBackground(new Color(90, 52, 43));
+            bManagerArea.setForeground(new Color(255, 242, 216));
+            bManagerArea.setBorderPainted(false);
+        } else {
+            bManagerArea.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+            bManagerArea.setBackground(new Color(90, 52, 43));
+            bManagerArea.setForeground(new Color(161, 150, 133));
+            bManagerArea.setBorderPainted(false);
+        }
 
         lMustManager.setFont(new Font(Font.DIALOG,  Font.ITALIC, 13));
         pMustManager.add(lMustManager);
@@ -539,6 +594,11 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
 
         lUrSalary.setFont(new Font(Font.DIALOG,  Font.BOLD, 20));
         lUrSalary.setForeground(new Color(90, 52, 43));
+
+        bLogOut.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bLogOut.setBackground(new Color(90, 52, 43));
+        bLogOut.setForeground(new Color(255, 242, 216));
+        bLogOut.setBorderPainted(false);
 
         pProfilePicture.setOpaque(false);
 
@@ -625,20 +685,42 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         bGenerateNewOrder.setForeground(new Color(255, 242, 216));
         bGenerateNewOrder.setBorderPainted(false);
 
-        bAcceptAll.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
-        bAcceptAll.setBackground(new Color(90, 52, 43));
-        bAcceptAll.setForeground(new Color(255, 242, 216));
-        bAcceptAll.setBorderPainted(false);
+        if (isSeller) {
+            bAcceptAll.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+            bAcceptAll.setBackground(new Color(90, 52, 43));
+            bAcceptAll.setForeground(new Color(255, 242, 216));
+            bAcceptAll.setBorderPainted(false);
+        } else {
+            bAcceptAll.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+            bAcceptAll.setBackground(new Color(90, 52, 43));
+            bAcceptAll.setForeground(new Color(161, 150, 133));
+            bAcceptAll.setBorderPainted(false);
+        }
+
+        lMustSeller.setFont(new Font(Font.DIALOG,  Font.ITALIC, 10));
+        pMustSeller.add(lMustSeller);
+        pMustSeller.setBackground(new Color(255, 255, 255, 230));
 
         bGenerateNewOrder.setBounds(700, 80, 200, 25);
         pNewOrdersTitle.setBounds(300, 90, 400, 40);
         bAcceptAll.setBounds(700, 110, 200, 25);
+        pMustSeller.setBounds(780, 130, 200, 25);
 
         //bake products window
-        bBakeProducts.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
-        bBakeProducts.setBackground(new Color(90, 52, 43));
-        bBakeProducts.setForeground(new Color(255, 242, 216));
-        bBakeProducts.setBorderPainted(false);
+        if (isConfectioner) {
+            bBakeProducts.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+            bBakeProducts.setBackground(new Color(90, 52, 43));
+            bBakeProducts.setForeground(new Color(255, 242, 216));
+            bBakeProducts.setBorderPainted(false);
+        } else {
+            bBakeProducts.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+            bBakeProducts.setBackground(new Color(90, 52, 43));
+            bBakeProducts.setForeground(new Color(161, 150, 133));
+            bBakeProducts.setBorderPainted(false);
+        }
+
+        lMustConfectioner.setFont(new Font(Font.DIALOG,  Font.ITALIC, 10));
+        pMustConfectioner.add(lMustConfectioner);
 
         lBakeTitle.setFont(new Font(Font.DIALOG,  Font.BOLD, 25));
         lBakeTitle.setForeground(new Color(90, 52, 43));
@@ -664,6 +746,9 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
 
         pBakeTitle.setBounds(350, 80, 200, 40);
         bBakeProducts.setBounds(600, 85, 200, 25);
+
+        pMustConfectioner.setBounds(690, 100, 200, 25);
+
         pProductName.setBounds(280, 120, 200, 25);
         pProductCurrentAmount.setBounds(475, 120, 200, 25);
         pProductAmountToBake.setBounds(680, 120, 200, 25);
@@ -704,6 +789,48 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         cbStatsCategory.setBounds(550, 100, 150, 25);
 
         //manager area window
+        bManagerBack.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bManagerBack.setBackground(new Color(54, 54, 55));
+        bManagerBack.setForeground(new Color(255, 255, 255));
+        bManagerBack.setBorderPainted(false);
+
+        bManagerAdd.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bManagerAdd.setBackground(new Color(40, 203, 0));
+        bManagerAdd.setForeground(new Color(255, 248, 236));
+        bManagerAdd.setBorderPainted(false);
+
+        bManagerAccept.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bManagerAccept.setBackground(new Color(54, 54, 55));
+        bManagerAccept.setForeground(new Color(255, 255, 255));
+        bManagerAccept.setBorderPainted(false);
+
+        bManagerCancel.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+        bManagerCancel.setBackground(new Color(54, 54, 55));
+        bManagerCancel.setForeground(new Color(255, 255, 255));
+        bManagerCancel.setBorderPainted(false);
+
+        cbChooseDbo.setForeground(new Color(64, 64, 64));
+        cbChooseDbo.setBackground(new Color(255, 255, 255));
+        cbChooseDbo.setBorder(new LineBorder(new Color(64, 64, 64)));
+
+        cbManagamet.setForeground(new Color(64, 64, 64));
+        cbManagamet.setBackground(new Color(255, 255, 255));
+        cbManagamet.setBorder(new LineBorder(new Color(64, 64, 64)));
+
+        cbManagamet1.setForeground(new Color(64, 64, 64));
+        cbManagamet1.setBackground(new Color(255, 255, 255));
+        cbManagamet1.setBorder(new LineBorder(new Color(64, 64, 64)));
+
+        cbManagamet2.setForeground(new Color(64, 64, 64));
+        cbManagamet2.setBackground(new Color(255, 255, 255));
+        cbManagamet2.setBorder(new LineBorder(new Color(64, 64, 64)));
+
+        bgManager.setBounds(0, 0, 1000, 600);
+        bgManager.setBackground(Color.white);
+
+        bManagerBack.setBounds(800, 80, 150, 25);
+        bManagerAdd.setBounds(200, 80, 150, 25);
+        cbChooseDbo.setBounds(650, 80, 100, 25);
     }
 
     private void loginWindow() {
@@ -898,12 +1025,12 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         pBG.setBounds(0,-5, 1000, 600);
         pBG.add(lBG);
 
-        layere.add(pLogo, 2, 0);
-        layere.add(pBanner, 1, 0);
+        layere.add(pLogo, 4, 0);
+        layere.add(pBanner, 3, 0);
         layere.add(pBG, 0, 0);
 
-        //loginWindow();
-        createLeftBanner();
+        loginWindow();
+        //createLeftBanner();
     }
 
     private void createLeftBanner() {
@@ -914,6 +1041,9 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         bCompletedOrders.setBounds(25, 320, 170, 30);
         bStatistics.setBounds(25, 370, 170, 30);
         bManagerArea.setBounds(25, 470, 170, 30);
+
+        pMustManager.setBounds(100, 490, 240, 25);
+
         layere.add(bHome, 1, 0);
         layere.add(bSearchProducts, 1, 0);
         layere.add(bNewOrders, 1, 0);
@@ -922,27 +1052,49 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.add(bStatistics, 1, 0);
         layere.add(bManagerArea, 1, 0);
         checkPosition();
+        setStyle();
         if (isManager) {
             bManagerArea.setEnabled(true);
         } else {
             bManagerArea.setEnabled(false);
+        }
+        bManagerArea.removeActionListener(this);
+        bManagerArea.removeMouseListener(this);
+        if (isManager) {
+            bManagerArea.addActionListener(this);
+        } else {
+            bManagerArea.addMouseListener(this);
+        }
+        bBakeProducts.removeActionListener(this);
+        bBakeProducts.removeMouseListener(this);
+        if (isConfectioner) {
+            bBakeProducts.addActionListener(this);
+        } else {
+            bBakeProducts.addMouseListener(this);
+        }
+        bAcceptAll.removeActionListener(this);
+        bAcceptAll.removeMouseListener(this);
+        if (isSeller) {
+            bAcceptAll.addActionListener(this);
+        } else {
+            bAcceptAll.addMouseListener(this);
         }
         homeWindow();
     }
 
     private void checkPosition() {
         isManager = isSeller = isConfectioner = false;
-        String position = q.getSalaryOrPosition(userId, "PositionName");
-        if (position.equals("Manager")) {
+        String position = q.getSalaryOrPosition(userId, "Position.Id");
+        if (position.equals("1")) {
             isManager = true;
         } else {
             isManager = false;
         }
-        if (position.equals("Seller")) {
+        if (position.equals("3")) {
             isSeller = true;
         } else {
             isSeller= false;
-        } if (position.equals("Confectioner")) {
+        } if (position.equals("2")) {
             isConfectioner = true;
         } else {
             isConfectioner= false;
@@ -950,6 +1102,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
     }
 
     private void homeWindow() {
+
         window = "home";
 
         pWelcomeHome.setBounds(350, 80, 400, 50);
@@ -959,6 +1112,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         pProfilePicture.setBounds(700, 160, 250, 250);
         lProfilePicture.setIcon(img.getImage(q.getPicture("Employee",userId)));
         pProfilePicture.add(lProfilePicture);
+
+        bLogOut.setBounds(650, 470, 150, 30);
 
         pBigAdres1.setBounds(400, 170, 200, 40);
         pBigAdres2.setBounds(400, 200, 160, 40);
@@ -1000,6 +1155,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.add(pUrPosition, 1, 0);
         layere.add(pUrSalary, 1, 0);
 
+        layere.add(bLogOut, 1, 0);
+
         layere.add(pUrPosition2, 1, 0);
         layere.add(pUrSalary2, 1, 0);
     }
@@ -1017,6 +1174,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
             removeCompletedOrdersWindow();
         } else if (window.equals("statisticsWindow")) {
             removeStatisticsWindow();
+        } else if (window.equals("managerWindow")) {
+            removeManagerWindow();
         }
     }
 
@@ -1031,6 +1190,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(pUrSalary2);
         layere.remove(pUrPosition);
         layere.remove(pUrPosition2);
+        layere.remove(bLogOut);
         layere.revalidate();
         layere.repaint();
     }
@@ -1873,6 +2033,1476 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.repaint();
     }
 
+    private void managerWindow() {
+
+        window = "managerWindow";
+
+        layere.add(cbChooseDbo, 2, 0);
+        layere.add(bManagerBack, 2, 0);
+        layere.add(bManagerAdd, 2, 0);
+        layere.add(bgManager, 1, 0);
+
+        cbChooseDbo.addActionListener(this);
+
+        updateManagerWindow();
+    }
+
+    private void updateManagerWindow() {
+
+        listOfIds.clear();
+
+        layere.remove(spManagement);
+        layere.revalidate();
+        layere.repaint();
+
+        pManagementBox.removeAll();
+        pManagementBox.revalidate();
+        pManagementBox.repaint();
+
+        int d = 0;
+
+        switch (cbChooseDbo.getSelectedIndex()) {
+            case 0:
+                sData = q.getCustomerAndAdres();
+                bManagerUpdate = new JButton[sData.length];
+                bManagerDelete = new JButton[sData.length];
+
+                for (int i = 0; i < sData.length; i++) {
+
+                    d = d + 1;
+
+                    JPanel p0 = new JPanel();
+                    JPanel p0e1 = new JPanel();
+                    JPanel p0e2 = new JPanel();
+                    JPanel p0e3 = new JPanel();
+                    JPanel p0l = new JPanel();
+                    JLabel l0 = new JLabel(sData[i][2]+" "+sData[i][3]);
+
+                    bManagerUpdate[i] = new JButton("Update");
+                    bManagerDelete[i] = new JButton("Delete");
+
+                    p0.add(l0);
+                    p0.setOpaque(false);
+                    p0e1.setOpaque(false);
+                    p0e2.setOpaque(false);
+                    p0e3.setOpaque(false);
+                    p0l.setBackground(new Color(64, 64, 64));
+
+                    l0.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    l0.setForeground(new Color(64, 64, 64));
+
+                    bManagerUpdate[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerUpdate[i].setBackground(new Color(203, 135, 0));
+                    bManagerUpdate[i].setForeground(new Color(255, 248, 236));
+                    bManagerUpdate[i].setBorderPainted(false);
+
+                    bManagerDelete[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerDelete[i].setBackground(new Color(203, 0, 0));
+                    bManagerDelete[i].setForeground(new Color(255, 248, 236));
+                    bManagerDelete[i].setBorderPainted(false);
+
+                    bManagerUpdate[i].addActionListener(this);
+                    bManagerDelete[i].addActionListener(this);
+
+                    p0.setPreferredSize(new Dimension(200, 30));
+                    p0e1.setPreferredSize(new Dimension(100, 25));
+                    p0e2.setPreferredSize(new Dimension(50, 25));
+                    p0e3.setPreferredSize(new Dimension(400, 25));
+                    bManagerUpdate[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerDelete[i].setPreferredSize(new Dimension(100, 25));
+                    p0l.setPreferredSize(new Dimension(900, 1));
+
+                    pManagementBox.add(p0l);
+                    pManagementBox.add(p0);
+                    pManagementBox.add(p0e1);
+                    pManagementBox.add(bManagerUpdate[i]);
+                    pManagementBox.add(p0e2);
+                    pManagementBox.add(bManagerDelete[i]);
+                    pManagementBox.add(p0e3);
+                }
+
+                break;
+            case 1:
+                sData = q.getEmployeeAndAdres();
+                bManagerUpdate = new JButton[sData.length];
+                bManagerDelete = new JButton[sData.length];
+
+                for (int i = 0; i < sData.length; i++) {
+
+                    d = d + 1;
+
+                    JPanel p0 = new JPanel();
+                    JPanel p0e1 = new JPanel();
+                    JPanel p0e2 = new JPanel();
+                    JPanel p0e3 = new JPanel();
+                    JPanel p0e4 = new JPanel();
+                    JPanel p1 = new JPanel();
+                    JPanel p0l = new JPanel();
+                    JLabel l0 = new JLabel(sData[i][3]+" "+sData[i][4]);
+                    JLabel l1 = new JLabel(sData[i][12]);
+
+                    bManagerUpdate[i] = new JButton("Update");
+                    bManagerDelete[i] = new JButton("Delete");
+
+                    p0.add(l0);
+                    p1.add(l1);
+                    p0.setOpaque(false);
+                    p1.setOpaque(false);
+                    p0e1.setOpaque(false);
+                    p0e2.setOpaque(false);
+                    p0e3.setOpaque(false);
+                    p0e4.setOpaque(false);
+                    p0l.setBackground(new Color(64, 64, 64));
+
+                    l0.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    l0.setForeground(new Color(64, 64, 64));
+
+                    l1.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    l1.setForeground(new Color(64, 64, 64));
+
+                    bManagerUpdate[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerUpdate[i].setBackground(new Color(203, 135, 0));
+                    bManagerUpdate[i].setForeground(new Color(255, 248, 236));
+                    bManagerUpdate[i].setBorderPainted(false);
+
+                    bManagerDelete[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerDelete[i].setBackground(new Color(203, 0, 0));
+                    bManagerDelete[i].setForeground(new Color(255, 248, 236));
+                    bManagerDelete[i].setBorderPainted(false);
+
+                    bManagerUpdate[i].addActionListener(this);
+                    bManagerDelete[i].addActionListener(this);
+
+                    p0.setPreferredSize(new Dimension(200, 30));
+                    p0e1.setPreferredSize(new Dimension(50, 25));
+                    p0e4.setPreferredSize(new Dimension(50, 25));
+                    p1.setPreferredSize(new Dimension(100, 30));
+                    p0e2.setPreferredSize(new Dimension(50, 25));
+                    p0e3.setPreferredSize(new Dimension(200, 25));
+                    bManagerUpdate[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerDelete[i].setPreferredSize(new Dimension(100, 25));
+                    p0l.setPreferredSize(new Dimension(900, 1));
+
+                    pManagementBox.add(p0l);
+                    pManagementBox.add(p0);
+                    pManagementBox.add(p0e1);
+                    pManagementBox.add(p1);
+                    pManagementBox.add(p0e4);
+                    pManagementBox.add(bManagerUpdate[i]);
+                    pManagementBox.add(p0e2);
+                    pManagementBox.add(bManagerDelete[i]);
+                    pManagementBox.add(p0e3);
+                }
+
+                break;
+            case 2:
+                sData = q.getProductCategorySubcategory();
+                bManagerUpdate = new JButton[sData.length];
+                bManagerDelete = new JButton[sData.length];
+
+                for (int i = 0; i < sData.length; i++) {
+
+                    d = d + 1;
+
+                    JPanel p0 = new JPanel();
+                    JPanel p0e1 = new JPanel();
+                    JPanel p0e2 = new JPanel();
+                    JPanel p0e3 = new JPanel();
+                    JPanel p0e4 = new JPanel();
+                    JPanel p1 = new JPanel();
+                    JPanel p0l = new JPanel();
+                    JLabel l0 = new JLabel(sData[i][4]);
+                    JLabel l1 = new JLabel("$ "+sData[i][5]);
+
+                    bManagerUpdate[i] = new JButton("Update");
+                    bManagerDelete[i] = new JButton("Delete");
+
+                    p0.add(l0);
+                    p1.add(l1);
+                    p0.setOpaque(false);
+                    p1.setOpaque(false);
+                    p0e1.setOpaque(false);
+                    p0e2.setOpaque(false);
+                    p0e3.setOpaque(false);
+                    p0e4.setOpaque(false);
+                    p0l.setBackground(new Color(64, 64, 64));
+
+                    l0.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    l0.setForeground(new Color(64, 64, 64));
+
+                    l1.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    l1.setForeground(new Color(64, 64, 64));
+
+                    bManagerUpdate[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerUpdate[i].setBackground(new Color(203, 135, 0));
+                    bManagerUpdate[i].setForeground(new Color(255, 248, 236));
+                    bManagerUpdate[i].setBorderPainted(false);
+
+                    bManagerDelete[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerDelete[i].setBackground(new Color(203, 0, 0));
+                    bManagerDelete[i].setForeground(new Color(255, 248, 236));
+                    bManagerDelete[i].setBorderPainted(false);
+
+                    bManagerUpdate[i].addActionListener(this);
+                    bManagerDelete[i].addActionListener(this);
+
+                    p0.setPreferredSize(new Dimension(200, 30));
+                    p0e1.setPreferredSize(new Dimension(50, 25));
+                    p0e4.setPreferredSize(new Dimension(50, 25));
+                    p1.setPreferredSize(new Dimension(100, 30));
+                    p0e2.setPreferredSize(new Dimension(50, 25));
+                    p0e3.setPreferredSize(new Dimension(200, 25));
+                    bManagerUpdate[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerDelete[i].setPreferredSize(new Dimension(100, 25));
+                    p0l.setPreferredSize(new Dimension(900, 1));
+
+                    pManagementBox.add(p0l);
+                    pManagementBox.add(p0);
+                    pManagementBox.add(p0e1);
+                    pManagementBox.add(p1);
+                    pManagementBox.add(p0e4);
+                    pManagementBox.add(bManagerUpdate[i]);
+                    pManagementBox.add(p0e2);
+                    pManagementBox.add(bManagerDelete[i]);
+                    pManagementBox.add(p0e3);
+                }
+
+                break;
+            case 3:
+                sData = q.getSupplierAndAdres();
+                bManagerUpdate = new JButton[sData.length];
+                bManagerDelete = new JButton[sData.length];
+
+                for (int i = 0; i < sData.length; i++) {
+
+                    d = d + 1;
+
+                    JPanel p0 = new JPanel();
+                    JPanel p0e1 = new JPanel();
+                    JPanel p0e2 = new JPanel();
+                    JPanel p0e3 = new JPanel();
+                    JPanel p0l = new JPanel();
+                    JLabel l0 = new JLabel(sData[i][2]);
+
+                    bManagerUpdate[i] = new JButton("Update");
+                    bManagerDelete[i] = new JButton("Delete");
+
+                    p0.add(l0);
+                    p0.setOpaque(false);
+                    p0e1.setOpaque(false);
+                    p0e2.setOpaque(false);
+                    p0e3.setOpaque(false);
+                    p0l.setBackground(new Color(64, 64, 64));
+
+                    l0.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    l0.setForeground(new Color(64, 64, 64));
+
+                    bManagerUpdate[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerUpdate[i].setBackground(new Color(203, 135, 0));
+                    bManagerUpdate[i].setForeground(new Color(255, 248, 236));
+                    bManagerUpdate[i].setBorderPainted(false);
+
+                    bManagerDelete[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerDelete[i].setBackground(new Color(203, 0, 0));
+                    bManagerDelete[i].setForeground(new Color(255, 248, 236));
+                    bManagerDelete[i].setBorderPainted(false);
+
+                    bManagerUpdate[i].addActionListener(this);
+                    bManagerDelete[i].addActionListener(this);
+
+                    p0.setPreferredSize(new Dimension(200, 30));
+                    p0e1.setPreferredSize(new Dimension(100, 25));
+                    p0e2.setPreferredSize(new Dimension(50, 25));
+                    p0e3.setPreferredSize(new Dimension(400, 25));
+                    bManagerUpdate[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerDelete[i].setPreferredSize(new Dimension(100, 25));
+                    p0l.setPreferredSize(new Dimension(900, 1));
+
+                    pManagementBox.add(p0l);
+                    pManagementBox.add(p0);
+                    pManagementBox.add(p0e1);
+                    pManagementBox.add(bManagerUpdate[i]);
+                    pManagementBox.add(p0e2);
+                    pManagementBox.add(bManagerDelete[i]);
+                    pManagementBox.add(p0e3);
+                }
+
+
+                break;
+            case 4:
+
+                sData = q.getPosition();
+                bManagerUpdate = new JButton[sData.length];
+                bManagerDelete = new JButton[sData.length];
+
+                for (int i = 0; i < sData.length; i++) {
+
+                    d = d + 1;
+
+                    JPanel p0 = new JPanel();
+                    JPanel p0e1 = new JPanel();
+                    JPanel p0e2 = new JPanel();
+                    JPanel p0e3 = new JPanel();
+                    JPanel p0l = new JPanel();
+                    JLabel l0 = new JLabel(sData[i][1]);
+
+                    bManagerUpdate[i] = new JButton("Update");
+                    bManagerDelete[i] = new JButton("Delete");
+
+                    p0.add(l0);
+                    p0.setOpaque(false);
+                    p0e1.setOpaque(false);
+                    p0e2.setOpaque(false);
+                    p0e3.setOpaque(false);
+                    p0l.setBackground(new Color(64, 64, 64));
+
+                    l0.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    l0.setForeground(new Color(64, 64, 64));
+
+                    bManagerUpdate[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerUpdate[i].setBackground(new Color(203, 135, 0));
+                    bManagerUpdate[i].setForeground(new Color(255, 248, 236));
+                    bManagerUpdate[i].setBorderPainted(false);
+
+                    bManagerDelete[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerDelete[i].setBackground(new Color(203, 0, 0));
+                    bManagerDelete[i].setForeground(new Color(255, 248, 236));
+                    bManagerDelete[i].setBorderPainted(false);
+
+                    bManagerUpdate[i].addActionListener(this);
+                    bManagerDelete[i].addActionListener(this);
+
+                    p0.setPreferredSize(new Dimension(200, 30));
+                    p0e1.setPreferredSize(new Dimension(100, 25));
+                    p0e2.setPreferredSize(new Dimension(50, 25));
+                    p0e3.setPreferredSize(new Dimension(400, 25));
+                    bManagerUpdate[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerDelete[i].setPreferredSize(new Dimension(100, 25));
+                    p0l.setPreferredSize(new Dimension(900, 1));
+
+                    pManagementBox.add(p0l);
+                    pManagementBox.add(p0);
+                    pManagementBox.add(p0e1);
+                    pManagementBox.add(bManagerUpdate[i]);
+                    pManagementBox.add(p0e2);
+                    pManagementBox.add(bManagerDelete[i]);
+                    pManagementBox.add(p0e3);
+                }
+
+
+                break;
+            default:
+        }
+
+        pManagementBox.setPreferredSize(new Dimension(900, 41*d));
+        pManagementBox.setOpaque(false);
+        spManagement.setOpaque(false);
+        spManagement.getViewport().setOpaque(false);
+        spManagement.setBorder(createEmptyBorder());
+        spManagement.setBounds(0, 120, 986, 444);
+
+        layere.add(spManagement, 1, 0);
+
+    }
+
+    private void updateCustomerAndAdres(int i) {
+
+        update = true;
+
+        stroreId = i;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[6];
+
+        JPanel pname = new JPanel();
+        JPanel psurname = new JPanel();
+        JPanel pstreet = new JPanel();
+        JPanel phome = new JPanel();
+        JPanel ppostalCode = new JPanel();
+        JPanel pcity = new JPanel();
+
+        JLabel lname = new JLabel("Name:");
+        JLabel lsurname = new JLabel("Surname:");
+        JLabel lstreet = new JLabel("Street:");
+        JLabel lhome = new JLabel("Home nr:");
+        JLabel lpostalCode = new JLabel("Postal code:");
+        JLabel lcity = new JLabel("City: ");
+
+        pname.setOpaque(false);
+        psurname.setOpaque(false);
+        pstreet.setOpaque(false);
+        phome.setOpaque(false);
+        ppostalCode.setOpaque(false);
+        pcity.setOpaque(false);
+
+        pname.add(lname);
+        psurname.add(lsurname);
+        pstreet.add(lstreet);
+        phome.add(lhome);
+        ppostalCode.add(lpostalCode);
+        pcity.add(lcity);
+
+        tfData[0] = new JTextField(sData[i][2]);
+        tfData[1] = new JTextField(sData[i][3]);
+        tfData[2] = new JTextField(sData[i][4]);
+        tfData[3] = new JTextField(sData[i][5]);
+        tfData[4] = new JTextField(sData[i][6]);
+        tfData[5] = new JTextField(sData[i][7]);
+
+        tfData[0].addKeyListener(this);
+        tfData[1].addKeyListener(this);
+        tfData[2].addKeyListener(this);
+        tfData[3].addKeyListener(this);
+        tfData[4].addKeyListener(this);
+        tfData[5].addKeyListener(this);
+
+        tfData[0].setBounds(300, 200, 100, 25);
+        tfData[1].setBounds(300, 250, 100, 25);
+        tfData[2].setBounds(700, 150, 100, 25);
+        tfData[3].setBounds(700, 200, 100, 25);
+        tfData[4].setBounds(700, 250, 100, 25);
+        tfData[5].setBounds(700, 300, 100, 25);
+
+        pname.setBounds(200, 200, 100, 25);
+        psurname.setBounds(200, 250, 100, 25);
+        pstreet.setBounds(600, 150, 100, 25);
+        phome.setBounds(600, 200, 100, 25);
+        ppostalCode.setBounds(600, 250, 100, 25);
+        pcity.setBounds(600, 300, 100, 25);
+
+        bgManager.add(pname, 2, 0);
+        bgManager.add(psurname, 2, 0);
+        bgManager.add(pstreet, 2, 0);
+        bgManager.add(phome, 2, 0);
+        bgManager.add(ppostalCode, 2, 0);
+        bgManager.add(pcity, 2, 0);
+        bgManager.add(pname, 2, 0);
+
+        bgManager.add(tfData[0], 2, 0);
+        bgManager.add(tfData[1], 2, 0);
+        bgManager.add(tfData[2], 2, 0);
+        bgManager.add(tfData[3], 2, 0);
+        bgManager.add(tfData[4], 2, 0);
+        bgManager.add(tfData[5], 2, 0);
+    }
+
+    private void newCustomerAndAdres() {
+
+        update = false;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[6];
+
+        JPanel pname = new JPanel();
+        JPanel psurname = new JPanel();
+        JPanel pstreet = new JPanel();
+        JPanel phome = new JPanel();
+        JPanel ppostalCode = new JPanel();
+        JPanel pcity = new JPanel();
+
+        JLabel lname = new JLabel("Name:");
+        JLabel lsurname = new JLabel("Surname:");
+        JLabel lstreet = new JLabel("Street:");
+        JLabel lhome = new JLabel("Home nr:");
+        JLabel lpostalCode = new JLabel("Postal code:");
+        JLabel lcity = new JLabel("City: ");
+
+        pname.setOpaque(false);
+        psurname.setOpaque(false);
+        pstreet.setOpaque(false);
+        phome.setOpaque(false);
+        ppostalCode.setOpaque(false);
+        pcity.setOpaque(false);
+
+        pname.add(lname);
+        psurname.add(lsurname);
+        pstreet.add(lstreet);
+        phome.add(lhome);
+        ppostalCode.add(lpostalCode);
+        pcity.add(lcity);
+
+        tfData[0] = new JTextField();
+        tfData[1] = new JTextField();
+        tfData[2] = new JTextField();
+        tfData[3] = new JTextField();
+        tfData[4] = new JTextField();
+        tfData[5] = new JTextField();
+
+        tfData[0].addKeyListener(this);
+        tfData[1].addKeyListener(this);
+        tfData[2].addKeyListener(this);
+        tfData[3].addKeyListener(this);
+        tfData[4].addKeyListener(this);
+        tfData[5].addKeyListener(this);
+
+        tfData[0].setBounds(300, 200, 100, 25);
+        tfData[1].setBounds(300, 250, 100, 25);
+        tfData[2].setBounds(700, 150, 100, 25);
+        tfData[3].setBounds(700, 200, 100, 25);
+        tfData[4].setBounds(700, 250, 100, 25);
+        tfData[5].setBounds(700, 300, 100, 25);
+
+        pname.setBounds(200, 200, 100, 25);
+        psurname.setBounds(200, 250, 100, 25);
+        pstreet.setBounds(600, 150, 100, 25);
+        phome.setBounds(600, 200, 100, 25);
+        ppostalCode.setBounds(600, 250, 100, 25);
+        pcity.setBounds(600, 300, 100, 25);
+
+        bgManager.add(pname, 2, 0);
+        bgManager.add(psurname, 2, 0);
+        bgManager.add(pstreet, 2, 0);
+        bgManager.add(phome, 2, 0);
+        bgManager.add(ppostalCode, 2, 0);
+        bgManager.add(pcity, 2, 0);
+        bgManager.add(pname, 2, 0);
+
+        bgManager.add(tfData[0], 2, 0);
+        bgManager.add(tfData[1], 2, 0);
+        bgManager.add(tfData[2], 2, 0);
+        bgManager.add(tfData[3], 2, 0);
+        bgManager.add(tfData[4], 2, 0);
+        bgManager.add(tfData[5], 2, 0);
+    }
+
+    private void updateEmployeeAndAdres(int i) {
+
+        cbManagamet.removeAllItems();
+
+        for (String s : q.fillcbPosition()) {
+            cbManagamet.addItem(s);
+        }
+
+        cbManagamet.setSelectedItem(sData[i][12]);
+
+        update = true;
+
+        stroreId = i;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[9];
+
+        JPanel pname = new JPanel();
+        JPanel psurname = new JPanel();
+        JPanel ppesel = new JPanel();
+        JPanel pbirthDate = new JPanel();
+        JPanel pphoneNumber = new JPanel();
+        JPanel pstreet = new JPanel();
+        JPanel phome = new JPanel();
+        JPanel ppostalCode = new JPanel();
+        JPanel pcity = new JPanel();
+        JPanel pposition = new JPanel();
+
+        JLabel lname = new JLabel("Name:");
+        JLabel lsurname = new JLabel("Surname:");
+        JLabel lpesel = new JLabel("Pesel:");
+        JLabel lbirthDate = new JLabel("Birth date:");
+        JLabel lphoneNumber = new JLabel("Phone number:");
+        JLabel lstreet = new JLabel("Street:");
+        JLabel lhome = new JLabel("Home nr:");
+        JLabel lpostalCode = new JLabel("Postal code:");
+        JLabel lcity = new JLabel("City: ");
+        JLabel lposition = new JLabel(("Position:"));
+
+        pname.setOpaque(false);
+        psurname.setOpaque(false);
+        ppesel.setOpaque(false);
+        pbirthDate.setOpaque(false);
+        pphoneNumber.setOpaque(false);
+        pstreet.setOpaque(false);
+        phome.setOpaque(false);
+        ppostalCode.setOpaque(false);
+        pcity.setOpaque(false);
+        pposition.setOpaque(false);
+
+        pname.add(lname);
+        psurname.add(lsurname);
+        ppesel.add(lpesel);
+        pbirthDate.add(lbirthDate);
+        pphoneNumber.add(lphoneNumber);
+        pstreet.add(lstreet);
+        phome.add(lhome);
+        ppostalCode.add(lpostalCode);
+        pcity.add(lcity);
+        pposition.add(lposition);
+
+        tfData[0] = new JTextField(sData[i][3]);
+        tfData[1] = new JTextField(sData[i][4]);
+        tfData[2] = new JTextField(sData[i][5]);
+        tfData[3] = new JTextField(sData[i][6]);
+        tfData[4] = new JTextField(sData[i][7]);
+        tfData[5] = new JTextField(sData[i][8]);
+        tfData[6] = new JTextField(sData[i][9]);
+        tfData[7] = new JTextField(sData[i][10]);
+        tfData[8] = new JTextField(sData[i][11]);
+
+        tfData[0].addKeyListener(this);
+        tfData[1].addKeyListener(this);
+        tfData[2].addKeyListener(this);
+        tfData[3].addKeyListener(this);
+        tfData[4].addKeyListener(this);
+        tfData[5].addKeyListener(this);
+        tfData[6].addKeyListener(this);
+        tfData[7].addKeyListener(this);
+        tfData[8].addKeyListener(this);
+
+        tfData[0].setBounds(300, 100, 100, 25);
+        tfData[1].setBounds(300, 150, 100, 25);
+        tfData[2].setBounds(300, 200, 100, 25);
+        tfData[3].setBounds(300, 250, 100, 25);
+        tfData[4].setBounds(300, 300, 100, 25);
+        tfData[5].setBounds(700, 150, 100, 25);
+        tfData[6].setBounds(700, 200, 100, 25);
+        tfData[7].setBounds(700, 250, 100, 25);
+        tfData[8].setBounds(700, 300, 100, 25);
+
+        cbManagamet.setBounds(300, 350, 100, 25);
+
+        pname.setBounds(200, 100, 100, 25);
+        psurname.setBounds(200, 150, 100, 25);
+        ppesel.setBounds(200, 200, 100, 25);
+        pbirthDate.setBounds(200, 250, 100, 25);
+        pphoneNumber.setBounds(200, 300, 100, 25);
+        pposition.setBounds(200, 350, 100, 25);
+        pstreet.setBounds(600, 150, 100, 25);
+        phome.setBounds(600, 200, 100, 25);
+        ppostalCode.setBounds(600, 250, 100, 25);
+        pcity.setBounds(600, 300, 100, 25);
+
+        bgManager.add(pname, 2, 0);
+        bgManager.add(psurname, 2, 0);
+        bgManager.add(ppesel, 2, 0);
+        bgManager.add(pbirthDate, 2, 0);
+        bgManager.add(pphoneNumber, 2, 0);
+        bgManager.add(pposition, 2, 0);
+        bgManager.add(pstreet, 2, 0);
+        bgManager.add(phome, 2, 0);
+        bgManager.add(ppostalCode, 2, 0);
+        bgManager.add(pcity, 2, 0);
+        bgManager.add(pname, 2, 0);
+
+        bgManager.add(cbManagamet, 2, 0);
+
+        bgManager.add(tfData[0], 2, 0);
+        bgManager.add(tfData[1], 2, 0);
+        bgManager.add(tfData[2], 2, 0);
+        bgManager.add(tfData[3], 2, 0);
+        bgManager.add(tfData[4], 2, 0);
+        bgManager.add(tfData[5], 2, 0);
+        bgManager.add(tfData[6], 2, 0);
+        bgManager.add(tfData[7], 2, 0);
+        bgManager.add(tfData[8], 2, 0);
+    }
+
+    private void newEmployeeAndAdres() {
+        cbManagamet.removeAllItems();
+
+        for (String s : q.fillcbPosition()) {
+            cbManagamet.addItem(s);
+        }
+
+        update = false;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[9];
+
+        JPanel pname = new JPanel();
+        JPanel psurname = new JPanel();
+        JPanel ppesel = new JPanel();
+        JPanel pbirthDate = new JPanel();
+        JPanel pphoneNumber = new JPanel();
+        JPanel pstreet = new JPanel();
+        JPanel phome = new JPanel();
+        JPanel ppostalCode = new JPanel();
+        JPanel pcity = new JPanel();
+        JPanel pposition = new JPanel();
+
+        JLabel lname = new JLabel("Name:");
+        JLabel lsurname = new JLabel("Surname:");
+        JLabel lpesel = new JLabel("Pesel:");
+        JLabel lbirthDate = new JLabel("Birth date:");
+        JLabel lphoneNumber = new JLabel("Phone number:");
+        JLabel lstreet = new JLabel("Street:");
+        JLabel lhome = new JLabel("Home nr:");
+        JLabel lpostalCode = new JLabel("Postal code:");
+        JLabel lcity = new JLabel("City: ");
+        JLabel lposition = new JLabel(("Position:"));
+
+        pname.setOpaque(false);
+        psurname.setOpaque(false);
+        ppesel.setOpaque(false);
+        pbirthDate.setOpaque(false);
+        pphoneNumber.setOpaque(false);
+        pstreet.setOpaque(false);
+        phome.setOpaque(false);
+        ppostalCode.setOpaque(false);
+        pcity.setOpaque(false);
+        pposition.setOpaque(false);
+
+        pname.add(lname);
+        psurname.add(lsurname);
+        ppesel.add(lpesel);
+        pbirthDate.add(lbirthDate);
+        pphoneNumber.add(lphoneNumber);
+        pstreet.add(lstreet);
+        phome.add(lhome);
+        ppostalCode.add(lpostalCode);
+        pcity.add(lcity);
+        pposition.add(lposition);
+
+        tfData[0] = new JTextField();
+        tfData[1] = new JTextField();
+        tfData[2] = new JTextField();
+        tfData[3] = new JTextField();
+        tfData[4] = new JTextField();
+        tfData[5] = new JTextField();
+        tfData[6] = new JTextField();
+        tfData[7] = new JTextField();
+        tfData[8] = new JTextField();
+
+        tfData[0].addKeyListener(this);
+        tfData[1].addKeyListener(this);
+        tfData[2].addKeyListener(this);
+        tfData[3].addKeyListener(this);
+        tfData[4].addKeyListener(this);
+        tfData[5].addKeyListener(this);
+        tfData[6].addKeyListener(this);
+        tfData[7].addKeyListener(this);
+        tfData[8].addKeyListener(this);
+
+        tfData[0].setBounds(300, 100, 100, 25);
+        tfData[1].setBounds(300, 150, 100, 25);
+        tfData[2].setBounds(300, 200, 100, 25);
+        tfData[3].setBounds(300, 250, 100, 25);
+        tfData[4].setBounds(300, 300, 100, 25);
+        tfData[5].setBounds(700, 150, 100, 25);
+        tfData[6].setBounds(700, 200, 100, 25);
+        tfData[7].setBounds(700, 250, 100, 25);
+        tfData[8].setBounds(700, 300, 100, 25);
+
+        cbManagamet.setBounds(300, 350, 100, 25);
+
+        pname.setBounds(200, 100, 100, 25);
+        psurname.setBounds(200, 150, 100, 25);
+        ppesel.setBounds(200, 200, 100, 25);
+        pbirthDate.setBounds(200, 250, 100, 25);
+        pphoneNumber.setBounds(200, 300, 100, 25);
+        pposition.setBounds(200, 350, 100, 25);
+        pstreet.setBounds(600, 150, 100, 25);
+        phome.setBounds(600, 200, 100, 25);
+        ppostalCode.setBounds(600, 250, 100, 25);
+        pcity.setBounds(600, 300, 100, 25);
+
+        bgManager.add(pname, 2, 0);
+        bgManager.add(psurname, 2, 0);
+        bgManager.add(ppesel, 2, 0);
+        bgManager.add(pbirthDate, 2, 0);
+        bgManager.add(pphoneNumber, 2, 0);
+        bgManager.add(pposition, 2, 0);
+        bgManager.add(pstreet, 2, 0);
+        bgManager.add(phome, 2, 0);
+        bgManager.add(ppostalCode, 2, 0);
+        bgManager.add(pcity, 2, 0);
+        bgManager.add(pname, 2, 0);
+
+        bgManager.add(cbManagamet, 2, 0);
+
+        bgManager.add(tfData[0], 2, 0);
+        bgManager.add(tfData[1], 2, 0);
+        bgManager.add(tfData[2], 2, 0);
+        bgManager.add(tfData[3], 2, 0);
+        bgManager.add(tfData[4], 2, 0);
+        bgManager.add(tfData[5], 2, 0);
+        bgManager.add(tfData[6], 2, 0);
+        bgManager.add(tfData[7], 2, 0);
+        bgManager.add(tfData[8], 2, 0);
+    }
+
+    private void updateProductCategory(int i) {
+
+        cbManagamet.removeAllItems();
+        cbManagamet1.removeAllItems();
+        cbManagamet2.removeAllItems();
+
+        cbManagamet1.addItem("none");
+        cbManagamet2.addItem("none");
+
+        storeBakerId = q.getConfectionersIds();
+
+        for (String s : q.fillcbCategory()) {
+            cbManagamet.addItem(s);
+        }
+
+        for (String s : q.fillcbConfectioner()) {
+            cbManagamet1.addItem(s);
+        }
+
+        for (String s : q.fillcbSupplier()) {
+            cbManagamet2.addItem(s);
+        }
+
+        cbManagamet.setSelectedItem(sData[i][11]);
+
+        if (sData[i][8] == null) {
+            cbManagamet1.setSelectedIndex(0);
+        } else {
+            cbManagamet1.setSelectedItem(sData[i][8]+" "+sData[i][9]);
+        }
+
+        if (sData[i][10] == null) {
+            cbManagamet2.setSelectedIndex(0);
+        } else {
+            cbManagamet2.setSelectedItem(sData[i][10]);
+        }
+
+        update = true;
+
+        stroreId = i;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[4];
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+        JPanel p3 = new JPanel();
+        JPanel p4 = new JPanel();
+        JPanel p5 = new JPanel();
+        JPanel p6 = new JPanel();
+        JPanel p7 = new JPanel();
+
+        JLabel l1 = new JLabel("Name:");
+        JLabel l2 = new JLabel("Price:");
+        JLabel l3 = new JLabel("Description:");
+        JLabel l4 = new JLabel("Composition");
+        JLabel l5 = new JLabel("Category:");
+        JLabel l6 = new JLabel("Confectioner:");
+        JLabel l7 = new JLabel("Supplier:");
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+        p3.setOpaque(false);
+        p4.setOpaque(false);
+        p5.setOpaque(false);
+        p6.setOpaque(false);
+        p7.setOpaque(false);
+
+        p1.add(l1);
+        p2.add(l2);
+        p3.add(l3);
+        p4.add(l4);
+        p5.add(l5);
+        p6.add(l6);
+        p7.add(l7);
+
+        tfData[0] = new JTextField(sData[i][4]);
+        tfData[1] = new JTextField(sData[i][5]);
+        tfData[2] = new JTextField(sData[i][6]);
+        tfData[3] = new JTextField(sData[i][7]);
+
+        tfData[0].addKeyListener(this);
+        tfData[1].addKeyListener(this);
+        tfData[2].addKeyListener(this);
+        tfData[3].addKeyListener(this);
+
+        tfData[0].setBounds(300, 150, 200, 25);
+        tfData[1].setBounds(300, 200, 100, 25);
+        tfData[2].setBounds(200, 290, 700, 50);
+        tfData[3].setBounds(200, 390, 700, 50);
+
+        cbManagamet.setBounds(700, 100, 150, 25);
+        cbManagamet1.setBounds(700, 150, 150, 25);
+        cbManagamet2.setBounds(700, 200, 150, 25);
+
+        p1.setBounds(200, 150, 100, 25);
+        p2.setBounds(200, 200, 100, 25);
+        p3.setBounds(200, 250, 100, 25);
+        p4.setBounds(200, 350, 100, 25);
+        p5.setBounds(600, 100, 100, 25);
+        p6.setBounds(600, 150, 100, 25);
+        p7.setBounds(600, 200, 100, 25);
+
+        bgManager.add(p1, 2, 0);
+        bgManager.add(p2, 2, 0);
+        bgManager.add(p3, 2, 0);
+        bgManager.add(p4, 2, 0);
+        bgManager.add(p5, 2, 0);
+        bgManager.add(p6, 2, 0);
+        bgManager.add(p7, 2, 0);
+
+        bgManager.add(cbManagamet, 2, 0);
+        bgManager.add(cbManagamet1, 2, 0);
+        bgManager.add(cbManagamet2, 2, 0);
+
+        bgManager.add(tfData[0], 2, 0);
+        bgManager.add(tfData[1], 2, 0);
+        bgManager.add(tfData[2], 2, 0);
+        bgManager.add(tfData[3], 2, 0);
+    }
+
+    private void newProductCategory() {
+
+        cbManagamet.removeAllItems();
+        cbManagamet1.removeAllItems();
+        cbManagamet2.removeAllItems();
+
+        cbManagamet1.addItem("none");
+        cbManagamet2.addItem("none");
+
+        storeBakerId = q.getConfectionersIds();
+
+        for (String s : q.fillcbCategory()) {
+            cbManagamet.addItem(s);
+        }
+
+        for (String s : q.fillcbConfectioner()) {
+            cbManagamet1.addItem(s);
+        }
+
+        for (String s : q.fillcbSupplier()) {
+            cbManagamet2.addItem(s);
+        }
+
+        update = false;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[4];
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+        JPanel p3 = new JPanel();
+        JPanel p4 = new JPanel();
+        JPanel p5 = new JPanel();
+        JPanel p6 = new JPanel();
+        JPanel p7 = new JPanel();
+
+        JLabel l1 = new JLabel("Name:");
+        JLabel l2 = new JLabel("Price:");
+        JLabel l3 = new JLabel("Description:");
+        JLabel l4 = new JLabel("Composition");
+        JLabel l5 = new JLabel("Category:");
+        JLabel l6 = new JLabel("Confectioner:");
+        JLabel l7 = new JLabel("Supplier:");
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+        p3.setOpaque(false);
+        p4.setOpaque(false);
+        p5.setOpaque(false);
+        p6.setOpaque(false);
+        p7.setOpaque(false);
+
+        p1.add(l1);
+        p2.add(l2);
+        p3.add(l3);
+        p4.add(l4);
+        p5.add(l5);
+        p6.add(l6);
+        p7.add(l7);
+
+        tfData[0] = new JTextField();
+        tfData[1] = new JTextField();
+        tfData[2] = new JTextField();
+        tfData[3] = new JTextField();
+
+        tfData[0].addKeyListener(this);
+        tfData[1].addKeyListener(this);
+        tfData[2].addKeyListener(this);
+        tfData[3].addKeyListener(this);
+
+        tfData[0].setBounds(300, 150, 200, 25);
+        tfData[1].setBounds(300, 200, 100, 25);
+        tfData[2].setBounds(200, 290, 700, 50);
+        tfData[3].setBounds(200, 390, 700, 50);
+
+        cbManagamet.setBounds(700, 100, 150, 25);
+        cbManagamet1.setBounds(700, 150, 150, 25);
+        cbManagamet2.setBounds(700, 200, 150, 25);
+
+        p1.setBounds(200, 150, 100, 25);
+        p2.setBounds(200, 200, 100, 25);
+        p3.setBounds(200, 250, 100, 25);
+        p4.setBounds(200, 350, 100, 25);
+        p5.setBounds(600, 100, 100, 25);
+        p6.setBounds(600, 150, 100, 25);
+        p7.setBounds(600, 200, 100, 25);
+
+        bgManager.add(p1, 2, 0);
+        bgManager.add(p2, 2, 0);
+        bgManager.add(p3, 2, 0);
+        bgManager.add(p4, 2, 0);
+        bgManager.add(p5, 2, 0);
+        bgManager.add(p6, 2, 0);
+        bgManager.add(p7, 2, 0);
+
+        bgManager.add(cbManagamet, 2, 0);
+        bgManager.add(cbManagamet1, 2, 0);
+        bgManager.add(cbManagamet2, 2, 0);
+
+        bgManager.add(tfData[0], 2, 0);
+        bgManager.add(tfData[1], 2, 0);
+        bgManager.add(tfData[2], 2, 0);
+        bgManager.add(tfData[3], 2, 0);
+    }
+
+    private void updateSupplierAdres(int i) {
+
+        update = true;
+
+        stroreId = i;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[7];
+
+        JPanel pname = new JPanel();
+        JPanel pphone = new JPanel();
+        JPanel pemail = new JPanel();
+        JPanel pstreet = new JPanel();
+        JPanel phome = new JPanel();
+        JPanel ppostalCode = new JPanel();
+        JPanel pcity = new JPanel();
+
+        JLabel lname = new JLabel("Name:");
+        JLabel lphone = new JLabel("Phone number:");
+        JLabel lemail = new JLabel("E-Mail:");
+        JLabel lstreet = new JLabel("Street:");
+        JLabel lhome = new JLabel("Home nr:");
+        JLabel lpostalCode = new JLabel("Postal code:");
+        JLabel lcity = new JLabel("City: ");
+
+        pname.setOpaque(false);
+        pphone.setOpaque(false);
+        pemail.setOpaque(false);
+        pstreet.setOpaque(false);
+        phome.setOpaque(false);
+        ppostalCode.setOpaque(false);
+        pcity.setOpaque(false);
+
+        pname.add(lname);
+        pphone.add(lphone);
+        pemail.add(lemail);
+        pstreet.add(lstreet);
+        phome.add(lhome);
+        ppostalCode.add(lpostalCode);
+        pcity.add(lcity);
+
+        tfData[0] = new JTextField(sData[i][2]);
+        tfData[1] = new JTextField(sData[i][3]);
+        tfData[2] = new JTextField(sData[i][4]);
+        tfData[3] = new JTextField(sData[i][5]);
+        tfData[4] = new JTextField(sData[i][6]);
+        tfData[5] = new JTextField(sData[i][7]);
+        tfData[6] = new JTextField(sData[i][8]);
+
+        tfData[0].addKeyListener(this);
+        tfData[1].addKeyListener(this);
+        tfData[2].addKeyListener(this);
+        tfData[3].addKeyListener(this);
+        tfData[4].addKeyListener(this);
+        tfData[5].addKeyListener(this);
+        tfData[6].addKeyListener(this);
+
+        tfData[0].setBounds(300, 150, 100, 25);
+        tfData[1].setBounds(300, 200, 100, 25);
+        tfData[2].setBounds(300, 250, 150, 25);
+        tfData[3].setBounds(700, 150, 100, 25);
+        tfData[4].setBounds(700, 200, 100, 25);
+        tfData[5].setBounds(700, 250, 100, 25);
+        tfData[6].setBounds(700, 300, 100, 25);
+
+        pname.setBounds(200, 150, 100, 25);
+        pphone.setBounds(200, 200, 100, 25);
+        pemail.setBounds(200, 250, 100, 25);
+        pstreet.setBounds(600, 150, 100, 25);
+        phome.setBounds(600, 200, 100, 25);
+        ppostalCode.setBounds(600, 250, 100, 25);
+        pcity.setBounds(600, 300, 100, 25);
+
+        bgManager.add(pname, 2, 0);
+        bgManager.add(pphone, 2, 0);
+        bgManager.add(pemail, 2, 0);
+        bgManager.add(pstreet, 2, 0);
+        bgManager.add(phome, 2, 0);
+        bgManager.add(ppostalCode, 2, 0);
+        bgManager.add(pcity, 2, 0);
+        bgManager.add(pname, 2, 0);
+
+        bgManager.add(tfData[0], 2, 0);
+        bgManager.add(tfData[1], 2, 0);
+        bgManager.add(tfData[2], 2, 0);
+        bgManager.add(tfData[3], 2, 0);
+        bgManager.add(tfData[4], 2, 0);
+        bgManager.add(tfData[5], 2, 0);
+        bgManager.add(tfData[6], 2, 0);
+    }
+
+    private void newSupplierAdres() {
+
+        update = false;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[7];
+
+        JPanel pname = new JPanel();
+        JPanel pphone = new JPanel();
+        JPanel pemail = new JPanel();
+        JPanel pstreet = new JPanel();
+        JPanel phome = new JPanel();
+        JPanel ppostalCode = new JPanel();
+        JPanel pcity = new JPanel();
+
+        JLabel lname = new JLabel("Name:");
+        JLabel lphone = new JLabel("Phone number:");
+        JLabel lemail = new JLabel("E-Mail:");
+        JLabel lstreet = new JLabel("Street:");
+        JLabel lhome = new JLabel("Home nr:");
+        JLabel lpostalCode = new JLabel("Postal code:");
+        JLabel lcity = new JLabel("City: ");
+
+        pname.setOpaque(false);
+        pphone.setOpaque(false);
+        pemail.setOpaque(false);
+        pstreet.setOpaque(false);
+        phome.setOpaque(false);
+        ppostalCode.setOpaque(false);
+        pcity.setOpaque(false);
+
+        pname.add(lname);
+        pphone.add(lphone);
+        pemail.add(lemail);
+        pstreet.add(lstreet);
+        phome.add(lhome);
+        ppostalCode.add(lpostalCode);
+        pcity.add(lcity);
+
+        tfData[0] = new JTextField();
+        tfData[1] = new JTextField();
+        tfData[2] = new JTextField();
+        tfData[3] = new JTextField();
+        tfData[4] = new JTextField();
+        tfData[5] = new JTextField();
+        tfData[6] = new JTextField();
+
+        tfData[0].addKeyListener(this);
+        tfData[1].addKeyListener(this);
+        tfData[2].addKeyListener(this);
+        tfData[3].addKeyListener(this);
+        tfData[4].addKeyListener(this);
+        tfData[5].addKeyListener(this);
+        tfData[6].addKeyListener(this);
+
+        tfData[0].setBounds(300, 150, 100, 25);
+        tfData[1].setBounds(300, 200, 100, 25);
+        tfData[2].setBounds(300, 250, 150, 25);
+        tfData[3].setBounds(700, 150, 100, 25);
+        tfData[4].setBounds(700, 200, 100, 25);
+        tfData[5].setBounds(700, 250, 100, 25);
+        tfData[6].setBounds(700, 300, 100, 25);
+
+        pname.setBounds(200, 150, 100, 25);
+        pphone.setBounds(200, 200, 100, 25);
+        pemail.setBounds(200, 250, 100, 25);
+        pstreet.setBounds(600, 150, 100, 25);
+        phome.setBounds(600, 200, 100, 25);
+        ppostalCode.setBounds(600, 250, 100, 25);
+        pcity.setBounds(600, 300, 100, 25);
+
+        bgManager.add(pname, 2, 0);
+        bgManager.add(pphone, 2, 0);
+        bgManager.add(pemail, 2, 0);
+        bgManager.add(pstreet, 2, 0);
+        bgManager.add(phome, 2, 0);
+        bgManager.add(ppostalCode, 2, 0);
+        bgManager.add(pcity, 2, 0);
+        bgManager.add(pname, 2, 0);
+
+        bgManager.add(tfData[0], 2, 0);
+        bgManager.add(tfData[1], 2, 0);
+        bgManager.add(tfData[2], 2, 0);
+        bgManager.add(tfData[3], 2, 0);
+        bgManager.add(tfData[4], 2, 0);
+        bgManager.add(tfData[5], 2, 0);
+        bgManager.add(tfData[6], 2, 0);
+    }
+
+    private void updatePositions(int i) {
+
+        update = true;
+
+        stroreId = i;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[2];
+
+        JPanel pname = new JPanel();
+        JPanel psalary = new JPanel();
+
+        JLabel lname = new JLabel("Position:");
+        JLabel lsalary = new JLabel("Salary:");
+
+        pname.setOpaque(false);
+        psalary.setOpaque(false);
+
+        pname.add(lname);
+        psalary.add(lsalary);
+
+        tfData[0] = new JTextField(sData[i][1]);
+        tfData[1] = new JTextField(sData[i][2]);
+
+        tfData[0].addKeyListener(this);
+        tfData[1].addKeyListener(this);
+
+        tfData[0].setBounds(200, 250, 100, 25);
+        tfData[1].setBounds(600, 250, 100, 25);
+
+        pname.setBounds(200, 200, 100, 25);
+        psalary.setBounds(600, 200, 100, 25);
+
+        bgManager.add(pname, 2, 0);
+        bgManager.add(psalary, 2, 0);
+
+        bgManager.add(tfData[0], 2, 0);
+        bgManager.add(tfData[1], 2, 0);
+    }
+
+    private void newPositions() {
+
+        update = false;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[2];
+
+        JPanel pname = new JPanel();
+        JPanel psalary = new JPanel();
+
+        JLabel lname = new JLabel("Position:");
+        JLabel lsalary = new JLabel("Salary:");
+
+        pname.setOpaque(false);
+        psalary.setOpaque(false);
+
+        pname.add(lname);
+        psalary.add(lsalary);
+
+        tfData[0] = new JTextField();
+        tfData[1] = new JTextField();
+
+        tfData[0].addKeyListener(this);
+        tfData[1].addKeyListener(this);
+
+        tfData[0].setBounds(200, 250, 100, 25);
+        tfData[1].setBounds(600, 250, 100, 25);
+
+        pname.setBounds(200, 200, 100, 25);
+        psalary.setBounds(600, 200, 100, 25);
+
+        bgManager.add(pname, 2, 0);
+        bgManager.add(psalary, 2, 0);
+
+        bgManager.add(tfData[0], 2, 0);
+        bgManager.add(tfData[1], 2, 0);
+    }
+
+    private void removeManagerMore() {
+
+        layere.remove(bManagerCancel);
+        layere.remove(bManagerAccept);
+        layere.remove(bgManager);
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.removeAll();
+        bgManager.revalidate();
+        bgManager.repaint();
+
+        managerWindow();
+    }
+
+    private void removeManagerWindow() {
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+    }
+
+    private void removeLeftBanner() {
+
+        layere.remove(bHome);
+        layere.remove(bSearchProducts);
+        layere.remove(bNewOrders);
+        layere.remove(bBake);
+        layere.remove(bCompletedOrders);
+        layere.remove(bStatistics);
+        layere.remove(bManagerArea);
+
+        layere.revalidate();
+        layere.repaint();
+    }
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         Object z = actionEvent.getSource();
@@ -1902,6 +3532,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                 q.newAccount(tfName.getText(),tfSurname.getText(),tfPesel.getText(),tfBirthDate.getText(),gender,tfTelephone.getText(),tfStreet.getText(),Integer.parseInt(tfHomeNr.getText()),tfPostalCode.getText(),tfCity.getText(),tfUserN.getText(),pfPasswordN.getText(),position);
                 removeNewAccountWindow();
                 loginWindow();
+            } else {
+                JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else if (z == bCancel) {
             removeNewAccountWindow();
@@ -1930,7 +3562,14 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
             statisticsWindow();
         } else if (z == bManagerArea) {
             removeWindows();
-
+            removeLeftBanner();
+            managerWindow();
+        } else if (z == bLogOut) {
+            removeWindows();
+            removeLeftBanner();
+            tfUser.setText("");
+            pfPassword.setText("");
+            loginWindow();
         } else if (z == cbSubategory) {
             cbCategory.setModel(new DefaultComboBoxModel(q.fillcbCat(cbSubategory.getSelectedIndex())));
             removeSearchProductsBoxes();
@@ -1955,6 +3594,205 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
             updateCompletedOrdersWindow();
         } else if (z == cbStatsCategory) {
             updateStatisticsWindow();
+        } else if (z == cbChooseDbo) {
+            updateManagerWindow();
+        } else if (z == bManagerAdd) {
+            switch (cbChooseDbo.getSelectedIndex()) {
+                case 0:
+                    newCustomerAndAdres();
+                    break;
+                case 1:
+                    newEmployeeAndAdres();
+                    break;
+                case 2:
+                    newProductCategory();
+                    break;
+                case 3:
+                    newSupplierAdres();
+                    break;
+                case 4:
+                    newPositions();
+                    break;
+                default:
+            }
+        } else if (z == bManagerBack) {
+            removeWindows();
+            createLeftBanner();
+        } else if (z == bManagerAccept) {
+            switch (cbChooseDbo.getSelectedIndex()) {
+                case 0:
+                    if (update) {
+                        if (logic.checkNames(tfData[0].getText()) && logic.checkNames(tfData[1].getText()) && logic.checkNames(tfData[2].getText()) && logic.checkNumber(tfData[3].getText()) && logic.checkPostalCode(tfData[4].getText()) && logic.checkNames(tfData[5].getText())) {
+                            q.updateCustomerAndAdres(sData[stroreId][0], sData[stroreId][1], tfData[0].getText(), tfData[1].getText(), tfData[2].getText(), tfData[3].getText(), tfData[4].getText(), tfData[5].getText());
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        if (logic.checkNames(tfData[0].getText()) && logic.checkNames(tfData[1].getText()) && logic.checkNames(tfData[2].getText()) && logic.checkNumber(tfData[3].getText()) && logic.checkPostalCode(tfData[4].getText()) && logic.checkNames(tfData[5].getText())) {
+                            q.newCustomerAndAdres(q.getLastId("Customer")+1, q.getLastId("Adres")+1, tfData[0].getText(), tfData[1].getText(), tfData[2].getText(), tfData[3].getText(), tfData[4].getText(), tfData[5].getText());
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                    break;
+                case 1:
+                    if (update) {
+                        if (logic.checkNames(tfData[0].getText()) && logic.checkNames(tfData[1].getText()) && logic.checkPesel(tfData[2].getText()) && logic.checkBirthDate(tfData[3].getText()) && logic.checkTelephone(tfData[4].getText()) && logic.checkNames(tfData[5].getText()) && logic.checkNumber(tfData[6].getText()) && logic.checkPostalCode(tfData[7].getText()) && logic.checkNames(tfData[8].getText())) {
+                            if (logic.setGender(tfData[2].getText())) {
+                                q.updateEmployeeAndAdres(sData[stroreId][0], sData[stroreId][1], cbManagamet.getSelectedIndex()+1, tfData[0].getText(), tfData[1].getText(), tfData[2].getText(), tfData[3].getText(), "w", tfData[4].getText(), tfData[5].getText(), tfData[6].getText(), tfData[7].getText(), tfData[8].getText());
+                            } else {
+                                q.updateEmployeeAndAdres(sData[stroreId][0], sData[stroreId][1], cbManagamet.getSelectedIndex()+1, tfData[0].getText(), tfData[1].getText(), tfData[2].getText(), tfData[3].getText(), "m", tfData[4].getText(), tfData[5].getText(), tfData[6].getText(), tfData[7].getText(), tfData[8].getText());
+                            }
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        if (logic.checkNames(tfData[0].getText()) && logic.checkNames(tfData[1].getText()) && logic.checkPesel(tfData[2].getText()) && logic.checkBirthDate(tfData[3].getText()) && logic.checkTelephone(tfData[4].getText()) && logic.checkNames(tfData[5].getText()) && logic.checkNumber(tfData[6].getText()) && logic.checkPostalCode(tfData[7].getText()) && logic.checkNames(tfData[8].getText())) {
+                            if (logic.setGender(tfData[2].getText())) {
+                                q.newEmployeeAndAdres(q.getLastId("Employee")+1, q.getLastId("Adres")+1, cbManagamet.getSelectedIndex()+1, tfData[0].getText(), tfData[1].getText(), tfData[2].getText(), tfData[3].getText(), "w", tfData[4].getText(), tfData[5].getText(), tfData[6].getText(), tfData[7].getText(), tfData[8].getText());
+                            } else {
+                                q.newEmployeeAndAdres(q.getLastId("Employee")+1, q.getLastId("Adres")+1, cbManagamet.getSelectedIndex()+1, tfData[0].getText(), tfData[1].getText(), tfData[2].getText(), tfData[3].getText(), "m", tfData[4].getText(), tfData[5].getText(), tfData[6].getText(), tfData[7].getText(), tfData[8].getText());
+                            }
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                    break;
+                case 2:
+                    if (update) {
+                        if (logic.checkProductNewName(tfData[0].getText()) && logic.checkPrice(tfData[1].getText()) && logic.checkText(tfData[2].getText()) && logic.checkText(tfData[3].getText())) {
+                            String s;
+                            if (cbManagamet1.getSelectedIndex()==0) {
+                                s = "NULL";
+                            } else {
+                                s = ""+storeBakerId[cbManagamet1.getSelectedIndex()-1];
+                            }
+                            q.updateProductCategorySubcategory(sData[stroreId][0], cbManagamet.getSelectedIndex()+1, s, cbManagamet2.getSelectedIndex(), tfData[0].getText(), tfData[1].getText(), tfData[2].getText(), tfData[3].getText());
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        if (logic.checkProductNewName(tfData[0].getText()) && logic.checkPrice(tfData[1].getText()) && logic.checkText(tfData[2].getText()) && logic.checkText(tfData[3].getText())) {
+                            String s;
+                            if (cbManagamet1.getSelectedIndex()==0) {
+                                s = "NULL";
+                            } else {
+                                s = ""+storeBakerId[cbManagamet1.getSelectedIndex()-1];
+                            }
+                            q.newProductCategorySubcategory(q.getLastId("Product")+1, cbManagamet.getSelectedIndex()+1, s, cbManagamet2.getSelectedIndex(), tfData[0].getText(), tfData[1].getText(), tfData[2].getText(), tfData[3].getText());
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                    break;
+                case 3:
+                    if (update) {
+                        if (logic.checkNames(tfData[0].getText()) && logic.checkTelephone(tfData[1].getText()) && logic.checkEmail(tfData[2].getText()) && logic.checkNames(tfData[3].getText()) && logic.checkNumber(tfData[4].getText()) && logic.checkPostalCode(tfData[5].getText()) && logic.checkNames(tfData[6].getText())) {
+                            q.updateSupplierAndAdres(sData[stroreId][0], sData[stroreId][1], tfData[0].getText(), tfData[1].getText(), tfData[2].getText(), tfData[3].getText(), tfData[4].getText(), tfData[5].getText(), tfData[6].getText());
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        if (logic.checkNames(tfData[0].getText()) && logic.checkTelephone(tfData[1].getText()) && logic.checkEmail(tfData[2].getText()) && logic.checkNames(tfData[3].getText()) && logic.checkNumber(tfData[4].getText()) && logic.checkPostalCode(tfData[5].getText()) && logic.checkNames(tfData[6].getText())) {
+                            q.newSupplierAndAdres(q.getLastId("Supplier")+1, q.getLastId("Adres")+1, tfData[0].getText(), tfData[1].getText(), tfData[2].getText(), tfData[3].getText(), tfData[4].getText(), tfData[5].getText(), tfData[6].getText());
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                    break;
+                case 4:
+                    if (update) {
+                        if (logic.checkNames(tfData[0].getText()) && logic.checkPrice(tfData[1].getText())) {
+                            q.updatePosition(sData[stroreId][0], tfData[0].getText(), tfData[1].getText());
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        if (logic.checkNames(tfData[0].getText()) && logic.checkPrice(tfData[1].getText())) {
+                            q.newPosition(q.getLastId("Position")+1, tfData[0].getText(), tfData[1].getText());
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                    break;
+                default:
+            }
+        } else if (z == bManagerCancel) {
+            removeManagerMore();
+        } else {
+            if (bManagerDelete != null) {
+                for (int i = 0; i < bManagerDelete.length; i++) {
+                    if (z == bManagerDelete[i]) {
+                        switch (cbChooseDbo.getSelectedIndex()) {
+                            case 0:
+                                q.deleteCustomer(sData[i][0]);
+                                shift = shift + listOrders.size();
+                                listOrders.clear();
+                                updateManagerWindow();
+                                break;
+                            case 1:
+                                q.deleteEmployee(sData[i][0]);
+                                shift = shift + listOrders.size();
+                                listOrders.clear();
+                                updateManagerWindow();
+                                break;
+                            case 2:
+                                q.deleteProdct(sData[i][0]);
+                                shift = shift + listOrders.size();
+                                listOrders.clear();
+                                updateManagerWindow();
+                                break;
+                            case 3:
+                                q.deleteSupplier(sData[i][0]);
+                                shift = shift + listOrders.size();
+                                listOrders.clear();
+                                updateManagerWindow();
+                                break;
+                            case 4:
+                                q.deletePosition(sData[i][0]);
+                                shift = shift + listOrders.size();
+                                listOrders.clear();
+                                updateManagerWindow();
+                                break;
+                            default:
+                        }
+                    }
+                }
+            }
+            if (bManagerUpdate != null) {
+                for (int i = 0; i < bManagerUpdate.length; i++) {
+                    if (z == bManagerUpdate[i]) {
+                        switch (cbChooseDbo.getSelectedIndex()) {
+                            case 0:
+                                updateCustomerAndAdres(i);
+                                break;
+                            case 1:
+                                updateEmployeeAndAdres(i);
+                                break;
+                            case 2:
+                                updateProductCategory(i);
+                                break;
+                            case 3:
+                                updateSupplierAdres(i);
+                                break;
+                            case 4:
+                                updatePositions(i);
+                                break;
+                            default:
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -2082,32 +3920,224 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                 tfMax.setBackground(new Color(246, 226, 226));
             }
         } else {
-            for (int i = 0; i < tfAmountToBake.length; i++) {
-                if (z == tfAmountToBake[i]) {
-                    if (logic.checkProductToBake(tfAmountToBake[i].getText())) {
-                        tfAmountToBake[i].setBackground(new Color(227, 245, 227));
-                    } else {
-                        tfAmountToBake[i].setText("0");
-                        tfAmountToBake[i].setBackground(new Color(246, 226, 226));
+            if (tfAmountToBake != null) {
+                for (int i = 0; i < tfAmountToBake.length; i++) {
+                    if (z == tfAmountToBake[i]) {
+                        if (logic.checkProductToBake(tfAmountToBake[i].getText())) {
+                            tfAmountToBake[i].setBackground(new Color(227, 245, 227));
+                        } else {
+                            tfAmountToBake[i].setText("0");
+                            tfAmountToBake[i].setBackground(new Color(246, 226, 226));
+                        }
+                    }
+                }
+            }
+            if (tfData != null) {
+                for (int i = 0; i < tfData.length; i++) {
+                    switch (cbChooseDbo.getSelectedIndex()) {
+                        case 0:
+                            if (z == tfData[0]) {
+                                if (logic.checkNames(tfData[0].getText())) {
+                                    tfData[0].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[0].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[1]) {
+                                if (logic.checkNames(tfData[1].getText())) {
+                                    tfData[1].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[1].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[2]) {
+                                if (logic.checkNames(tfData[2].getText())) {
+                                    tfData[2].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[2].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[3]) {
+                                if (logic.checkNumber(tfData[3].getText())) {
+                                    tfData[3].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[3].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[4]) {
+                                if (logic.checkPostalCode(tfData[4].getText())) {
+                                    tfData[4].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[4].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[5]) {
+                                if (logic.checkNames(tfData[5].getText())) {
+                                    tfData[5].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[5].setBackground(new Color(246, 226, 226));
+                                }
+                            }
+                            break;
+                        case 1:
+                            if (z == tfData[0]) {
+                                if (logic.checkNames(tfData[0].getText())) {
+                                    tfData[0].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[0].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[1]) {
+                                if (logic.checkNames(tfData[1].getText())) {
+                                    tfData[1].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[1].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[2]) {
+                                if (logic.checkPesel(tfData[2].getText())) {
+                                    tfData[2].setBackground(new Color(227, 245, 227));
+                                    tfData[3].setText(logic.setBirthDate(tfData[2].getText()));
+                                } else {
+                                    tfData[2].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[3]) {
+                                if (logic.checkBirthDate(tfData[3].getText())) {
+                                    tfData[3].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[3].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[4]) {
+                                if (logic.checkTelephone(tfData[4].getText())) {
+                                    tfData[4].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[4].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[5]) {
+                                if (logic.checkNames(tfData[5].getText())) {
+                                    tfData[5].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[5].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[6]) {
+                                if (logic.checkNumber(tfData[6].getText())) {
+                                    tfData[6].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[6].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[7]) {
+                                if (logic.checkPostalCode(tfData[7].getText())) {
+                                    tfData[7].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[7].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[8]) {
+                                if (logic.checkNames(tfData[8].getText())) {
+                                    tfData[8].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[8].setBackground(new Color(246, 226, 226));
+                                }
+                            }
+                            break;
+                        case 2:
+                            if (z == tfData[0]) {
+                                if (logic.checkProductNewName(tfData[0].getText())) {
+                                    tfData[0].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[0].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[1]) {
+                                if (logic.checkPrice(tfData[1].getText())) {
+                                    tfData[1].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[1].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[2]) {
+                                if (logic.checkText(tfData[2].getText())) {
+                                    tfData[2].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[2].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[3]) {
+                                if (logic.checkText(tfData[3].getText())) {
+                                    tfData[3].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[3].setBackground(new Color(246, 226, 226));
+                                }
+                            }
+                            break;
+                        case 3:
+                            if (z == tfData[0]) {
+                                if (logic.checkNames(tfData[0].getText())) {
+                                    tfData[0].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[0].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[1]) {
+                                if (logic.checkTelephone(tfData[1].getText())) {
+                                    tfData[1].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[1].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[2]) {
+                                if (logic.checkEmail(tfData[2].getText())) {
+                                    tfData[2].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[2].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[3]) {
+                                if (logic.checkNames(tfData[3].getText())) {
+                                    tfData[3].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[3].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[4]) {
+                                if (logic.checkNumber(tfData[4].getText())) {
+                                    tfData[4].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[4].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[5]) {
+                                if (logic.checkPostalCode(tfData[5].getText())) {
+                                    tfData[5].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[5].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[6]) {
+                                if (logic.checkNames(tfData[6].getText())) {
+                                    tfData[6].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[6].setBackground(new Color(246, 226, 226));
+                                }
+                            }
+                            break;
+                        case 4:
+                            if (z == tfData[0]) {
+                                if (logic.checkNames(tfData[0].getText())) {
+                                    tfData[0].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[0].setBackground(new Color(246, 226, 226));
+                                }
+                            } else if (z == tfData[1]) {
+                                if (logic.checkPrice(tfData[1].getText())) {
+                                    tfData[1].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[1].setBackground(new Color(246, 226, 226));
+                                }
+                            }
+                            break;
+                        default:
                     }
                 }
             }
         }
     }
 
-
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(MouseEvent mouseEvent) {
 
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(MouseEvent mouseEvent) {
 
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(MouseEvent mouseEvent) {
 
     }
 
@@ -2115,16 +4145,29 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
     public void mouseEntered(MouseEvent mouseEvent) {
         Object z = mouseEvent.getSource();
         if (z == bManagerArea) {
-            JPanel p = new JPanel();
-            JLabel l = new JLabel("ELO");
-            p.add(l);
-            p.setBounds(300, 200, 400, 100);
-            layere.add(p, 1, 0);
+            layere.add(pMustManager, 2, 0);
+        } else if (z == bAcceptAll) {
+            layere.add(pMustSeller, 2, 0);
+        } else if (z == bBakeProducts) {
+            layere.add(pMustConfectioner, 2, 0);
         }
     }
 
     @Override
-    public void mouseExited(MouseEvent e) {
-
+    public void mouseExited(MouseEvent mouseEvent) {
+        Object z = mouseEvent.getSource();
+        if (z == bManagerArea) {
+            layere.remove(pMustManager);
+            layere.revalidate();
+            layere.repaint();
+        } else if (z == bAcceptAll) {
+            layere.remove(pMustSeller);
+            layere.revalidate();
+            layere.repaint();
+        } else if (z == bBakeProducts) {
+            layere.remove(pMustConfectioner);
+            layere.revalidate();
+            layere.repaint();
+        }
     }
 }

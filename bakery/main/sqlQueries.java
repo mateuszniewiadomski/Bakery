@@ -858,4 +858,360 @@ public class sqlQueries extends Component {
         }
         return null;
     }
+
+    public String[][] getCustomerAndAdres() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Customer.Id, Id_Adres, Name, Surname, Street, Nr_Home, PostalCode, City\n" +
+                    " FROM Customer iNNER JOIN Adres ON Adres.Id = Customer.Id_Adres");
+            ResultSetMetaData rsmd = rs.getMetaData();
+            rs.last();
+            int amountRows = rs.getRow();
+            rs.first();
+            int amountColumns = rsmd.getColumnCount();
+            String[][] s = new String[amountRows][amountColumns];
+            for (int i = 0; i < amountRows; i++) {
+                for (int j = 0; j < amountColumns; j++) {
+                    s[i][j] = rs.getString(j+1);
+                }
+                rs.next();
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public void updateCustomerAndAdres(String id, String idAdres, String name, String surname, String street, String home, String postalCode, String city) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("UPDATE Customer SET Name = '"+name+"', Surname = '"+surname+"' WHERE Id = "+id+";"+
+                    " UPDATE Adres SET Street = '"+street+"', Nr_Home = '"+home+"', PostalCode = '"+postalCode+"', City = '"+city+"' WHERE Id = "+idAdres);
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void newCustomerAndAdres(int id, int idAdres, String name, String surname, String street, String home, String postalCode, String city) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("INSERT INTO Adres (Id, Street, Nr_Home, PostalCode, City) VALUES ("+idAdres+",'"+street+"',"+home+",'"+postalCode+"','"+city+"');" +
+                            " INSERT INTO Customer (Id, Id_Adres, Name, Surname) VALUES ("+id+", "+idAdres+", '"+name+"', '"+surname+"');");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void deleteCustomer(String id) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("DELETE Customer WHERE Id = "+id);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "This customer is in orders history. If you delete that tax office will kill us!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public String[][] getEmployeeAndAdres() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Employee.Id, Id_Adres, Id_Position, Name, Surname, Pesel, BirthDate, PhoneNumber, Street, Nr_Home, PostalCode, City, PositionName\n" +
+                    " FROM Employee iNNER JOIN Adres ON Adres.Id = Employee.Id_Adres\n" +
+                    " INNER JOIN Position ON Position.Id = Employee.Id_Position");
+            ResultSetMetaData rsmd = rs.getMetaData();
+            rs.last();
+            int amountRows = rs.getRow();
+            rs.first();
+            int amountColumns = rsmd.getColumnCount();
+            String[][] s = new String[amountRows][amountColumns];
+            for (int i = 0; i < amountRows; i++) {
+                for (int j = 0; j < amountColumns; j++) {
+                    s[i][j] = rs.getString(j+1);
+                }
+                rs.next();
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public void updateEmployeeAndAdres(String id, String idAdres, int idPosition, String name, String surname, String pesel, String birthDate, String gender, String phoneNumber, String street, String home, String postalCode, String city) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("UPDATE Employee SET Name = '"+name+"', Surname = '"+surname+"', Id_Position = "+idPosition+", Pesel = '"+pesel+"', BirthDate = '"+birthDate+"', Gender = '"+gender+"', PhoneNumber = '"+phoneNumber+"' WHERE Id = "+id+";"+
+                    " UPDATE Adres SET Street = '"+street+"', Nr_Home = '"+home+"', PostalCode = '"+postalCode+"', City = '"+city+"' WHERE Id = "+idAdres);
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void newEmployeeAndAdres(int id, int idAdres, int idPosition, String name, String surname, String pesel, String birthDate, String gender, String phoneNumber, String street, String home, String postalCode, String city) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("INSERT INTO Adres (Id, Street, Nr_Home, PostalCode, City) VALUES ("+idAdres+",'"+street+"',"+home+",'"+postalCode+"','"+city+"');" +
+                    " INSERT INTO Employee (Id, Id_Adres, Id_Position, Name, Surname, Pesel, BirthDate, Gender, PhoneNumber) VALUES ("+id+", "+idAdres+", "+idPosition+", '"+name+"', '"+surname+"', '"+pesel+"', '"+birthDate+"', '"+gender+"', '"+phoneNumber+"');");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void deleteEmployee(String id) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("DELETE Employee WHERE Id = "+id);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "This employee is in orders history. If you delete that tax office will kill us!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public String[] fillcbConfectioner() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Name, Surname FROM Employee WHERE Id_Position = 2 ORDER BY Id");
+            rs.last();
+            int rows = rs.getRow();
+            rs.first();
+            String[] s = new String[rows];
+            for (int i = 0; i < rows; i++) {
+                s[i] = rs.getString(1)+" "+rs.getString(2);
+                rs.next();
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public int[] getConfectionersIds() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Id FROM Employee WHERE Id_Position = 2 ORDER BY Id");
+            rs.last();
+            int rows = rs.getRow();
+            rs.first();
+            int[] s = new int[rows];
+            for (int i = 0; i < rows; i++) {
+                s[i] = rs.getInt(1);
+                rs.next();
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String[] fillcbCategory() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT CategoryName FROM Category ORDER BY Id");
+            rs.last();
+            int rows = rs.getRow();
+            rs.first();
+            String[] s = new String[rows];
+            for (int i = 0; i < rows; i++) {
+                s[i] = rs.getString(1);
+                rs.next();
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String[] fillcbSupplier() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT CompanyName FROM Supplier ORDER BY Id");
+            rs.last();
+            int rows = rs.getRow();
+            rs.first();
+            String[] s = new String[rows];
+            for (int i = 0; i < rows; i++) {
+                s[i] = rs.getString(1);
+                rs.next();
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public String[][] getProductCategorySubcategory() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Product.Id, Id_Baker, Id_Supplier, Id_Category, ProductName, Price, Desctiprion, Composition, Employee.Name, Employee.Surname, Supplier.CompanyName, Category.CategoryName\n" +
+                    " FROM Product INNER JOIN Category ON Category.Id = Product.Id_Category\n" +
+                    " LEFT JOIN Employee ON Employee.Id = Product.Id_Baker\n" +
+                    " LEFT JOIN Supplier ON Supplier.Id = Product.Id_Supplier");
+            ResultSetMetaData rsmd = rs.getMetaData();
+            rs.last();
+            int amountRows = rs.getRow();
+            rs.first();
+            int amountColumns = rsmd.getColumnCount();
+            String[][] s = new String[amountRows][amountColumns];
+            for (int i = 0; i < amountRows; i++) {
+                for (int j = 0; j < amountColumns; j++) {
+                    s[i][j] = rs.getString(j+1);
+                }
+                rs.next();
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public void updateProductCategorySubcategory(String id, int idCategoryi, String idBaker, int idSupplieri, String productname, String price, String description, String composition) {
+
+        String idCategory = ""+idCategoryi;
+
+        String idSupplier = ""+idSupplieri;
+
+        if (idSupplier.equals("0")) {
+            idSupplier = "NULL";
+        }
+
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("UPDATE Product SET ProductName = '"+productname+"', Id_Category = "+idCategory+", Price = "+price+", Desctiprion = '"+description+"', Composition = '"+composition+"', Id_Baker = "+idBaker+", Id_Supplier = "+idSupplier+" WHERE Id = "+id);
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void newProductCategorySubcategory(int id, int idCategoryi, String idBaker, int idSupplieri, String productname, String price, String description, String composition) {
+
+        String idCategory = ""+idCategoryi;
+
+        String idSupplier = ""+idSupplieri;
+
+        if (idSupplier.equals("0")) {
+            idSupplier = "NULL";
+        }
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("INSERT INTO Product(Id, ProductName, Id_Category, Price, Amount, Desctiprion, Composition, Id_Baker, Id_Supplier) VALUES ("+id+",'"+productname+"',"+idCategory+","+price+",0,'"+description+"','"+composition+"',"+idBaker+","+idSupplier+");");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void deleteProdct(String id) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("DELETE Product WHERE Id = "+id);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "This product is in orders history. If you delete that tax office will kill us!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public String[][] getSupplierAndAdres() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Supplier.Id, Id_Adres, CompanyName, PhoneNumber, EMail, Street, Nr_Home, PostalCode, City\n" +
+                    " FROM Supplier iNNER JOIN Adres ON Adres.Id = Supplier.Id_Adres");
+            ResultSetMetaData rsmd = rs.getMetaData();
+            rs.last();
+            int amountRows = rs.getRow();
+            rs.first();
+            int amountColumns = rsmd.getColumnCount();
+            String[][] s = new String[amountRows][amountColumns];
+            for (int i = 0; i < amountRows; i++) {
+                for (int j = 0; j < amountColumns; j++) {
+                    s[i][j] = rs.getString(j+1);
+                }
+                rs.next();
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public void updateSupplierAndAdres(String id, String idAdres, String name, String tel, String email, String street, String home, String postalCode, String city) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("UPDATE Supplier SET CompanyName = '"+name+"', PhoneNumber = '"+tel+"', EMail = '"+email+"' WHERE Id = "+id+";"+
+                    " UPDATE Adres SET Street = '"+street+"', Nr_Home = '"+home+"', PostalCode = '"+postalCode+"', City = '"+city+"' WHERE Id = "+idAdres);
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void newSupplierAndAdres(int id, int idAdres, String name, String tel, String email, String street, String home, String postalCode, String city) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("INSERT INTO Adres (Id, Street, Nr_Home, PostalCode, City) VALUES ("+idAdres+",'"+street+"',"+home+",'"+postalCode+"','"+city+"');" +
+                    " INSERT INTO Supplier (Id, Id_Adres, CompanyName, PhoneNumber, EMail) VALUES ("+id+", "+idAdres+", '"+name+"', '"+tel+"', '"+email+"');");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void deleteSupplier(String id) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("DELETE Supplier WHERE Id = "+id);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "There are products in database from that supplier", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public String[][] getPosition() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Id, PositionName, Salary FROM Position");
+            ResultSetMetaData rsmd = rs.getMetaData();
+            rs.last();
+            int amountRows = rs.getRow();
+            rs.first();
+            int amountColumns = rsmd.getColumnCount();
+            String[][] s = new String[amountRows][amountColumns];
+            for (int i = 0; i < amountRows; i++) {
+                for (int j = 0; j < amountColumns; j++) {
+                    s[i][j] = rs.getString(j+1);
+                }
+                rs.next();
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public void updatePosition(String id, String name, String salary) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("UPDATE Position SET PositionName = '"+name+"', Salary = "+salary+" WHERE Id = "+id+";");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void newPosition(int id, String name, String salary) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("INSERT INTO Position (Id, PositionName, Salary) VALUES ("+id+", '"+name+"', "+salary+");");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void deletePosition(String id) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("DELETE Position WHERE Id = "+id);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "There are hired employees on that position", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }

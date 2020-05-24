@@ -124,7 +124,7 @@ public class Logic {
     }
 
     public boolean checkPrice(String s) {
-        if (s.matches("[0-9]*")) {
+        if (s.matches("[0-9]*[.]?[0-9]{0,2}")) {
             return true;
         } else {
             return false;
@@ -146,6 +146,32 @@ public class Logic {
             } else {
                 return true;
             }
+        } else {
+            return false;
+        }
+    }
+
+    public boolean checkProductNewName(String s) {
+        if (s.length() < 50) {
+            if (s.matches("^[A-Za-z0-9 !.?;,]*[A-Za-z0-9][A-Za-z0-9 !.?;,]*")) {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    public boolean checkText(String s) {
+        if (s.matches("^[A-Za-z0-9 !.?;,]*[A-Za-z0-9][A-Za-z0-9 !.?;,]*")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean checkEmail(String s) {
+        if (s.matches("^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})")) {
+            return true;
         } else {
             return false;
         }
