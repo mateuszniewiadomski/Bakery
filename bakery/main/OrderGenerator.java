@@ -7,12 +7,13 @@ import java.util.Date;
 import java.util.Random;
 
 public class OrderGenerator {
-    public int[][] products;
-    public String date;
-    public int paymentId;
-    public int packingId;
-    public int customerId;
-    public boolean done;
+
+    private int[][] products;
+    private String date;
+    private int paymentId;
+    private int packingId;
+    private int customerId;
+    private boolean done;
 
     public OrderGenerator() {
         sqlQueries q = new sqlQueries();
@@ -44,5 +45,33 @@ public class OrderGenerator {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         date = dateFormat.format(Date);
         done = false;
+    }
+
+    public int[][] getProducts() {
+        return products;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public int getPaymentId() {
+        return paymentId;
+    }
+
+    public int getPackingId() {
+        return packingId;
+    }
+
+    public int getCustomerId() {
+        return customerId;
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
     }
 }

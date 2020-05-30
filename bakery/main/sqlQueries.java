@@ -23,10 +23,10 @@ public class sqlQueries extends Component {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         } catch (ClassNotFoundException e) {
             System.out.println(e);
-            JOptionPane.showMessageDialog(this, "Nie masz sterownika :(", "Błąd", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "No controller detected", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (SQLException e) {
             System.out.println(e);
-            JOptionPane.showMessageDialog(this, "Błąd połączenia", "Błąd", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Connecting Error", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -1214,4 +1214,205 @@ public class sqlQueries extends Component {
             JOptionPane.showMessageDialog(this, "There are hired employees on that position", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    public String[][] getSubcategory() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Category.Id, CategoryName, Id_Subcategory, SubcategoryName FROM Subcategory INNER JOIN Category ON Category.Id_Subcategory = Subcategory.Id");
+            ResultSetMetaData rsmd = rs.getMetaData();
+            rs.last();
+            int amountRows = rs.getRow();
+            rs.first();
+            int amountColumns = rsmd.getColumnCount();
+            String[][] s = new String[amountRows][amountColumns];
+            for (int i = 0; i < amountRows; i++) {
+                for (int j = 0; j < amountColumns; j++) {
+                    s[i][j] = rs.getString(j+1);
+                }
+                rs.next();
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public void updateSubcategory(String id, String name) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("UPDATE Subcategory SET SubcategoryName = '"+name+"' WHERE Id = "+id+";");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void newSubcategory(int id, String name) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("INSERT INTO Subcategory (Id, SubcategoryName) VALUES ("+id+", '"+name+"');");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void deleteSubcategory(String id) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("DELETE Subcategory WHERE Id = "+id);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "This category is in use", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public String[][] getCategory() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Id, SubcategoryName FROM Subcategory");
+            ResultSetMetaData rsmd = rs.getMetaData();
+            rs.last();
+            int amountRows = rs.getRow();
+            rs.first();
+            int amountColumns = rsmd.getColumnCount();
+            String[][] s = new String[amountRows][amountColumns];
+            for (int i = 0; i < amountRows; i++) {
+                for (int j = 0; j < amountColumns; j++) {
+                    s[i][j] = rs.getString(j+1);
+                }
+                rs.next();
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public void updateCategory(String id, String name, int subcategory) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("UPDATE Category SET CategoryName = '"+name+"', Id_Subcategory = "+subcategory+" WHERE Id = "+id+";");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void newCategory(int id, String name, int subcategory) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("INSERT INTO Category (Id, CategoryName, Id_Subcategory) VALUES ("+id+", '"+name+"', "+subcategory+");");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void deleteCategory(String id) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("DELETE Category WHERE Id = "+id);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "This subcategory is in use", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public String[][] getPayment() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Id, PaymentType FROM Payment");
+            ResultSetMetaData rsmd = rs.getMetaData();
+            rs.last();
+            int amountRows = rs.getRow();
+            rs.first();
+            int amountColumns = rsmd.getColumnCount();
+            String[][] s = new String[amountRows][amountColumns];
+            for (int i = 0; i < amountRows; i++) {
+                for (int j = 0; j < amountColumns; j++) {
+                    s[i][j] = rs.getString(j+1);
+                }
+                rs.next();
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public void updatePayment(String id, String name) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("UPDATE Payment SET PaymentType = '"+name+"' WHERE Id = "+id+";");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void newPayment(int id, String name) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("INSERT INTO Payment (Id, PaymentType) VALUES ("+id+", '"+name+"');");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void deletePayment(String id) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("DELETE Payment WHERE Id = "+id);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "This type of payment is in use", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public String[][] getPacking() {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Id, PackingType FROM Packing");
+            ResultSetMetaData rsmd = rs.getMetaData();
+            rs.last();
+            int amountRows = rs.getRow();
+            rs.first();
+            int amountColumns = rsmd.getColumnCount();
+            String[][] s = new String[amountRows][amountColumns];
+            for (int i = 0; i < amountRows; i++) {
+                for (int j = 0; j < amountColumns; j++) {
+                    s[i][j] = rs.getString(j+1);
+                }
+                rs.next();
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public void updatePacking(String id, String name) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("UPDATE Packing SET PackingType = '"+name+"' WHERE Id = "+id+";");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void newPacking(int id, String name) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("INSERT INTO Packing (Id, PackingType) VALUES ("+id+", '"+name+"');");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void deletePacking(String id) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("DELETE Packing WHERE Id = "+id);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "This packing type is in use", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
 }

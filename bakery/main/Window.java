@@ -236,6 +236,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
     private final JButton bManagerAdd = new JButton("Add");
     private JButton[] bManagerDelete;
     private JButton[] bManagerUpdate;
+    private JButton[] bManagerRead;
     private final JButton bManagerBack = new JButton("Back");
     private final JButton bManagerAccept = new JButton("Accept");
     private final JButton bManagerCancel = new JButton("Cancel");
@@ -389,6 +390,10 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         cbChooseDbo.addItem("Products");
         cbChooseDbo.addItem("Supplier");
         cbChooseDbo.addItem("Position");
+        cbChooseDbo.addItem("Category");
+        cbChooseDbo.addItem("Subcategory");
+        cbChooseDbo.addItem("Payment");
+        cbChooseDbo.addItem("Packing");
     }
 
     private void setStyle() {
@@ -1030,7 +1035,6 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.add(pBG, 0, 0);
 
         loginWindow();
-        //createLeftBanner();
     }
 
     private void createLeftBanner() {
@@ -1443,10 +1447,10 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
 
         for (int i = 0; i < listOrders.size(); i++) {
             boolean makeIt = true;
-            if (!listOrders.get(i).done) {
-                for (int j = 0; j < listOrders.get(i).products.length; j++) {
-                    int x = q.getAmount(listOrders.get(i).products[j][0]);
-                    if (x - listOrders.get(i).products[j][1] < 0) {
+            if (!listOrders.get(i).isDone()) {
+                for (int j = 0; j < listOrders.get(i).getProducts().length; j++) {
+                    int x = q.getAmount(listOrders.get(i).getProducts()[j][0]);
+                    if (x - listOrders.get(i).getProducts()[j][1] < 0) {
                         makeIt = false;
                     }
                 }
@@ -1454,16 +1458,16 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     Date Date = Calendar.getInstance().getTime();
                     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     double sum = 0;
-                    for (int z = 0; z < listOrders.get(i).products.length; z++) {
-                        sum = sum + listOrders.get(i).products[z][1]*q.getCost(listOrders.get(i).products[z][0]);
-                        q.updateAmountOfProducts(listOrders.get(i).products[z][0], q.getAmount(listOrders.get(i).products[z][0]) - listOrders.get(i).products[z][1]);
+                    for (int z = 0; z < listOrders.get(i).getProducts().length; z++) {
+                        sum = sum + listOrders.get(i).getProducts()[z][1]*q.getCost(listOrders.get(i).getProducts()[z][0]);
+                        q.updateAmountOfProducts(listOrders.get(i).getProducts()[z][0], q.getAmount(listOrders.get(i).getProducts()[z][0]) - listOrders.get(i).getProducts()[z][1]);
                     }
                     double noTaxes = sum*0.77;
-                    q.insertOrders(i+1+shift, listOrders.get(i).customerId, userId, listOrders.get(i).paymentId, listOrders.get(i).packingId, listOrders.get(i).date, dateFormat.format(Date), sum, noTaxes);
-                    for (int z = 0; z < listOrders.get(i).products.length; z++) {
-                        q.insertProductHasOrder(listOrders.get(i).products[z][0], i+1+shift, listOrders.get(i).products[z][1]);
+                    q.insertOrders(i+1+shift, listOrders.get(i).getCustomerId(), userId, listOrders.get(i).getPaymentId(), listOrders.get(i).getPackingId(), listOrders.get(i).getDate(), dateFormat.format(Date), sum, noTaxes);
+                    for (int z = 0; z < listOrders.get(i).getProducts().length; z++) {
+                        q.insertProductHasOrder(listOrders.get(i).getProducts()[z][0], i+1+shift, listOrders.get(i).getProducts()[z][1]);
                     }
-                    listOrders.get(i).done = true;
+                    listOrders.get(i).setDone(true);
                 }
             }
         }
@@ -1494,7 +1498,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
 
         for (int i = 0; i < listOrders.size(); i++) {
 
-            if (!listOrders.get(i).done) {
+            if (!listOrders.get(i).isDone()) {
 
                 currentObjects = currentObjects + 1;
 
@@ -1518,20 +1522,20 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                 pClient[i].setOpaque(false);
 
                 lTitle[i] = new JLabel("New order from: ");
-                lClient[i] = new JLabel(q.getFullName(listOrders.get(i).customerId));
+                lClient[i] = new JLabel(q.getFullName(listOrders.get(i).getCustomerId()));
                 lProduct[i] = new JLabel("Products:");
-                lDate[i] = new JLabel(listOrders.get(i).date);
+                lDate[i] = new JLabel(listOrders.get(i).getDate());
                 lToPay[i] = new JLabel();
 
-                JLabel[] lProductName = new JLabel[listOrders.get(i).products.length];
-                JLabel[] lProductCost = new JLabel[listOrders.get(i).products.length];
-                JLabel[] lProductAmount = new JLabel[listOrders.get(i).products.length];
+                JLabel[] lProductName = new JLabel[listOrders.get(i).getProducts().length];
+                JLabel[] lProductCost = new JLabel[listOrders.get(i).getProducts().length];
+                JLabel[] lProductAmount = new JLabel[listOrders.get(i).getProducts().length];
 
-                JPanel[] pProductName = new JPanel[listOrders.get(i).products.length];
-                JPanel[] pProductCost = new JPanel[listOrders.get(i).products.length];
-                JPanel[] pProductAmount = new JPanel[listOrders.get(i).products.length];
-                JPanel[] pExtraSpace1 = new JPanel[listOrders.get(i).products.length];
-                JPanel[] pExtraSpace2 = new JPanel[listOrders.get(i).products.length];
+                JPanel[] pProductName = new JPanel[listOrders.get(i).getProducts().length];
+                JPanel[] pProductCost = new JPanel[listOrders.get(i).getProducts().length];
+                JPanel[] pProductAmount = new JPanel[listOrders.get(i).getProducts().length];
+                JPanel[] pExtraSpace1 = new JPanel[listOrders.get(i).getProducts().length];
+                JPanel[] pExtraSpace2 = new JPanel[listOrders.get(i).getProducts().length];
 
                 p1[i].add(pTitle[i]);
                 p1[i].add(pClient[i]);
@@ -1554,11 +1558,11 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                 int additionalHeight = 0;
                 double toPay = 0.00;
 
-                for (int j = 0; j < listOrders.get(i).products.length; j++) {
+                for (int j = 0; j < listOrders.get(i).getProducts().length; j++) {
 
                     additionalHeight = additionalHeight + 22;
 
-                    toPay = toPay + listOrders.get(i).products[j][1]*q.getCost(listOrders.get(i).products[j][0]);
+                    toPay = toPay + listOrders.get(i).getProducts()[j][1]*q.getCost(listOrders.get(i).getProducts()[j][0]);
 
                     pProductName[j] = new JPanel();
                     pProductCost[j] = new JPanel();
@@ -1572,9 +1576,9 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     pExtraSpace1[j].setOpaque(false);
                     pExtraSpace2[j].setOpaque(false);
 
-                    lProductName[j] = new JLabel(q.getProductName(listOrders.get(i).products[j][0]));
-                    lProductCost[j] = new JLabel("$ "+q.getCost(listOrders.get(i).products[j][0]));
-                    lProductAmount[j] = new JLabel("x"+listOrders.get(i).products[j][1]);
+                    lProductName[j] = new JLabel(q.getProductName(listOrders.get(i).getProducts()[j][0]));
+                    lProductCost[j] = new JLabel("$ "+q.getCost(listOrders.get(i).getProducts()[j][0]));
+                    lProductAmount[j] = new JLabel("x"+listOrders.get(i).getProducts()[j][1]);
 
                     lProductName[j].setFont(new Font(Font.DIALOG,  Font.BOLD, 12));
                     lProductName[j].setForeground(new Color(90, 52, 43));
@@ -2066,6 +2070,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                 sData = q.getCustomerAndAdres();
                 bManagerUpdate = new JButton[sData.length];
                 bManagerDelete = new JButton[sData.length];
+                bManagerRead = new JButton[sData.length];
 
                 for (int i = 0; i < sData.length; i++) {
 
@@ -2075,17 +2080,20 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     JPanel p0e1 = new JPanel();
                     JPanel p0e2 = new JPanel();
                     JPanel p0e3 = new JPanel();
+                    JPanel p0e4 = new JPanel();
                     JPanel p0l = new JPanel();
                     JLabel l0 = new JLabel(sData[i][2]+" "+sData[i][3]);
 
                     bManagerUpdate[i] = new JButton("Update");
                     bManagerDelete[i] = new JButton("Delete");
+                    bManagerRead[i] = new JButton("Read");
 
                     p0.add(l0);
                     p0.setOpaque(false);
                     p0e1.setOpaque(false);
                     p0e2.setOpaque(false);
                     p0e3.setOpaque(false);
+                    p0e4.setOpaque(false);
                     p0l.setBackground(new Color(64, 64, 64));
 
                     l0.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
@@ -2101,15 +2109,23 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     bManagerDelete[i].setForeground(new Color(255, 248, 236));
                     bManagerDelete[i].setBorderPainted(false);
 
+                    bManagerRead[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerRead[i].setBackground(new Color(0, 108, 203));
+                    bManagerRead[i].setForeground(new Color(255, 248, 236));
+                    bManagerRead[i].setBorderPainted(false);
+
                     bManagerUpdate[i].addActionListener(this);
                     bManagerDelete[i].addActionListener(this);
+                    bManagerRead[i].addActionListener(this);
 
                     p0.setPreferredSize(new Dimension(200, 30));
                     p0e1.setPreferredSize(new Dimension(100, 25));
-                    p0e2.setPreferredSize(new Dimension(50, 25));
-                    p0e3.setPreferredSize(new Dimension(400, 25));
+                    p0e2.setPreferredSize(new Dimension(20, 25));
+                    p0e3.setPreferredSize(new Dimension(20, 25));
+                    p0e4.setPreferredSize(new Dimension(250, 25));
                     bManagerUpdate[i].setPreferredSize(new Dimension(100, 25));
                     bManagerDelete[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerRead[i].setPreferredSize(new Dimension(100, 25));
                     p0l.setPreferredSize(new Dimension(900, 1));
 
                     pManagementBox.add(p0l);
@@ -2119,6 +2135,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     pManagementBox.add(p0e2);
                     pManagementBox.add(bManagerDelete[i]);
                     pManagementBox.add(p0e3);
+                    pManagementBox.add(bManagerRead[i]);
+                    pManagementBox.add(p0e4);
                 }
 
                 break;
@@ -2126,6 +2144,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                 sData = q.getEmployeeAndAdres();
                 bManagerUpdate = new JButton[sData.length];
                 bManagerDelete = new JButton[sData.length];
+                bManagerRead = new JButton[sData.length];
 
                 for (int i = 0; i < sData.length; i++) {
 
@@ -2136,13 +2155,15 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     JPanel p0e2 = new JPanel();
                     JPanel p0e3 = new JPanel();
                     JPanel p0e4 = new JPanel();
+                    JPanel p0e5 = new JPanel();
                     JPanel p1 = new JPanel();
                     JPanel p0l = new JPanel();
                     JLabel l0 = new JLabel(sData[i][3]+" "+sData[i][4]);
-                    JLabel l1 = new JLabel(sData[i][12]);
+                    JLabel l1 = new JLabel(sData[i][5]);
 
                     bManagerUpdate[i] = new JButton("Update");
                     bManagerDelete[i] = new JButton("Delete");
+                    bManagerRead[i] = new JButton("Read");
 
                     p0.add(l0);
                     p1.add(l1);
@@ -2152,6 +2173,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     p0e2.setOpaque(false);
                     p0e3.setOpaque(false);
                     p0e4.setOpaque(false);
+                    p0e5.setOpaque(false);
                     p0l.setBackground(new Color(64, 64, 64));
 
                     l0.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
@@ -2170,28 +2192,38 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     bManagerDelete[i].setForeground(new Color(255, 248, 236));
                     bManagerDelete[i].setBorderPainted(false);
 
+                    bManagerRead[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerRead[i].setBackground(new Color(0, 108, 203));
+                    bManagerRead[i].setForeground(new Color(255, 248, 236));
+                    bManagerRead[i].setBorderPainted(false);
+
                     bManagerUpdate[i].addActionListener(this);
                     bManagerDelete[i].addActionListener(this);
+                    bManagerRead[i].addActionListener(this);
 
                     p0.setPreferredSize(new Dimension(200, 30));
-                    p0e1.setPreferredSize(new Dimension(50, 25));
-                    p0e4.setPreferredSize(new Dimension(50, 25));
+                    p0e1.setPreferredSize(new Dimension(20, 25));
+                    p0e2.setPreferredSize(new Dimension(20, 25));
                     p1.setPreferredSize(new Dimension(100, 30));
-                    p0e2.setPreferredSize(new Dimension(50, 25));
-                    p0e3.setPreferredSize(new Dimension(200, 25));
+                    p0e3.setPreferredSize(new Dimension(20, 25));
+                    p0e4.setPreferredSize(new Dimension(20, 25));
+                    p0e5.setPreferredSize(new Dimension(100, 25));
                     bManagerUpdate[i].setPreferredSize(new Dimension(100, 25));
                     bManagerDelete[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerRead[i].setPreferredSize(new Dimension(100, 25));
                     p0l.setPreferredSize(new Dimension(900, 1));
 
                     pManagementBox.add(p0l);
-                    pManagementBox.add(p0);
-                    pManagementBox.add(p0e1);
                     pManagementBox.add(p1);
-                    pManagementBox.add(p0e4);
-                    pManagementBox.add(bManagerUpdate[i]);
+                    pManagementBox.add(p0e1);
+                    pManagementBox.add(p0);
                     pManagementBox.add(p0e2);
-                    pManagementBox.add(bManagerDelete[i]);
+                    pManagementBox.add(bManagerUpdate[i]);
                     pManagementBox.add(p0e3);
+                    pManagementBox.add(bManagerDelete[i]);
+                    pManagementBox.add(p0e4);
+                    pManagementBox.add(bManagerRead[i]);
+                    pManagementBox.add(p0e5);
                 }
 
                 break;
@@ -2199,6 +2231,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                 sData = q.getProductCategorySubcategory();
                 bManagerUpdate = new JButton[sData.length];
                 bManagerDelete = new JButton[sData.length];
+                bManagerRead = new JButton[sData.length];
 
                 for (int i = 0; i < sData.length; i++) {
 
@@ -2209,6 +2242,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     JPanel p0e2 = new JPanel();
                     JPanel p0e3 = new JPanel();
                     JPanel p0e4 = new JPanel();
+                    JPanel p0e5 = new JPanel();
                     JPanel p1 = new JPanel();
                     JPanel p0l = new JPanel();
                     JLabel l0 = new JLabel(sData[i][4]);
@@ -2216,6 +2250,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
 
                     bManagerUpdate[i] = new JButton("Update");
                     bManagerDelete[i] = new JButton("Delete");
+                    bManagerRead[i] = new JButton("Read");
 
                     p0.add(l0);
                     p1.add(l1);
@@ -2225,6 +2260,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     p0e2.setOpaque(false);
                     p0e3.setOpaque(false);
                     p0e4.setOpaque(false);
+                    p0e5.setOpaque(false);
                     p0l.setBackground(new Color(64, 64, 64));
 
                     l0.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
@@ -2243,17 +2279,25 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     bManagerDelete[i].setForeground(new Color(255, 248, 236));
                     bManagerDelete[i].setBorderPainted(false);
 
+                    bManagerRead[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerRead[i].setBackground(new Color(0, 108, 203));
+                    bManagerRead[i].setForeground(new Color(255, 248, 236));
+                    bManagerRead[i].setBorderPainted(false);
+
                     bManagerUpdate[i].addActionListener(this);
                     bManagerDelete[i].addActionListener(this);
+                    bManagerRead[i].addActionListener(this);
 
                     p0.setPreferredSize(new Dimension(200, 30));
-                    p0e1.setPreferredSize(new Dimension(50, 25));
-                    p0e4.setPreferredSize(new Dimension(50, 25));
+                    p0e1.setPreferredSize(new Dimension(20, 25));
+                    p0e2.setPreferredSize(new Dimension(20, 25));
                     p1.setPreferredSize(new Dimension(100, 30));
-                    p0e2.setPreferredSize(new Dimension(50, 25));
-                    p0e3.setPreferredSize(new Dimension(200, 25));
+                    p0e3.setPreferredSize(new Dimension(20, 25));
+                    p0e4.setPreferredSize(new Dimension(20, 25));
+                    p0e5.setPreferredSize(new Dimension(100, 25));
                     bManagerUpdate[i].setPreferredSize(new Dimension(100, 25));
                     bManagerDelete[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerRead[i].setPreferredSize(new Dimension(100, 25));
                     p0l.setPreferredSize(new Dimension(900, 1));
 
                     pManagementBox.add(p0l);
@@ -2265,6 +2309,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     pManagementBox.add(p0e2);
                     pManagementBox.add(bManagerDelete[i]);
                     pManagementBox.add(p0e3);
+                    pManagementBox.add(bManagerRead[i]);
+                    pManagementBox.add(p0e5);
                 }
 
                 break;
@@ -2272,6 +2318,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                 sData = q.getSupplierAndAdres();
                 bManagerUpdate = new JButton[sData.length];
                 bManagerDelete = new JButton[sData.length];
+                bManagerRead = new JButton[sData.length];
 
                 for (int i = 0; i < sData.length; i++) {
 
@@ -2281,17 +2328,20 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     JPanel p0e1 = new JPanel();
                     JPanel p0e2 = new JPanel();
                     JPanel p0e3 = new JPanel();
+                    JPanel p0e4 = new JPanel();
                     JPanel p0l = new JPanel();
                     JLabel l0 = new JLabel(sData[i][2]);
 
                     bManagerUpdate[i] = new JButton("Update");
                     bManagerDelete[i] = new JButton("Delete");
+                    bManagerRead[i] = new JButton("Read");
 
                     p0.add(l0);
                     p0.setOpaque(false);
                     p0e1.setOpaque(false);
                     p0e2.setOpaque(false);
                     p0e3.setOpaque(false);
+                    p0e4.setOpaque(false);
                     p0l.setBackground(new Color(64, 64, 64));
 
                     l0.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
@@ -2307,15 +2357,23 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     bManagerDelete[i].setForeground(new Color(255, 248, 236));
                     bManagerDelete[i].setBorderPainted(false);
 
+                    bManagerRead[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerRead[i].setBackground(new Color(0, 108, 203));
+                    bManagerRead[i].setForeground(new Color(255, 248, 236));
+                    bManagerRead[i].setBorderPainted(false);
+
                     bManagerUpdate[i].addActionListener(this);
                     bManagerDelete[i].addActionListener(this);
+                    bManagerRead[i].addActionListener(this);
 
                     p0.setPreferredSize(new Dimension(200, 30));
-                    p0e1.setPreferredSize(new Dimension(100, 25));
-                    p0e2.setPreferredSize(new Dimension(50, 25));
-                    p0e3.setPreferredSize(new Dimension(400, 25));
+                    p0e1.setPreferredSize(new Dimension(50, 25));
+                    p0e2.setPreferredSize(new Dimension(20, 25));
+                    p0e3.setPreferredSize(new Dimension(20, 25));
+                    p0e4.setPreferredSize(new Dimension(200, 25));
                     bManagerUpdate[i].setPreferredSize(new Dimension(100, 25));
                     bManagerDelete[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerRead[i].setPreferredSize(new Dimension(100, 25));
                     p0l.setPreferredSize(new Dimension(900, 1));
 
                     pManagementBox.add(p0l);
@@ -2325,6 +2383,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     pManagementBox.add(p0e2);
                     pManagementBox.add(bManagerDelete[i]);
                     pManagementBox.add(p0e3);
+                    pManagementBox.add(bManagerRead[i]);
+                    pManagementBox.add(p0e4);
                 }
 
 
@@ -2334,6 +2394,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                 sData = q.getPosition();
                 bManagerUpdate = new JButton[sData.length];
                 bManagerDelete = new JButton[sData.length];
+                bManagerRead = new JButton[sData.length];
 
                 for (int i = 0; i < sData.length; i++) {
 
@@ -2343,17 +2404,20 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     JPanel p0e1 = new JPanel();
                     JPanel p0e2 = new JPanel();
                     JPanel p0e3 = new JPanel();
+                    JPanel p0e4 = new JPanel();
                     JPanel p0l = new JPanel();
                     JLabel l0 = new JLabel(sData[i][1]);
 
                     bManagerUpdate[i] = new JButton("Update");
                     bManagerDelete[i] = new JButton("Delete");
+                    bManagerRead[i] = new JButton("Read");
 
                     p0.add(l0);
                     p0.setOpaque(false);
                     p0e1.setOpaque(false);
                     p0e2.setOpaque(false);
                     p0e3.setOpaque(false);
+                    p0e4.setOpaque(false);
                     p0l.setBackground(new Color(64, 64, 64));
 
                     l0.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
@@ -2369,15 +2433,23 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     bManagerDelete[i].setForeground(new Color(255, 248, 236));
                     bManagerDelete[i].setBorderPainted(false);
 
+                    bManagerRead[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerRead[i].setBackground(new Color(0, 108, 203));
+                    bManagerRead[i].setForeground(new Color(255, 248, 236));
+                    bManagerRead[i].setBorderPainted(false);
+
                     bManagerUpdate[i].addActionListener(this);
                     bManagerDelete[i].addActionListener(this);
+                    bManagerRead[i].addActionListener(this);
 
                     p0.setPreferredSize(new Dimension(200, 30));
-                    p0e1.setPreferredSize(new Dimension(100, 25));
-                    p0e2.setPreferredSize(new Dimension(50, 25));
-                    p0e3.setPreferredSize(new Dimension(400, 25));
+                    p0e1.setPreferredSize(new Dimension(50, 25));
+                    p0e2.setPreferredSize(new Dimension(20, 25));
+                    p0e3.setPreferredSize(new Dimension(20, 25));
+                    p0e4.setPreferredSize(new Dimension(300, 25));
                     bManagerUpdate[i].setPreferredSize(new Dimension(100, 25));
                     bManagerDelete[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerRead[i].setPreferredSize(new Dimension(100, 25));
                     p0l.setPreferredSize(new Dimension(900, 1));
 
                     pManagementBox.add(p0l);
@@ -2387,9 +2459,305 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     pManagementBox.add(p0e2);
                     pManagementBox.add(bManagerDelete[i]);
                     pManagementBox.add(p0e3);
+                    pManagementBox.add(bManagerRead[i]);
+                    pManagementBox.add(p0e4);
                 }
+                break;
+            case 5:
 
+                sData = q.getCategory();
+                bManagerUpdate = new JButton[sData.length];
+                bManagerDelete = new JButton[sData.length];
+                bManagerRead = new JButton[sData.length];
 
+                for (int i = 0; i < sData.length; i++) {
+
+                    d = d + 1;
+
+                    JPanel p0 = new JPanel();
+                    JPanel p0e1 = new JPanel();
+                    JPanel p0e2 = new JPanel();
+                    JPanel p0e3 = new JPanel();
+                    JPanel p0e4 = new JPanel();
+                    JPanel p0l = new JPanel();
+                    JLabel l0 = new JLabel(sData[i][1]);
+
+                    bManagerUpdate[i] = new JButton("Update");
+                    bManagerDelete[i] = new JButton("Delete");
+                    bManagerRead[i] = new JButton("Read");
+
+                    p0.add(l0);
+                    p0.setOpaque(false);
+                    p0e1.setOpaque(false);
+                    p0e2.setOpaque(false);
+                    p0e3.setOpaque(false);
+                    p0e4.setOpaque(false);
+                    p0l.setBackground(new Color(64, 64, 64));
+
+                    l0.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    l0.setForeground(new Color(64, 64, 64));
+
+                    bManagerUpdate[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerUpdate[i].setBackground(new Color(203, 135, 0));
+                    bManagerUpdate[i].setForeground(new Color(255, 248, 236));
+                    bManagerUpdate[i].setBorderPainted(false);
+
+                    bManagerDelete[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerDelete[i].setBackground(new Color(203, 0, 0));
+                    bManagerDelete[i].setForeground(new Color(255, 248, 236));
+                    bManagerDelete[i].setBorderPainted(false);
+
+                    bManagerRead[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerRead[i].setBackground(new Color(0, 108, 203));
+                    bManagerRead[i].setForeground(new Color(255, 248, 236));
+                    bManagerRead[i].setBorderPainted(false);
+
+                    bManagerUpdate[i].addActionListener(this);
+                    bManagerDelete[i].addActionListener(this);
+                    bManagerRead[i].addActionListener(this);
+
+                    p0.setPreferredSize(new Dimension(200, 30));
+                    p0e1.setPreferredSize(new Dimension(50, 25));
+                    p0e2.setPreferredSize(new Dimension(20, 25));
+                    p0e3.setPreferredSize(new Dimension(20, 25));
+                    p0e4.setPreferredSize(new Dimension(300, 25));
+                    bManagerUpdate[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerDelete[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerRead[i].setPreferredSize(new Dimension(100, 25));
+                    p0l.setPreferredSize(new Dimension(900, 1));
+
+                    pManagementBox.add(p0l);
+                    pManagementBox.add(p0);
+                    pManagementBox.add(p0e1);
+                    pManagementBox.add(bManagerUpdate[i]);
+                    pManagementBox.add(p0e2);
+                    pManagementBox.add(bManagerDelete[i]);
+                    pManagementBox.add(p0e3);
+                    pManagementBox.add(bManagerRead[i]);
+                    pManagementBox.add(p0e4);
+                }
+                break;
+            case 6:
+
+                sData = q.getSubcategory();
+                bManagerUpdate = new JButton[sData.length];
+                bManagerDelete = new JButton[sData.length];
+                bManagerRead = new JButton[sData.length];
+
+                for (int i = 0; i < sData.length; i++) {
+
+                    d = d + 1;
+
+                    JPanel p0 = new JPanel();
+                    JPanel p0e1 = new JPanel();
+                    JPanel p0e2 = new JPanel();
+                    JPanel p0e3 = new JPanel();
+                    JPanel p0e4 = new JPanel();
+                    JPanel p0l = new JPanel();
+                    JLabel l0 = new JLabel(sData[i][1]);
+
+                    bManagerUpdate[i] = new JButton("Update");
+                    bManagerDelete[i] = new JButton("Delete");
+                    bManagerRead[i] = new JButton("Read");
+
+                    p0.add(l0);
+                    p0.setOpaque(false);
+                    p0e1.setOpaque(false);
+                    p0e2.setOpaque(false);
+                    p0e3.setOpaque(false);
+                    p0e4.setOpaque(false);
+                    p0l.setBackground(new Color(64, 64, 64));
+
+                    l0.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    l0.setForeground(new Color(64, 64, 64));
+
+                    bManagerUpdate[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerUpdate[i].setBackground(new Color(203, 135, 0));
+                    bManagerUpdate[i].setForeground(new Color(255, 248, 236));
+                    bManagerUpdate[i].setBorderPainted(false);
+
+                    bManagerDelete[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerDelete[i].setBackground(new Color(203, 0, 0));
+                    bManagerDelete[i].setForeground(new Color(255, 248, 236));
+                    bManagerDelete[i].setBorderPainted(false);
+
+                    bManagerRead[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerRead[i].setBackground(new Color(0, 108, 203));
+                    bManagerRead[i].setForeground(new Color(255, 248, 236));
+                    bManagerRead[i].setBorderPainted(false);
+
+                    bManagerUpdate[i].addActionListener(this);
+                    bManagerDelete[i].addActionListener(this);
+                    bManagerRead[i].addActionListener(this);
+
+                    p0.setPreferredSize(new Dimension(200, 30));
+                    p0e1.setPreferredSize(new Dimension(50, 25));
+                    p0e2.setPreferredSize(new Dimension(20, 25));
+                    p0e3.setPreferredSize(new Dimension(20, 25));
+                    p0e4.setPreferredSize(new Dimension(300, 25));
+                    bManagerUpdate[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerDelete[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerRead[i].setPreferredSize(new Dimension(100, 25));
+                    p0l.setPreferredSize(new Dimension(900, 1));
+
+                    pManagementBox.add(p0l);
+                    pManagementBox.add(p0);
+                    pManagementBox.add(p0e1);
+                    pManagementBox.add(bManagerUpdate[i]);
+                    pManagementBox.add(p0e2);
+                    pManagementBox.add(bManagerDelete[i]);
+                    pManagementBox.add(p0e3);
+                    pManagementBox.add(bManagerRead[i]);
+                    pManagementBox.add(p0e4);
+                }
+                break;
+            case 7:
+
+                sData = q.getPayment();
+                bManagerUpdate = new JButton[sData.length];
+                bManagerDelete = new JButton[sData.length];
+                bManagerRead = new JButton[sData.length];
+
+                for (int i = 0; i < sData.length; i++) {
+
+                    d = d + 1;
+
+                    JPanel p0 = new JPanel();
+                    JPanel p0e1 = new JPanel();
+                    JPanel p0e2 = new JPanel();
+                    JPanel p0e3 = new JPanel();
+                    JPanel p0e4 = new JPanel();
+                    JPanel p0l = new JPanel();
+                    JLabel l0 = new JLabel(sData[i][1]);
+
+                    bManagerUpdate[i] = new JButton("Update");
+                    bManagerDelete[i] = new JButton("Delete");
+                    bManagerRead[i] = new JButton("Read");
+
+                    p0.add(l0);
+                    p0.setOpaque(false);
+                    p0e1.setOpaque(false);
+                    p0e2.setOpaque(false);
+                    p0e3.setOpaque(false);
+                    p0e4.setOpaque(false);
+                    p0l.setBackground(new Color(64, 64, 64));
+
+                    l0.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    l0.setForeground(new Color(64, 64, 64));
+
+                    bManagerUpdate[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerUpdate[i].setBackground(new Color(203, 135, 0));
+                    bManagerUpdate[i].setForeground(new Color(255, 248, 236));
+                    bManagerUpdate[i].setBorderPainted(false);
+
+                    bManagerDelete[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerDelete[i].setBackground(new Color(203, 0, 0));
+                    bManagerDelete[i].setForeground(new Color(255, 248, 236));
+                    bManagerDelete[i].setBorderPainted(false);
+
+                    bManagerRead[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerRead[i].setBackground(new Color(0, 108, 203));
+                    bManagerRead[i].setForeground(new Color(255, 248, 236));
+                    bManagerRead[i].setBorderPainted(false);
+
+                    bManagerUpdate[i].addActionListener(this);
+                    bManagerDelete[i].addActionListener(this);
+                    bManagerRead[i].addActionListener(this);
+
+                    p0.setPreferredSize(new Dimension(200, 30));
+                    p0e1.setPreferredSize(new Dimension(50, 25));
+                    p0e2.setPreferredSize(new Dimension(20, 25));
+                    p0e3.setPreferredSize(new Dimension(20, 25));
+                    p0e4.setPreferredSize(new Dimension(300, 25));
+                    bManagerUpdate[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerDelete[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerRead[i].setPreferredSize(new Dimension(100, 25));
+                    p0l.setPreferredSize(new Dimension(900, 1));
+
+                    pManagementBox.add(p0l);
+                    pManagementBox.add(p0);
+                    pManagementBox.add(p0e1);
+                    pManagementBox.add(bManagerUpdate[i]);
+                    pManagementBox.add(p0e2);
+                    pManagementBox.add(bManagerDelete[i]);
+                    pManagementBox.add(p0e3);
+                    pManagementBox.add(bManagerRead[i]);
+                    pManagementBox.add(p0e4);
+                }
+                break;
+            case 8:
+
+                sData = q.getPacking();
+                bManagerUpdate = new JButton[sData.length];
+                bManagerDelete = new JButton[sData.length];
+                bManagerRead = new JButton[sData.length];
+
+                for (int i = 0; i < sData.length; i++) {
+
+                    d = d + 1;
+
+                    JPanel p0 = new JPanel();
+                    JPanel p0e1 = new JPanel();
+                    JPanel p0e2 = new JPanel();
+                    JPanel p0e3 = new JPanel();
+                    JPanel p0e4 = new JPanel();
+                    JPanel p0l = new JPanel();
+                    JLabel l0 = new JLabel(sData[i][1]);
+
+                    bManagerUpdate[i] = new JButton("Update");
+                    bManagerDelete[i] = new JButton("Delete");
+                    bManagerRead[i] = new JButton("Read");
+
+                    p0.add(l0);
+                    p0.setOpaque(false);
+                    p0e1.setOpaque(false);
+                    p0e2.setOpaque(false);
+                    p0e3.setOpaque(false);
+                    p0e4.setOpaque(false);
+                    p0l.setBackground(new Color(64, 64, 64));
+
+                    l0.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    l0.setForeground(new Color(64, 64, 64));
+
+                    bManagerUpdate[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerUpdate[i].setBackground(new Color(203, 135, 0));
+                    bManagerUpdate[i].setForeground(new Color(255, 248, 236));
+                    bManagerUpdate[i].setBorderPainted(false);
+
+                    bManagerDelete[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerDelete[i].setBackground(new Color(203, 0, 0));
+                    bManagerDelete[i].setForeground(new Color(255, 248, 236));
+                    bManagerDelete[i].setBorderPainted(false);
+
+                    bManagerRead[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerRead[i].setBackground(new Color(0, 108, 203));
+                    bManagerRead[i].setForeground(new Color(255, 248, 236));
+                    bManagerRead[i].setBorderPainted(false);
+
+                    bManagerUpdate[i].addActionListener(this);
+                    bManagerDelete[i].addActionListener(this);
+                    bManagerRead[i].addActionListener(this);
+
+                    p0.setPreferredSize(new Dimension(200, 30));
+                    p0e1.setPreferredSize(new Dimension(50, 25));
+                    p0e2.setPreferredSize(new Dimension(20, 25));
+                    p0e3.setPreferredSize(new Dimension(20, 25));
+                    p0e4.setPreferredSize(new Dimension(300, 25));
+                    bManagerUpdate[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerDelete[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerRead[i].setPreferredSize(new Dimension(100, 25));
+                    p0l.setPreferredSize(new Dimension(900, 1));
+
+                    pManagementBox.add(p0l);
+                    pManagementBox.add(p0);
+                    pManagementBox.add(p0e1);
+                    pManagementBox.add(bManagerUpdate[i]);
+                    pManagementBox.add(p0e2);
+                    pManagementBox.add(bManagerDelete[i]);
+                    pManagementBox.add(p0e3);
+                    pManagementBox.add(bManagerRead[i]);
+                    pManagementBox.add(p0e4);
+                }
                 break;
             default:
         }
@@ -2595,6 +2963,103 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         bgManager.add(tfData[3], 2, 0);
         bgManager.add(tfData[4], 2, 0);
         bgManager.add(tfData[5], 2, 0);
+    }
+
+    private void readCustomerAndAdres(int i) {
+
+        JFrame frame = new JFrame();
+        frame.setSize(550, 300);
+
+        JPanel p = new JPanel();
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+        JPanel p3 = new JPanel();
+        JPanel p4 = new JPanel();
+        JPanel p5 = new JPanel();
+        JPanel p6 = new JPanel();
+        JPanel p7 = new JPanel();
+        JPanel p8 = new JPanel();
+        JPanel p9 = new JPanel();
+        JPanel p10 = new JPanel();
+        JPanel p11 = new JPanel();
+        JPanel p12 = new JPanel();
+
+        JLabel l1 = new JLabel("Name:");
+        JLabel l2 = new JLabel(sData[i][2]);
+        JLabel l3 = new JLabel("Surname:");
+        JLabel l4 = new JLabel(sData[i][3]);
+        JLabel l5 = new JLabel("Street:");
+        JLabel l6 = new JLabel(sData[i][4]);
+        JLabel l7 = new JLabel("Home number:");
+        JLabel l8 = new JLabel(sData[i][5]);
+        JLabel l9 = new JLabel("Postal Code:");
+        JLabel l10 = new JLabel(sData[i][6]);
+        JLabel l11 = new JLabel("City:");
+        JLabel l12 = new JLabel(sData[i][7]);
+
+        p.setLayout(null);
+        p.setBackground(Color.white);
+        p.setPreferredSize(new Dimension(550, 300));
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+        p3.setOpaque(false);
+        p4.setOpaque(false);
+        p5.setOpaque(false);
+        p6.setOpaque(false);
+        p7.setOpaque(false);
+        p8.setOpaque(false);
+        p9.setOpaque(false);
+        p10.setOpaque(false);
+        p11.setOpaque(false);
+        p12.setOpaque(false);
+
+        p1.add(l1);
+        p2.add(l2);
+        p3.add(l3);
+        p4.add(l4);
+        p5.add(l5);
+        p6.add(l6);
+        p7.add(l7);
+        p8.add(l8);
+        p9.add(l9);
+        p10.add(l10);
+        p11.add(l11);
+        p12.add(l12);
+
+        p1.setBounds(150, 10, 120, 25);
+        p2.setBounds(270, 10, 120, 25);
+        p3.setBounds(150, 40, 120, 25);
+        p4.setBounds(270, 40, 120, 25);
+        p5.setBounds(150, 70, 120, 25);
+        p6.setBounds(270, 70, 120, 25);
+        p7.setBounds(150, 100, 120, 25);
+        p8.setBounds(270, 100, 120, 25);
+        p9.setBounds(150, 130, 120, 25);
+        p10.setBounds(270, 130, 120, 25);
+        p11.setBounds(150, 160, 120, 25);
+        p12.setBounds(270, 160, 120, 25);
+
+        p.add(p1);
+        p.add(p2);
+        p.add(p3);
+        p.add(p4);
+        p.add(p5);
+        p.add(p6);
+        p.add(p7);
+        p.add(p8);
+        p.add(p9);
+        p.add(p10);
+        p.add(p11);
+        p.add(p12);
+
+        frame.add(p);
+
+        frame.setTitle("Customer read");
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
     }
 
     private void updateEmployeeAndAdres(int i) {
@@ -2882,6 +3347,151 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         bgManager.add(tfData[8], 2, 0);
     }
 
+    private void readEmployeeAndAdres(int i) {
+
+        JFrame frame = new JFrame();
+        frame.setSize(550, 350);
+
+        JPanel p = new JPanel();
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+        JPanel p3 = new JPanel();
+        JPanel p4 = new JPanel();
+        JPanel p5 = new JPanel();
+        JPanel p6 = new JPanel();
+        JPanel p7 = new JPanel();
+        JPanel p8 = new JPanel();
+        JPanel p9 = new JPanel();
+        JPanel p10 = new JPanel();
+        JPanel p11 = new JPanel();
+        JPanel p12 = new JPanel();
+        JPanel p13 = new JPanel();
+        JPanel p14 = new JPanel();
+        JPanel p15 = new JPanel();
+        JPanel p16 = new JPanel();
+        JPanel p17 = new JPanel();
+        JPanel p18 = new JPanel();
+        JPanel p19 = new JPanel();
+        JPanel p20 = new JPanel();
+
+        JLabel l1 = new JLabel("Name:");
+        JLabel l2 = new JLabel(sData[i][3]);
+        JLabel l3 = new JLabel("Surname:");
+        JLabel l4 = new JLabel(sData[i][4]);
+        JLabel l5 = new JLabel("Pesel:");
+        JLabel l6 = new JLabel(sData[i][5]);
+        JLabel l7 = new JLabel("Birth date:");
+        JLabel l8 = new JLabel(sData[i][6]);
+        JLabel l9 = new JLabel("Phone number:");
+        JLabel l10 = new JLabel(sData[i][7]);
+        JLabel l11 = new JLabel("Street:");
+        JLabel l12 = new JLabel(sData[i][8]);
+        JLabel l13 = new JLabel("Home number:");
+        JLabel l14 = new JLabel(sData[i][9]);
+        JLabel l15 = new JLabel("Postal code:");
+        JLabel l16 = new JLabel(sData[i][10]);
+        JLabel l17 = new JLabel("City:");
+        JLabel l18 = new JLabel(sData[i][11]);
+        JLabel l19 = new JLabel("Position:");
+        JLabel l20 = new JLabel(sData[i][12]);
+
+        p.setLayout(null);
+        p.setBackground(Color.white);
+        p.setPreferredSize(new Dimension(550, 350));
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+        p3.setOpaque(false);
+        p4.setOpaque(false);
+        p5.setOpaque(false);
+        p6.setOpaque(false);
+        p7.setOpaque(false);
+        p8.setOpaque(false);
+        p9.setOpaque(false);
+        p10.setOpaque(false);
+        p11.setOpaque(false);
+        p12.setOpaque(false);
+        p13.setOpaque(false);
+        p14.setOpaque(false);
+        p15.setOpaque(false);
+        p16.setOpaque(false);
+        p17.setOpaque(false);
+        p18.setOpaque(false);
+        p19.setOpaque(false);
+        p20.setOpaque(false);
+
+        p1.add(l1);
+        p2.add(l2);
+        p3.add(l3);
+        p4.add(l4);
+        p5.add(l5);
+        p6.add(l6);
+        p7.add(l7);
+        p8.add(l8);
+        p9.add(l9);
+        p10.add(l10);
+        p11.add(l11);
+        p12.add(l12);
+        p13.add(l13);
+        p14.add(l14);
+        p15.add(l15);
+        p16.add(l16);
+        p17.add(l17);
+        p18.add(l18);
+        p19.add(l19);
+        p20.add(l20);
+
+        p1.setBounds(150, 10, 120, 25);
+        p2.setBounds(270, 10, 120, 25);
+        p3.setBounds(150, 40, 120, 25);
+        p4.setBounds(270, 40, 120, 25);
+        p5.setBounds(150, 70, 120, 25);
+        p6.setBounds(270, 70, 120, 25);
+        p7.setBounds(150, 100, 120, 25);
+        p8.setBounds(270, 100, 120, 25);
+        p9.setBounds(150, 130, 120, 25);
+        p10.setBounds(270, 130, 120, 25);
+        p11.setBounds(150, 160, 120, 25);
+        p12.setBounds(270, 160, 120, 25);
+        p13.setBounds(150, 190, 120, 25);
+        p14.setBounds(270, 190, 120, 25);
+        p15.setBounds(150, 220, 120, 25);
+        p16.setBounds(270, 220, 120, 25);
+        p17.setBounds(150, 250, 120, 25);
+        p18.setBounds(270, 250, 120, 25);
+        p19.setBounds(150, 280, 120, 25);
+        p20.setBounds(270, 280, 120, 25);
+
+        p.add(p1);
+        p.add(p2);
+        p.add(p3);
+        p.add(p4);
+        p.add(p5);
+        p.add(p6);
+        p.add(p7);
+        p.add(p8);
+        p.add(p9);
+        p.add(p10);
+        p.add(p11);
+        p.add(p12);
+        p.add(p13);
+        p.add(p14);
+        p.add(p15);
+        p.add(p16);
+        p.add(p17);
+        p.add(p18);
+        p.add(p19);
+        p.add(p20);
+
+        frame.add(p);
+
+        frame.setTitle("Employee read");
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+    }
+
     private void updateProductCategory(int i) {
 
         cbManagamet.removeAllItems();
@@ -3140,6 +3750,124 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         bgManager.add(tfData[3], 2, 0);
     }
 
+    private void readProductCategory(int i) {
+        JFrame frame = new JFrame();
+        frame.setSize(550, 350);
+
+        JPanel p = new JPanel();
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+        JPanel p3 = new JPanel();
+        JPanel p4 = new JPanel();
+        JPanel p5 = new JPanel();
+        JPanel p6 = new JPanel();
+        JPanel p7 = new JPanel();
+        JPanel p8 = new JPanel();
+        JPanel p9 = new JPanel();
+        JPanel p10 = new JPanel();
+        JPanel p11 = new JPanel();
+        JPanel p12 = new JPanel();
+        JPanel p13 = new JPanel();
+        JPanel p14 = new JPanel();
+
+        JLabel l1 = new JLabel("Product name:");
+        JLabel l2 = new JLabel(sData[i][4]);
+        JLabel l3 = new JLabel("Price:");
+        JLabel l4 = new JLabel("$ "+sData[i][5]);
+        JLabel l5 = new JLabel("Description:");
+        JLabel l6 = new JLabel(sData[i][6]);
+        JLabel l7 = new JLabel("Composition:");
+        JLabel l8 = new JLabel(sData[i][7]);
+        JLabel l9 = new JLabel("Creator:");
+        JLabel l10 = new JLabel();
+        if (sData[i][8] != null) {
+            l10.setText(sData[i][8]+" "+sData[i][9]);
+        } else {
+            l10.setText("supplier");
+        }
+        JLabel l11 = new JLabel("Supplier:");
+        JLabel l12 = new JLabel();
+        if (sData[i][10] != null) {
+            l12.setText(sData[i][10]);
+        } else {
+            l12.setText("us");
+        }
+        JLabel l13 = new JLabel("Category:");
+        JLabel l14 = new JLabel(sData[i][11]);
+
+        p.setLayout(null);
+        p.setBackground(Color.white);
+        p.setPreferredSize(new Dimension(550, 350));
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+        p3.setOpaque(false);
+        p4.setOpaque(false);
+        p5.setOpaque(false);
+        p6.setOpaque(false);
+        p7.setOpaque(false);
+        p8.setOpaque(false);
+        p9.setOpaque(false);
+        p10.setOpaque(false);
+        p11.setOpaque(false);
+        p12.setOpaque(false);
+        p13.setOpaque(false);
+        p14.setOpaque(false);
+
+        p1.add(l1);
+        p2.add(l2);
+        p3.add(l3);
+        p4.add(l4);
+        p5.add(l5);
+        p6.add(l6);
+        p7.add(l7);
+        p8.add(l8);
+        p9.add(l9);
+        p10.add(l10);
+        p11.add(l11);
+        p12.add(l12);
+        p13.add(l13);
+        p14.add(l14);
+
+        p1.setBounds(150, 10, 120, 25);
+        p2.setBounds(270, 10, 120, 25);
+        p3.setBounds(150, 40, 120, 25);
+        p4.setBounds(270, 40, 120, 25);
+        p5.setBounds(150, 70, 120, 25);
+        p6.setBounds(100, 100, 400, 25);
+        p7.setBounds(150, 130, 120, 25);
+        p8.setBounds(100, 160, 400, 25);
+        p9.setBounds(150, 190, 120, 25);
+        p10.setBounds(270, 190, 120, 25);
+        p11.setBounds(150, 220, 120, 25);
+        p12.setBounds(270, 220, 120, 25);
+        p13.setBounds(150, 250, 120, 25);
+        p14.setBounds(270, 250, 120, 25);
+
+        p.add(p1);
+        p.add(p2);
+        p.add(p3);
+        p.add(p4);
+        p.add(p5);
+        p.add(p6);
+        p.add(p7);
+        p.add(p8);
+        p.add(p9);
+        p.add(p10);
+        p.add(p11);
+        p.add(p12);
+        p.add(p13);
+        p.add(p14);
+
+        frame.add(p);
+
+        frame.setTitle("Product read");
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+    }
+
     private void updateSupplierAdres(int i) {
 
         update = true;
@@ -3352,6 +4080,115 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         bgManager.add(tfData[6], 2, 0);
     }
 
+    private void readSupplierAdres(int i) {
+
+        JFrame frame = new JFrame();
+        frame.setSize(550, 300);
+
+        JPanel p = new JPanel();
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+        JPanel p3 = new JPanel();
+        JPanel p4 = new JPanel();
+        JPanel p5 = new JPanel();
+        JPanel p6 = new JPanel();
+        JPanel p7 = new JPanel();
+        JPanel p8 = new JPanel();
+        JPanel p9 = new JPanel();
+        JPanel p10 = new JPanel();
+        JPanel p11 = new JPanel();
+        JPanel p12 = new JPanel();
+        JPanel p13 = new JPanel();
+        JPanel p14 = new JPanel();
+
+        JLabel l1 = new JLabel("Company name:");
+        JLabel l2 = new JLabel(sData[i][2]);
+        JLabel l3 = new JLabel("Phone number:");
+        JLabel l4 = new JLabel(sData[i][3]);
+        JLabel l5 = new JLabel("E-Mail:");
+        JLabel l6 = new JLabel(sData[i][4]);
+        JLabel l7 = new JLabel("Street:");
+        JLabel l8 = new JLabel(sData[i][5]);
+        JLabel l9 = new JLabel("Home number:");
+        JLabel l10 = new JLabel(sData[i][6]);
+        JLabel l11 = new JLabel("Postal Code:");
+        JLabel l12 = new JLabel(sData[i][7]);
+        JLabel l13 = new JLabel("City:");
+        JLabel l14 = new JLabel(sData[i][8]);
+
+        p.setLayout(null);
+        p.setBackground(Color.white);
+        p.setPreferredSize(new Dimension(550, 300));
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+        p3.setOpaque(false);
+        p4.setOpaque(false);
+        p5.setOpaque(false);
+        p6.setOpaque(false);
+        p7.setOpaque(false);
+        p8.setOpaque(false);
+        p9.setOpaque(false);
+        p10.setOpaque(false);
+        p11.setOpaque(false);
+        p12.setOpaque(false);
+        p13.setOpaque(false);
+        p14.setOpaque(false);
+
+        p1.add(l1);
+        p2.add(l2);
+        p3.add(l3);
+        p4.add(l4);
+        p5.add(l5);
+        p6.add(l6);
+        p7.add(l7);
+        p8.add(l8);
+        p9.add(l9);
+        p10.add(l10);
+        p11.add(l11);
+        p12.add(l12);
+        p13.add(l13);
+        p14.add(l14);
+
+        p1.setBounds(150, 10, 120, 25);
+        p2.setBounds(270, 10, 120, 25);
+        p3.setBounds(150, 40, 120, 25);
+        p4.setBounds(270, 40, 120, 25);
+        p5.setBounds(150, 70, 120, 25);
+        p6.setBounds(270, 70, 160, 25);
+        p7.setBounds(150, 100, 120, 25);
+        p8.setBounds(270, 100, 120, 25);
+        p9.setBounds(150, 130, 120, 25);
+        p10.setBounds(270, 130, 120, 25);
+        p11.setBounds(150, 160, 120, 25);
+        p12.setBounds(270, 160, 120, 25);
+        p13.setBounds(150, 190, 120, 25);
+        p14.setBounds(270, 190, 120, 25);
+
+        p.add(p1);
+        p.add(p2);
+        p.add(p3);
+        p.add(p4);
+        p.add(p5);
+        p.add(p6);
+        p.add(p7);
+        p.add(p8);
+        p.add(p9);
+        p.add(p10);
+        p.add(p11);
+        p.add(p12);
+        p.add(p13);
+        p.add(p14);
+
+        frame.add(p);
+
+        frame.setTitle("Supplier read");
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+    }
+
     private void updatePositions(int i) {
 
         update = true;
@@ -3460,6 +4297,609 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
 
         bgManager.add(tfData[0], 2, 0);
         bgManager.add(tfData[1], 2, 0);
+    }
+
+    private void readPositions(int i) {
+
+        JFrame frame = new JFrame();
+        frame.setSize(550, 150);
+
+        JPanel p = new JPanel();
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+        JPanel p3 = new JPanel();
+        JPanel p4 = new JPanel();
+
+        JLabel l1 = new JLabel("Position name:");
+        JLabel l2 = new JLabel(sData[i][1]);
+        JLabel l3 = new JLabel("Salary:");
+        JLabel l4 = new JLabel("$ "+sData[i][2]);
+
+        p.setLayout(null);
+        p.setBackground(Color.white);
+        p.setPreferredSize(new Dimension(550, 150));
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+        p3.setOpaque(false);
+        p4.setOpaque(false);
+
+        p1.add(l1);
+        p2.add(l2);
+        p3.add(l3);
+        p4.add(l4);
+
+        p1.setBounds(150, 10, 120, 25);
+        p2.setBounds(270, 10, 120, 25);
+        p3.setBounds(150, 40, 120, 25);
+        p4.setBounds(270, 40, 120, 25);
+
+        p.add(p1);
+        p.add(p2);
+        p.add(p3);
+        p.add(p4);
+
+        frame.add(p);
+
+        frame.setTitle("Packing type read");
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+
+    }
+
+    private void updateCategory(int i) {
+
+        update = true;
+
+        stroreId = i;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[1];
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+
+        JLabel l1 = new JLabel("Category Name:");
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+
+        p1.add(l1);
+
+        tfData[0] = new JTextField(sData[i][1]);
+
+        tfData[0].addKeyListener(this);
+
+        tfData[0].setBounds(400, 250, 200, 25);
+        p1.setBounds(400, 200, 100, 25);
+
+        bgManager.add(p1, 2, 0);
+        bgManager.add(tfData[0], 2, 0);
+
+    }
+
+    private void newCategory() {
+
+        update = false;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[1];
+
+        tfData[0] = new JTextField();
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+
+        JLabel l1 = new JLabel("Category Name:");
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+
+        p1.add(l1);
+
+        tfData[0].addKeyListener(this);
+
+        tfData[0].setBounds(400, 250, 200, 25);
+        p1.setBounds(400, 200, 100, 25);
+
+        bgManager.add(p1, 2, 0);
+        bgManager.add(tfData[0], 2, 0);
+    }
+
+    private void readCategory(int i) {
+
+        JFrame frame = new JFrame();
+        frame.setSize(550, 100);
+
+        JPanel p = new JPanel();
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+
+        JLabel l1 = new JLabel("Category name:");
+        JLabel l2 = new JLabel(sData[i][1]);
+
+        p.setLayout(null);
+        p.setBackground(Color.white);
+        p.setPreferredSize(new Dimension(550, 100));
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+
+        p1.add(l1);
+        p2.add(l2);
+
+        p1.setBounds(150, 10, 120, 25);
+        p2.setBounds(270, 10, 120, 25);
+
+        p.add(p1);
+        p.add(p2);
+
+        frame.add(p);
+
+        frame.setTitle("Category read");
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+    }
+
+    private void updateSubcategory(int i) {
+
+        update = true;
+
+        stroreId = i;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+
+        cbManagamet.removeAllItems();
+
+        for (String s : q.fillcbSubcat()) {
+            cbManagamet.addItem(s);
+        }
+
+        cbManagamet.setSelectedItem(sData[i][3]);
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[1];
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+
+        JLabel l1 = new JLabel("Subcategory Name:");
+        JLabel l2 = new JLabel("Choose category:");
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+
+        p1.add(l1);
+        p2.add(l2);
+
+        tfData[0] = new JTextField(sData[i][1]);
+
+        tfData[0].addKeyListener(this);
+
+        tfData[0].setBounds(200, 250, 200, 25);
+
+        cbManagamet.setBounds(600, 250, 150, 25);
+
+        p1.setBounds(200, 200, 120, 25);
+        p2.setBounds(600, 200, 100, 25);
+
+        bgManager.add(p1, 2, 0);
+        bgManager.add(p2, 2, 0);
+
+        bgManager.add(cbManagamet, 2, 0);
+
+        bgManager.add(tfData[0], 2, 0);
+    }
+
+    private void newSubcategory() {
+
+        update = false;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+
+        cbManagamet.removeAllItems();
+
+        for (String s : q.fillcbSubcat()) {
+            cbManagamet.addItem(s);
+        }
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[1];
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+
+        JLabel l1 = new JLabel("Subcategory Name:");
+        JLabel l2 = new JLabel("Choose category:");
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+
+        p1.add(l1);
+        p2.add(l2);
+
+        tfData[0] = new JTextField();
+
+        tfData[0].addKeyListener(this);
+
+        tfData[0].setBounds(200, 250, 200, 25);
+
+        cbManagamet.setBounds(600, 250, 150, 25);
+
+        p1.setBounds(200, 200, 120, 25);
+        p2.setBounds(600, 200, 100, 25);
+
+        bgManager.add(p1, 2, 0);
+        bgManager.add(p2, 2, 0);
+
+        bgManager.add(cbManagamet, 2, 0);
+
+        bgManager.add(tfData[0], 2, 0);
+
+    }
+
+    private void readSubcategory(int i) {
+
+        JFrame frame = new JFrame();
+        frame.setSize(550, 150);
+
+        JPanel p = new JPanel();
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+        JPanel p3 = new JPanel();
+        JPanel p4 = new JPanel();
+
+        JLabel l1 = new JLabel("Subcategory name:");
+        JLabel l2 = new JLabel(sData[i][1]);
+        JLabel l3 = new JLabel("Category name:");
+        JLabel l4 = new JLabel(sData[i][3]);
+
+        p.setLayout(null);
+        p.setBackground(Color.white);
+        p.setPreferredSize(new Dimension(550, 150));
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+        p3.setOpaque(false);
+        p4.setOpaque(false);
+
+        p1.add(l1);
+        p2.add(l2);
+        p3.add(l3);
+        p4.add(l4);
+
+        p1.setBounds(150, 10, 120, 25);
+        p2.setBounds(270, 10, 120, 25);
+        p3.setBounds(150, 40, 120, 25);
+        p4.setBounds(270, 40, 120, 25);
+
+        p.add(p1);
+        p.add(p2);
+        p.add(p3);
+        p.add(p4);
+
+        frame.add(p);
+
+        frame.setTitle("Packing type read");
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+    }
+
+    private void updatePayment(int i) {
+
+        update = true;
+
+        stroreId = i;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[1];
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+
+        JLabel l1 = new JLabel("Payment Name:");
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+
+        p1.add(l1);
+
+        tfData[0] = new JTextField(sData[i][1]);
+
+        tfData[0].addKeyListener(this);
+
+        tfData[0].setBounds(400, 250, 200, 25);
+        p1.setBounds(400, 200, 100, 25);
+
+        bgManager.add(p1, 2, 0);
+        bgManager.add(tfData[0], 2, 0);
+    }
+
+    private void newPayment() {
+
+        update = false;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[1];
+        tfData[0] = new JTextField();
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+
+        JLabel l1 = new JLabel("Payment Name:");
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+
+        p1.add(l1);
+
+        tfData[0].addKeyListener(this);
+
+        tfData[0].setBounds(400, 250, 200, 25);
+        p1.setBounds(400, 200, 100, 25);
+
+        bgManager.add(p1, 2, 0);
+        bgManager.add(tfData[0], 2, 0);
+    }
+
+    private void readPayment(int i) {
+        JFrame frame = new JFrame();
+        frame.setSize(550, 100);
+
+        JPanel p = new JPanel();
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+
+        JLabel l1 = new JLabel("Payment type:");
+        JLabel l2 = new JLabel(sData[i][1]);
+
+        p.setLayout(null);
+        p.setBackground(Color.white);
+        p.setPreferredSize(new Dimension(550, 100));
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+
+        p1.add(l1);
+        p2.add(l2);
+
+        p1.setBounds(150, 10, 120, 25);
+        p2.setBounds(270, 10, 120, 25);
+
+        p.add(p1);
+        p.add(p2);
+
+        frame.add(p);
+
+        frame.setTitle("Payment type read");
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+    }
+
+    private void updatePacking(int i) {
+
+        update = true;
+
+        stroreId = i;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[1];
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+
+        JLabel l1 = new JLabel("Packing type:");
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+
+        p1.add(l1);
+
+        tfData[0] = new JTextField(sData[i][1]);
+
+        tfData[0].addKeyListener(this);
+
+        tfData[0].setBounds(400, 250, 200, 25);
+        p1.setBounds(400, 200, 100, 25);
+
+        bgManager.add(p1, 2, 0);
+        bgManager.add(tfData[0], 2, 0);
+    }
+
+    private void newPacking() {
+
+        update = false;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[1];
+        tfData[0] = new JTextField();
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+
+        JLabel l1 = new JLabel("Packing type:");
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+
+        p1.add(l1);
+
+        tfData[0].addKeyListener(this);
+
+        tfData[0].setBounds(400, 250, 200, 25);
+        p1.setBounds(400, 200, 100, 25);
+
+        bgManager.add(p1, 2, 0);
+        bgManager.add(tfData[0], 2, 0);
+    }
+
+    private void readPacking(int i) {
+
+        JFrame frame = new JFrame();
+        frame.setSize(550, 100);
+
+        JPanel p = new JPanel();
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+
+        JLabel l1 = new JLabel("Packing type:");
+        JLabel l2 = new JLabel(sData[i][1]);
+
+        p.setLayout(null);
+        p.setBackground(Color.white);
+        p.setPreferredSize(new Dimension(550, 100));
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+
+        p1.add(l1);
+        p2.add(l2);
+
+        p1.setBounds(150, 10, 120, 25);
+        p2.setBounds(270, 10, 120, 25);
+
+        p.add(p1);
+        p.add(p2);
+
+        frame.add(p);
+
+        frame.setTitle("Packing type read");
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
     }
 
     private void removeManagerMore() {
@@ -3613,6 +5053,18 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                 case 4:
                     newPositions();
                     break;
+                case 5:
+                    newCategory();
+                    break;
+                case 6:
+                    newSubcategory();
+                    break;
+                case 7:
+                    newPayment();
+                    break;
+                case 8:
+                    newPacking();
+                    break;
                 default:
             }
         } else if (z == bManagerBack) {
@@ -3725,6 +5177,74 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                         }
                     }
                     break;
+                case 5:
+                    if (update) {
+                        if (logic.checkText(tfData[0].getText())) {
+                            q.updateSubcategory(sData[stroreId][0], tfData[0].getText());
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        if (logic.checkText(tfData[0].getText())) {
+                            q.newSubcategory(q.getLastId("Subcategory")+1, tfData[0].getText());
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                    break;
+                case 6:
+                    if (update) {
+                        if (logic.checkText(tfData[0].getText())) {
+                            q.updateCategory(sData[stroreId][0], tfData[0].getText(), cbManagamet.getSelectedIndex()+1);
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        if (logic.checkText(tfData[0].getText())) {
+                            q.newCategory(q.getLastId("Category")+1, tfData[0].getText(), cbManagamet.getSelectedIndex()+1);
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                    break;
+                case 7:
+                    if (update) {
+                        if (logic.checkText(tfData[0].getText())) {
+                            q.updatePayment(sData[stroreId][0], tfData[0].getText());
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        if (logic.checkText(tfData[0].getText())) {
+                            q.newPayment(q.getLastId("Payment")+1, tfData[0].getText());
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                    break;
+                case 8:
+                    if (update) {
+                        if (logic.checkText(tfData[0].getText())) {
+                            q.updatePacking(sData[stroreId][0], tfData[0].getText());
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        if (logic.checkText(tfData[0].getText())) {
+                            q.newPacking(q.getLastId("Packing")+1, tfData[0].getText());
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                    break;
                 default:
             }
         } else if (z == bManagerCancel) {
@@ -3764,6 +5284,30 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                                 listOrders.clear();
                                 updateManagerWindow();
                                 break;
+                            case 5:
+                                q.deleteSubcategory(sData[i][0]);
+                                shift = shift + listOrders.size();
+                                listOrders.clear();
+                                updateManagerWindow();
+                                break;
+                            case 6:
+                                q.deleteCategory(sData[i][0]);
+                                shift = shift + listOrders.size();
+                                listOrders.clear();
+                                updateManagerWindow();
+                                break;
+                            case 7:
+                                q.deletePayment(sData[i][0]);
+                                shift = shift + listOrders.size();
+                                listOrders.clear();
+                                updateManagerWindow();
+                                break;
+                            case 8:
+                                q.deletePacking(sData[i][0]);
+                                shift = shift + listOrders.size();
+                                listOrders.clear();
+                                updateManagerWindow();
+                                break;
                             default:
                         }
                     }
@@ -3787,6 +5331,54 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                                 break;
                             case 4:
                                 updatePositions(i);
+                                break;
+                            case 5:
+                                updateCategory(i);
+                                break;
+                            case 6:
+                                updateSubcategory(i);
+                                break;
+                            case 7:
+                                updatePayment(i);
+                                break;
+                            case 8:
+                                updatePacking(i);
+                                break;
+                            default:
+                        }
+                    }
+                }
+            }
+            if (bManagerRead != null) {
+                for (int i = 0; i < bManagerRead.length; i++) {
+                    if (z == bManagerRead[i]) {
+                        switch (cbChooseDbo.getSelectedIndex()) {
+                            case 0:
+                                readCustomerAndAdres(i);
+                                break;
+                            case 1:
+                                readEmployeeAndAdres(i);
+                                break;
+                            case 2:
+                                readProductCategory(i);
+                                break;
+                            case 3:
+                                readSupplierAdres(i);
+                                break;
+                            case 4:
+                                readPositions(i);
+                                break;
+                            case 5:
+                                readCategory(i);
+                                break;
+                            case 6:
+                                readSubcategory(i);
+                                break;
+                            case 7:
+                                readPayment(i);
+                                break;
+                            case 8:
+                                readPacking(i);
                                 break;
                             default:
                         }
@@ -4116,6 +5708,42 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                                     tfData[1].setBackground(new Color(227, 245, 227));
                                 } else {
                                     tfData[1].setBackground(new Color(246, 226, 226));
+                                }
+                            }
+                            break;
+                        case 5:
+                            if (z == tfData[0]) {
+                                if (logic.checkText(tfData[0].getText())) {
+                                    tfData[0].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[0].setBackground(new Color(246, 226, 226));
+                                }
+                            }
+                            break;
+                        case 6:
+                            if (z == tfData[0]) {
+                                if (logic.checkText(tfData[0].getText())) {
+                                    tfData[0].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[0].setBackground(new Color(246, 226, 226));
+                                }
+                            }
+                            break;
+                        case 7:
+                            if (z == tfData[0]) {
+                                if (logic.checkText(tfData[0].getText())) {
+                                    tfData[0].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[0].setBackground(new Color(246, 226, 226));
+                                }
+                            }
+                            break;
+                        case 8:
+                            if (z == tfData[0]) {
+                                if (logic.checkText(tfData[0].getText())) {
+                                    tfData[0].setBackground(new Color(227, 245, 227));
+                                } else {
+                                    tfData[0].setBackground(new Color(246, 226, 226));
                                 }
                             }
                             break;
