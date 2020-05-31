@@ -1,9 +1,20 @@
 # Bakery
-Bakery Management Application
+Bakery Management Application. Database stores data about: users, customers, employees, addresses, products, suppliers, and orders. Database structure on diagram below:
+
+![Bakery database diagram](BakeryDBD.png)
+
 ## Languages
 - Java
 - MSSQL
-## Author
-Mateusz Niewiadomski
 
-![DBS](BakeryDBD.png)
+## Project includes
+- CRUD
+    - Create
+    - Read
+    - Update
+    - Delete
+- sorting
+
+## Installation
+
+## Full description
