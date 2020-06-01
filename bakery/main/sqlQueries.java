@@ -859,11 +859,11 @@ public class sqlQueries extends Component {
         return null;
     }
 
-    public String[][] getCustomerAndAdres() {
+    public String[][] getCustomerAndAdres(String word) {
         try {
             Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = st.executeQuery("SELECT Customer.Id, Id_Adres, Name, Surname, Street, Nr_Home, PostalCode, City\n" +
-                    " FROM Customer iNNER JOIN Adres ON Adres.Id = Customer.Id_Adres");
+                    " FROM Customer iNNER JOIN Adres ON Adres.Id = Customer.Id_Adres WHERE (Name LIKE UPPER('%"+word+"%')) OR (Surname LIKE UPPER('%"+word+"%'))");
             ResultSetMetaData rsmd = rs.getMetaData();
             rs.last();
             int amountRows = rs.getRow();
@@ -912,12 +912,12 @@ public class sqlQueries extends Component {
         }
     }
 
-    public String[][] getEmployeeAndAdres() {
+    public String[][] getEmployeeAndAdres(String word) {
         try {
             Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = st.executeQuery("SELECT Employee.Id, Id_Adres, Id_Position, Name, Surname, Pesel, BirthDate, PhoneNumber, Street, Nr_Home, PostalCode, City, PositionName\n" +
                     " FROM Employee iNNER JOIN Adres ON Adres.Id = Employee.Id_Adres\n" +
-                    " INNER JOIN Position ON Position.Id = Employee.Id_Position");
+                    " INNER JOIN Position ON Position.Id = Employee.Id_Position WHERE (Name LIKE UPPER('%"+word+"%')) OR (Surname LIKE UPPER('%"+word+"%')) OR (Pesel LIKE UPPER('%"+word+"%'))");
             ResultSetMetaData rsmd = rs.getMetaData();
             rs.last();
             int amountRows = rs.getRow();
@@ -1042,13 +1042,13 @@ public class sqlQueries extends Component {
         return null;
     }
 
-    public String[][] getProductCategorySubcategory() {
+    public String[][] getProductCategorySubcategory(String word) {
         try {
             Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = st.executeQuery("SELECT Product.Id, Id_Baker, Id_Supplier, Id_Category, ProductName, Price, Desctiprion, Composition, Employee.Name, Employee.Surname, Supplier.CompanyName, Category.CategoryName\n" +
                     " FROM Product INNER JOIN Category ON Category.Id = Product.Id_Category\n" +
                     " LEFT JOIN Employee ON Employee.Id = Product.Id_Baker\n" +
-                    " LEFT JOIN Supplier ON Supplier.Id = Product.Id_Supplier");
+                    " LEFT JOIN Supplier ON Supplier.Id = Product.Id_Supplier WHERE (ProductName LIKE UPPER('%"+word+"%'))");
             ResultSetMetaData rsmd = rs.getMetaData();
             rs.last();
             int amountRows = rs.getRow();
@@ -1112,11 +1112,11 @@ public class sqlQueries extends Component {
         }
     }
 
-    public String[][] getSupplierAndAdres() {
+    public String[][] getSupplierAndAdres(String word) {
         try {
             Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = st.executeQuery("SELECT Supplier.Id, Id_Adres, CompanyName, PhoneNumber, EMail, Street, Nr_Home, PostalCode, City\n" +
-                    " FROM Supplier iNNER JOIN Adres ON Adres.Id = Supplier.Id_Adres");
+                    " FROM Supplier iNNER JOIN Adres ON Adres.Id = Supplier.Id_Adres WHERE (CompanyName LIKE UPPER('%"+word+"%'))");
             ResultSetMetaData rsmd = rs.getMetaData();
             rs.last();
             int amountRows = rs.getRow();
@@ -1165,10 +1165,10 @@ public class sqlQueries extends Component {
         }
     }
 
-    public String[][] getPosition() {
+    public String[][] getPosition(String word) {
         try {
             Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            ResultSet rs = st.executeQuery("SELECT Id, PositionName, Salary FROM Position");
+            ResultSet rs = st.executeQuery("SELECT Id, PositionName, Salary FROM Position WHERE (PositionName LIKE UPPER('%"+word+"%'))");
             ResultSetMetaData rsmd = rs.getMetaData();
             rs.last();
             int amountRows = rs.getRow();
@@ -1215,10 +1215,10 @@ public class sqlQueries extends Component {
         }
     }
 
-    public String[][] getSubcategory() {
+    public String[][] getSubcategory(String word) {
         try {
             Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            ResultSet rs = st.executeQuery("SELECT Category.Id, CategoryName, Id_Subcategory, SubcategoryName FROM Subcategory INNER JOIN Category ON Category.Id_Subcategory = Subcategory.Id");
+            ResultSet rs = st.executeQuery("SELECT Category.Id, CategoryName, Id_Subcategory, SubcategoryName FROM Subcategory INNER JOIN Category ON Category.Id_Subcategory = Subcategory.Id WHERE (SubcategoryName LIKE UPPER('%"+word+"%'))");
             ResultSetMetaData rsmd = rs.getMetaData();
             rs.last();
             int amountRows = rs.getRow();
@@ -1265,10 +1265,10 @@ public class sqlQueries extends Component {
         }
     }
 
-    public String[][] getCategory() {
+    public String[][] getCategory(String word) {
         try {
             Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            ResultSet rs = st.executeQuery("SELECT Id, SubcategoryName FROM Subcategory");
+            ResultSet rs = st.executeQuery("SELECT Id, SubcategoryName FROM Subcategory WHERE (SubcategoryName LIKE UPPER('%"+word+"%'))");
             ResultSetMetaData rsmd = rs.getMetaData();
             rs.last();
             int amountRows = rs.getRow();
@@ -1315,10 +1315,10 @@ public class sqlQueries extends Component {
         }
     }
 
-    public String[][] getPayment() {
+    public String[][] getPayment(String word) {
         try {
             Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            ResultSet rs = st.executeQuery("SELECT Id, PaymentType FROM Payment");
+            ResultSet rs = st.executeQuery("SELECT Id, PaymentType FROM Payment WHERE (PaymentType LIKE UPPER('%"+word+"%'))");
             ResultSetMetaData rsmd = rs.getMetaData();
             rs.last();
             int amountRows = rs.getRow();
@@ -1365,10 +1365,10 @@ public class sqlQueries extends Component {
         }
     }
 
-    public String[][] getPacking() {
+    public String[][] getPacking(String word) {
         try {
             Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            ResultSet rs = st.executeQuery("SELECT Id, PackingType FROM Packing");
+            ResultSet rs = st.executeQuery("SELECT Id, PackingType FROM Packing WHERE (PackingType LIKE UPPER('%"+word+"%'))");
             ResultSetMetaData rsmd = rs.getMetaData();
             rs.last();
             int amountRows = rs.getRow();

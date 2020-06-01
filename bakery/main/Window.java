@@ -254,6 +254,10 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
     private int stroreId;
     private int[] storeBakerId;
 
+    private JTextField tfSearch = new JTextField();
+    private final JPanel pSearch = new JPanel();
+    private final JLabel lSearch = new JLabel("Search:");
+
     private boolean update = false;
 
     public Window() {
@@ -836,6 +840,12 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         bManagerBack.setBounds(800, 80, 150, 25);
         bManagerAdd.setBounds(200, 80, 150, 25);
         cbChooseDbo.setBounds(650, 80, 100, 25);
+
+        pSearch.add(lSearch);
+        pSearch.setOpaque(false);
+
+        pSearch.setBounds(400, 80, 100, 25);
+        tfSearch.setBounds(500, 80, 100, 25);
     }
 
     private void loginWindow() {
@@ -2045,8 +2055,11 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.add(bManagerBack, 2, 0);
         layere.add(bManagerAdd, 2, 0);
         layere.add(bgManager, 1, 0);
+        layere.add(tfSearch, 2, 0);
+        layere.add(pSearch, 2, 0);
 
         cbChooseDbo.addActionListener(this);
+        tfSearch.addKeyListener(this);
 
         updateManagerWindow();
     }
@@ -2067,7 +2080,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
 
         switch (cbChooseDbo.getSelectedIndex()) {
             case 0:
-                sData = q.getCustomerAndAdres();
+                sData = q.getCustomerAndAdres(tfSearch.getText());
                 bManagerUpdate = new JButton[sData.length];
                 bManagerDelete = new JButton[sData.length];
                 bManagerRead = new JButton[sData.length];
@@ -2141,7 +2154,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
 
                 break;
             case 1:
-                sData = q.getEmployeeAndAdres();
+                sData = q.getEmployeeAndAdres(tfSearch.getText());
                 bManagerUpdate = new JButton[sData.length];
                 bManagerDelete = new JButton[sData.length];
                 bManagerRead = new JButton[sData.length];
@@ -2228,7 +2241,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
 
                 break;
             case 2:
-                sData = q.getProductCategorySubcategory();
+                sData = q.getProductCategorySubcategory(tfSearch.getText());
                 bManagerUpdate = new JButton[sData.length];
                 bManagerDelete = new JButton[sData.length];
                 bManagerRead = new JButton[sData.length];
@@ -2315,7 +2328,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
 
                 break;
             case 3:
-                sData = q.getSupplierAndAdres();
+                sData = q.getSupplierAndAdres(tfSearch.getText());
                 bManagerUpdate = new JButton[sData.length];
                 bManagerDelete = new JButton[sData.length];
                 bManagerRead = new JButton[sData.length];
@@ -2391,7 +2404,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                 break;
             case 4:
 
-                sData = q.getPosition();
+                sData = q.getPosition(tfSearch.getText());
                 bManagerUpdate = new JButton[sData.length];
                 bManagerDelete = new JButton[sData.length];
                 bManagerRead = new JButton[sData.length];
@@ -2465,7 +2478,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                 break;
             case 5:
 
-                sData = q.getCategory();
+                sData = q.getCategory(tfSearch.getText());
                 bManagerUpdate = new JButton[sData.length];
                 bManagerDelete = new JButton[sData.length];
                 bManagerRead = new JButton[sData.length];
@@ -2539,7 +2552,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                 break;
             case 6:
 
-                sData = q.getSubcategory();
+                sData = q.getSubcategory(tfSearch.getText());
                 bManagerUpdate = new JButton[sData.length];
                 bManagerDelete = new JButton[sData.length];
                 bManagerRead = new JButton[sData.length];
@@ -2613,7 +2626,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                 break;
             case 7:
 
-                sData = q.getPayment();
+                sData = q.getPayment(tfSearch.getText());
                 bManagerUpdate = new JButton[sData.length];
                 bManagerDelete = new JButton[sData.length];
                 bManagerRead = new JButton[sData.length];
@@ -2687,7 +2700,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                 break;
             case 8:
 
-                sData = q.getPacking();
+                sData = q.getPacking(tfSearch.getText());
                 bManagerUpdate = new JButton[sData.length];
                 bManagerDelete = new JButton[sData.length];
                 bManagerRead = new JButton[sData.length];
@@ -4924,6 +4937,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -5035,6 +5050,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         } else if (z == cbStatsCategory) {
             updateStatisticsWindow();
         } else if (z == cbChooseDbo) {
+            tfSearch.setText("");
             updateManagerWindow();
         } else if (z == bManagerAdd) {
             switch (cbChooseDbo.getSelectedIndex()) {
@@ -5491,6 +5507,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
             } else {
                 tfSearchProductByName.setBackground(new Color(246, 226, 226));
             }
+        } else if (z == tfSearch) {
+            updateManagerWindow();
         } else if (z == tfMin) {
             if (logic.checkPrice(tfMin.getText())) {
                 tfMin.setBackground(new Color(255, 248, 235));
