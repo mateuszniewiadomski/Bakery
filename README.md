@@ -27,7 +27,7 @@ Bakery Management Application. Database stores data about: users, customers, emp
     - PESEL (polish identity number) validator
     - only users with specific ids can acces selected functions
 
-<img src="imgSources/overview.gif" style="display:block; width:500px; margin:auto">
+<img src="imgSources/overview.gif" style="display:block; width:400px; margin:auto">
 
 ## Installation
 - download ZIP or clone the source repository from Github: 
