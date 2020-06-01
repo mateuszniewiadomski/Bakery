@@ -27,7 +27,7 @@ Bakery Management Application. Database stores data about: users, customers, emp
     - PESEL (polish identity number) validator
     - only users with specific ids can acces selected functions
 
-![overview](imgSources/overview.gif)
+<img src="imgSources/overview.gif" style="display:block; width:500px; margin:auto">
 
 ## Installation
 - download ZIP or clone the source repository from Github: 
@@ -36,6 +36,4 @@ Bakery Management Application. Database stores data about: users, customers, emp
 - install jar from `jarFile` folder
 - add `logininfo.txt` in first line enter your login to your local databese and in second line password
 - if you use IntelliJ, your folder layout should look like this
-![Folder Layout](imgSources/folderLayout.JPG)
-
-## Full description
+![Folder Layout](imgSources/folderLayout.jpg)
