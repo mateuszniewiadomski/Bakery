@@ -36,4 +36,5 @@ Bakery Management Application. Database stores data about: users, customers, emp
 - install jar from `jarFile` folder
 - add `logininfo.txt` in first line enter your login to your local databese and in second line password
 - if you use IntelliJ, your folder layout should look like this
+
 ![Folder Layout](imgSources/folderLayout.jpg)

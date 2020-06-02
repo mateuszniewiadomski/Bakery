@@ -1415,4 +1415,66 @@ public class sqlQueries extends Component {
         }
     }
 
+    public String[][] getUser(String word) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT Id, Account, Password FROM Account WHERE (Account LIKE UPPER('%"+word+"%'))");
+            ResultSetMetaData rsmd = rs.getMetaData();
+            rs.last();
+            int amountRows = rs.getRow();
+            rs.first();
+            int amountColumns = rsmd.getColumnCount();
+            String[][] s = new String[amountRows][amountColumns];
+            for (int i = 0; i < amountRows; i++) {
+                for (int j = 0; j < amountColumns; j++) {
+                    s[i][j] = rs.getString(j+1);
+                }
+                rs.next();
+            }
+            return s;
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+        return null;
+    }
+
+    public void updateUserAndPassword(String id, String name, String password) {
+        try {
+            HashPassword hp = new HashPassword();
+            password = hp.generateHash(password);
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("UPDATE Account SET Account = '"+name+"', Password = '"+password+"' WHERE Id = "+id+";");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void updateUser(String id, String name) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("UPDATE Account SET Account = '"+name+"' WHERE Id = "+id+";");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void newUser(int id, String name, String password) {
+        try {
+            HashPassword hp = new HashPassword();
+            password = hp.generateHash(password);
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("INSERT INTO Account (Id, Account, Password) VALUES ("+id+", '"+name+"', '"+password+"');");
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
+    public void deleteUser(String id) {
+        try {
+            Statement st = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.executeUpdate("DELETE Account WHERE Id = "+id);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "This account is in use", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }

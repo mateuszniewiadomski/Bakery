@@ -398,6 +398,7 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         cbChooseDbo.addItem("Subcategory");
         cbChooseDbo.addItem("Payment");
         cbChooseDbo.addItem("Packing");
+        cbChooseDbo.addItem("Users");
     }
 
     private void setStyle() {
@@ -2772,6 +2773,80 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     pManagementBox.add(p0e4);
                 }
                 break;
+            case 9:
+
+                sData = q.getUser(tfSearch.getText());
+                bManagerUpdate = new JButton[sData.length];
+                bManagerDelete = new JButton[sData.length];
+                bManagerRead = new JButton[sData.length];
+
+                for (int i = 0; i < sData.length; i++) {
+
+                    d = d + 1;
+
+                    JPanel p0 = new JPanel();
+                    JPanel p0e1 = new JPanel();
+                    JPanel p0e2 = new JPanel();
+                    JPanel p0e3 = new JPanel();
+                    JPanel p0e4 = new JPanel();
+                    JPanel p0l = new JPanel();
+                    JLabel l0 = new JLabel(sData[i][1]);
+
+                    bManagerUpdate[i] = new JButton("Update");
+                    bManagerDelete[i] = new JButton("Delete");
+                    bManagerRead[i] = new JButton("Read");
+
+                    p0.add(l0);
+                    p0.setOpaque(false);
+                    p0e1.setOpaque(false);
+                    p0e2.setOpaque(false);
+                    p0e3.setOpaque(false);
+                    p0e4.setOpaque(false);
+                    p0l.setBackground(new Color(64, 64, 64));
+
+                    l0.setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    l0.setForeground(new Color(64, 64, 64));
+
+                    bManagerUpdate[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerUpdate[i].setBackground(new Color(203, 135, 0));
+                    bManagerUpdate[i].setForeground(new Color(255, 248, 236));
+                    bManagerUpdate[i].setBorderPainted(false);
+
+                    bManagerDelete[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerDelete[i].setBackground(new Color(203, 0, 0));
+                    bManagerDelete[i].setForeground(new Color(255, 248, 236));
+                    bManagerDelete[i].setBorderPainted(false);
+
+                    bManagerRead[i].setFont(new Font(Font.DIALOG,  Font.BOLD, 15));
+                    bManagerRead[i].setBackground(new Color(0, 108, 203));
+                    bManagerRead[i].setForeground(new Color(255, 248, 236));
+                    bManagerRead[i].setBorderPainted(false);
+
+                    bManagerUpdate[i].addActionListener(this);
+                    bManagerDelete[i].addActionListener(this);
+                    bManagerRead[i].addActionListener(this);
+
+                    p0.setPreferredSize(new Dimension(200, 30));
+                    p0e1.setPreferredSize(new Dimension(50, 25));
+                    p0e2.setPreferredSize(new Dimension(20, 25));
+                    p0e3.setPreferredSize(new Dimension(20, 25));
+                    p0e4.setPreferredSize(new Dimension(300, 25));
+                    bManagerUpdate[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerDelete[i].setPreferredSize(new Dimension(100, 25));
+                    bManagerRead[i].setPreferredSize(new Dimension(100, 25));
+                    p0l.setPreferredSize(new Dimension(900, 1));
+
+                    pManagementBox.add(p0l);
+                    pManagementBox.add(p0);
+                    pManagementBox.add(p0e1);
+                    pManagementBox.add(bManagerUpdate[i]);
+                    pManagementBox.add(p0e2);
+                    pManagementBox.add(bManagerDelete[i]);
+                    pManagementBox.add(p0e3);
+                    pManagementBox.add(bManagerRead[i]);
+                    pManagementBox.add(p0e4);
+                }
+                break;
             default:
         }
 
@@ -2797,6 +2872,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -2892,6 +2969,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -3094,6 +3173,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -3234,6 +3315,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -3551,6 +3634,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -3672,6 +3757,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -3892,6 +3979,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -3997,6 +4086,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -4213,6 +4304,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -4267,6 +4360,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -4373,6 +4468,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -4418,6 +4515,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -4501,6 +4600,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -4563,6 +4664,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -4675,6 +4778,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -4719,6 +4824,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -4800,6 +4907,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -4844,6 +4953,8 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         layere.remove(cbChooseDbo);
         layere.remove(bManagerAdd);
         layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
 
         layere.revalidate();
         layere.repaint();
@@ -4913,6 +5024,175 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);
+    }
+
+    private void updateUser(int i) {
+
+        update = true;
+
+        stroreId = i;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
+
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[2];
+
+        JPanel pUser = new JPanel();
+        JPanel pPassword = new JPanel();
+
+        JLabel lLogin = new JLabel("Login:");
+        JLabel lPassword = new JLabel("New password:");
+
+        pUser.setOpaque(false);
+        pPassword.setOpaque(false);
+
+        pUser.add(lLogin);
+        pPassword.add(lPassword);
+
+        tfData[0] = new JTextField(sData[i][1]);
+        tfData[1] = new JTextField("");
+
+        tfData[0].addKeyListener(this);
+        tfData[1].addKeyListener(this);
+
+        tfData[0].setBounds(200, 250, 100, 25);
+        tfData[1].setBounds(600, 250, 100, 25);
+
+        pUser.setBounds(200, 200, 100, 25);
+        pPassword.setBounds(600, 200, 100, 25);
+
+        bgManager.add(pUser, 2, 0);
+        bgManager.add(pPassword, 2, 0);
+
+        bgManager.add(tfData[0], 2, 0);
+        bgManager.add(tfData[1], 2, 0);
+    }
+
+    private void newUser() {
+
+        update = false;
+
+        layere.remove(bgManager);
+        layere.remove(spManagement);
+        layere.remove(cbChooseDbo);
+        layere.remove(bManagerAdd);
+        layere.remove(bManagerBack);
+        layere.remove(pSearch);
+        layere.remove(tfSearch);
+
+        layere.revalidate();
+        layere.repaint();
+
+        bgManager.setLayout(null);
+
+        layere.add(bgManager, 1, 0);
+        bManagerAccept.setBounds(550, 500, 100, 25);
+        bManagerCancel.setBounds(350, 500, 100, 25);
+        layere.add(bManagerAccept, 2, 0);
+        layere.add(bManagerCancel, 2, 0);
+
+        tfData = new JTextField[2];
+
+        JPanel pLogin = new JPanel();
+        JPanel pPassword = new JPanel();
+
+        JLabel lLogin = new JLabel("Login:");
+        JLabel lPassword = new JLabel("Password:");
+
+        pLogin.setOpaque(false);
+        pPassword.setOpaque(false);
+
+        pLogin.add(lLogin);
+        pPassword.add(lPassword);
+
+        tfData[0] = new JTextField();
+        tfData[1] = new JTextField();
+
+        tfData[0].addKeyListener(this);
+        tfData[1].addKeyListener(this);
+
+        tfData[0].setBounds(200, 250, 100, 25);
+        tfData[1].setBounds(600, 250, 100, 25);
+
+        pLogin.setBounds(200, 200, 100, 25);
+        pPassword.setBounds(600, 200, 100, 25);
+
+        bgManager.add(pLogin, 2, 0);
+        bgManager.add(pPassword, 2, 0);
+
+        bgManager.add(tfData[0], 2, 0);
+        bgManager.add(tfData[1], 2, 0);
+    }
+
+    private void readUser(int i) {
+
+        JFrame frame = new JFrame();
+        frame.setSize(550, 250);
+
+        JPanel p = new JPanel();
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+        JPanel p3 = new JPanel();
+        JPanel p4 = new JPanel();
+
+        JLabel l1 = new JLabel("Login:");
+        JLabel l2 = new JLabel(sData[i][1]);
+        JLabel l3 = new JLabel("Password:");
+        //JLabel l4 = new JLabel();
+        JTextArea l4 = new JTextArea(sData[i][2]);
+        //l4.setWrapStyleWord(true);
+        l4.setLineWrap(true);
+        l4.setEditable(false);
+
+        //l4.setText("<html>"+ sData[i][2] +"</html>");
+        p.setLayout(null);
+        p.setBackground(Color.white);
+        p.setPreferredSize(new Dimension(550, 250));
+
+        p1.setOpaque(false);
+        p2.setOpaque(false);
+        p3.setOpaque(false);
+        p4.setOpaque(false);
+
+        p1.add(l1);
+        p2.add(l2);
+        p3.add(l3);
+        p4.add(l4);
+
+        p1.setBounds(150, 10, 120, 25);
+        p2.setBounds(220, 10, 120, 25);
+        p3.setBounds(150, 40, 120, 25);
+        p4.setBounds(240, 40, 120, 200);
+
+        p.add(p1);
+        p.add(p2);
+        p.add(p3);
+        p.add(p4);
+
+        frame.add(p);
+
+        frame.setTitle("User read");
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+
     }
 
     private void removeManagerMore() {
@@ -5080,6 +5360,9 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                     break;
                 case 8:
                     newPacking();
+                    break;
+                case 9:
+                    newUser();
                     break;
                 default:
             }
@@ -5261,6 +5544,31 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                         }
                     }
                     break;
+                case 9:
+                    if (update) {
+                        if (logic.checkUsername(tfData[0].getText())) {
+                            if (tfData[1].getText().equals("")) {
+                                q.updateUser(sData[stroreId][0], tfData[0].getText());
+                                removeManagerMore();
+                            } else {
+                                if (logic.checkPassword(tfData[1].getText())) {
+                                    q.updateUserAndPassword(sData[stroreId][0], tfData[0].getText(), tfData[1].getText());
+                                } else {
+                                    JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        if (logic.checkUsername(tfData[0].getText()) && logic.checkPassword(tfData[1].getText())) {
+                            q.newUser(q.getLastId("Account")+1, tfData[0].getText(), tfData[1].getText());
+                            removeManagerMore();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Check if all data is correct", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                    break;
                 default:
             }
         } else if (z == bManagerCancel) {
@@ -5324,6 +5632,12 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                                 listOrders.clear();
                                 updateManagerWindow();
                                 break;
+                            case 9:
+                                q.deleteUser(sData[i][0]);
+                                shift = shift + listOrders.size();
+                                listOrders.clear();
+                                updateManagerWindow();
+                                break;
                             default:
                         }
                     }
@@ -5360,6 +5674,9 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                             case 8:
                                 updatePacking(i);
                                 break;
+                            case 9:
+                                updateUser(i);
+                                break;
                             default:
                         }
                     }
@@ -5395,6 +5712,9 @@ public class Window extends JFrame implements ActionListener, KeyListener, Mouse
                                 break;
                             case 8:
                                 readPacking(i);
+                                break;
+                            case 9:
+                                readUser(i);
                                 break;
                             default:
                         }
